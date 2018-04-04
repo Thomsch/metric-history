@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
+    compile files('lib/ck-0.2.1.jar')
+
+    testCompile 'junit:junit:4.11'
+}
+
+applicationName = rootProject.name
+mainClassName = "Main"
