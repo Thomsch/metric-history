@@ -53,3 +53,8 @@ fabric.properties
 
 .idea/
 metrics.iml
+
+.gradle/
+gradle/
+gradlew
+gradlew.bat
