@@ -58,3 +58,4 @@ fabric.properties
 # We're actually deriving the whole project from gradle. So there is no need for configuration file.
 .idea/
 metrics.iml
+/*.csv
