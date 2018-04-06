@@ -16,16 +16,27 @@ public class Collector {
      */
     public Metric collect(String folder) {
         final CKReport report = new CK().calculate(folder);
-        long loc = 0;
-        long nom = 0;
-        int count = 0;
+
+        long couplingBetweenObjects = 0;
+        long depthInheritanceTree = 0;
+        long numberOfChildren = 0;
+        long numberOfFields = 0;
+        long numberOfMethods = 0;
+        long responseForAClass = 0;
+        long weightMethodClass = 0;
+        long lineOfCode = 0;
 
         for (CKNumber ckNumber : report.all()) {
-            loc += ckNumber.getLoc();
-            nom += ckNumber.getNom();
-            count++;
+            couplingBetweenObjects += ckNumber.getCbo();
+            depthInheritanceTree += ckNumber.getDit();
+            numberOfChildren += ckNumber.getNoc();
+            numberOfFields += ckNumber.getNof();
+            numberOfMethods += ckNumber.getNom();
+            responseForAClass += ckNumber.getRfc();
+            weightMethodClass += ckNumber.getWmc();
+            lineOfCode += ckNumber.getLoc();
         }
 
-        return new Metric((double)loc / count, (double)nom / loc);
+        return new Metric(couplingBetweenObjects, depthInheritanceTree, numberOfChildren, numberOfFields, numberOfMethods, responseForAClass, weightMethodClass, lineOfCode);
     }
 }
