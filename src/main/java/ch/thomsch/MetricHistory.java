@@ -20,15 +20,14 @@ public class MetricHistory {
     }
 
     /**
-     * Collects the metrics for each of the refactorings found in the file <code>refactoringRevisions</code> that has
-     * been extracted from the project repository <code>repositoryDirectory</code>.
-     * @param refactoringRevisions Path to the CSV file containing the refactoring revisions
-     * @param repositoryDirectory Path to the version controlled project
+     * Collects the metrics before and after for each of the revisions found in the file <code>revisionFile</code>.
+     * @param revisionFile Path to the CSV file containing the revisions
+     * @param repositoryDirectory Location of revisions' repository
      * @param outputFile Path to the file where the results will be printed
      */
-    public void collect(String refactoringRevisions, String repositoryDirectory, String outputFile) {
+    public void collect(String revisionFile, String repositoryDirectory, String outputFile) {
         final CommitReader commitReader = new RMinerReader();
-        final List<String> refactorings = commitReader.load(refactoringRevisions);
+        final List<String> revisions = commitReader.load(revisionFile);
 
         try {
             reporter.initialize(outputFile);
@@ -38,17 +37,17 @@ public class MetricHistory {
             return;
         }
 
-        for (String refactoring : refactorings) {
+        for (String revision : revisions) {
             try {
-                System.out.println("Treating refactoring " + refactoring);
-                versionControl.checkout(refactoring);
+                System.out.println("Treating revision " + revision);
+                versionControl.checkout(revision);
                 final Metric current = collector.collect(repositoryDirectory);
-                versionControl.checkoutParent(refactoring);
+                versionControl.checkoutParent(revision);
                 final Metric before = collector.collect(repositoryDirectory);
 
-                reporter.writeResults(refactoring, current, before);
+                reporter.writeResults(revision, current, before);
             } catch (IOException e) {
-                System.err.println("Cannot write results for revision " + refactoring + ": " + e.getMessage());
+                System.err.println("Cannot write results for revision " + revision + ": " + e.getMessage());
             } catch (GitAPIException e) {
                 System.err.println("Checkout failure: " + e.getMessage());
             }
