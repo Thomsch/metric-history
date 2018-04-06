@@ -8,20 +8,19 @@ import java.util.List;
 /**
  * @author TSC
  */
-public class MetricsForJUnit {
-
+public class MetricHistory {
     private final Metrics metrics;
     private final VersionControl versionControl;
     private final Reporter reporter;
 
-    public MetricsForJUnit(Metrics metrics, VersionControl versionControl, Reporter reporter) {
+    public MetricHistory(Metrics metrics, VersionControl versionControl, Reporter reporter) {
         this.metrics = metrics;
         this.versionControl = versionControl;
         this.reporter = reporter;
     }
 
     public static void main(String[] args) {
-        new MetricsForJUnit(new Metrics(), new VersionControl(), new Reporter())
+        new MetricHistory(new Metrics(), new VersionControl(), new Reporter())
                 .collect("src/main/resources/toy-refactorings.csv",
                         "../refactoring-toy-example",
                         "./toy-refactorings-metrics.csv");
