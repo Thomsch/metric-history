@@ -9,7 +9,7 @@ import org.junit.Test;
 /**
  * @author TSC
  */
-public class IntegrationTest {
+public class CKTest {
     @Test
     public void calculateMetricForProject() {
         final CKReport report = new CK().calculate(".");
