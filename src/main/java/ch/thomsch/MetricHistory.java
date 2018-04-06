@@ -9,21 +9,14 @@ import java.util.List;
  * @author TSC
  */
 public class MetricHistory {
-    private final Metrics metrics;
+    private final Collector collector;
     private final VersionControl versionControl;
     private final Reporter reporter;
 
-    public MetricHistory(Metrics metrics, VersionControl versionControl, Reporter reporter) {
-        this.metrics = metrics;
+    public MetricHistory(Collector collector, VersionControl versionControl, Reporter reporter) {
+        this.collector = collector;
         this.versionControl = versionControl;
         this.reporter = reporter;
-    }
-
-    public static void main(String[] args) {
-        new MetricHistory(new Metrics(), new VersionControl(), new Reporter())
-                .collect("src/main/resources/toy-refactorings.csv",
-                        "../refactoring-toy-example",
-                        "./toy-refactorings-metrics.csv");
     }
 
     /**
@@ -33,7 +26,7 @@ public class MetricHistory {
      * @param repositoryDirectory Path to the version controlled project
      * @param outputFile Path to the file where the results will be printed
      */
-    private void collect(String refactoringRevisions, String repositoryDirectory, String outputFile) {
+    public void collect(String refactoringRevisions, String repositoryDirectory, String outputFile) {
         final CommitReader commitReader = new RMinerReader();
         final List<String> refactorings = commitReader.load(refactoringRevisions);
 
@@ -49,9 +42,9 @@ public class MetricHistory {
             try {
                 System.out.println("Treating refactoring " + refactoring);
                 versionControl.checkout(refactoring);
-                final Metric current = metrics.collect(repositoryDirectory);
+                final Metric current = collector.collect(repositoryDirectory);
                 versionControl.checkoutParent(refactoring);
-                final Metric before = metrics.collect(repositoryDirectory);
+                final Metric before = collector.collect(repositoryDirectory);
 
                 reporter.writeResults(refactoring, current, before);
             } catch (IOException e) {

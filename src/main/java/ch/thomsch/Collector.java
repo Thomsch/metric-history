@@ -7,7 +7,7 @@ import com.github.mauricioaniche.ck.CKReport;
 /**
  * @author TSC
  */
-public class Metrics {
+public class Collector {
 
     /**
      * Computes the metrics for the element in the folder.
