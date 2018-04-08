@@ -7,7 +7,7 @@ import java.util.List;
  * @author TSC
  */
 final class ExtractRevisionsFromCSV {
-    private static final String REFACTORING_RESULTS = "src/main/resources/all_refactorings_master.csv";
+    private static final String REFACTORING_RESULTS = "src/main/resources/junit4-refactorings-master.csv";
 
     public static void main(String[] args) {
         final CommitReader commitReader = new RMinerReader();
