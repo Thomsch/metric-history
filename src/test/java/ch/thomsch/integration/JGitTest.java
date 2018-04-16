@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.integration;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;

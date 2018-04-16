@@ -1,9 +1,9 @@
 package ch.thomsch.example;
 
 import ch.thomsch.Collector;
+import ch.thomsch.GitProvider;
 import ch.thomsch.MetricHistory;
 import ch.thomsch.Reporter;
-import ch.thomsch.GitProvider;
 
 /**
  * @author TSC

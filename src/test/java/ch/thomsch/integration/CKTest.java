@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.integration;
 
 import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNumber;
