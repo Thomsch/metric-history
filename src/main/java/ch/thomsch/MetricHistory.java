@@ -1,6 +1,8 @@
 package ch.thomsch;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.List;
  * @author TSC
  */
 public class MetricHistory {
+    private static final Logger logger = LoggerFactory.getLogger(MetricHistory.class);
+
     private final Collector collector;
     private final VersionControl versionControl;
     private final Reporter reporter;
@@ -33,13 +37,14 @@ public class MetricHistory {
             reporter.initialize(outputFile);
             versionControl.initializeRepository(repositoryDirectory);
         } catch (IOException e) {
-            System.err.println("Cannot initialize element: " + e.getMessage());
+            logger.error("Cannot initialize element:", e);
             return;
         }
 
         for (String revision : revisions) {
             try {
-                System.out.println("Processing revision " + revision);
+                logger.info("Processing revision {}", revision);
+
                 versionControl.checkout(revision);
                 final Metric current = collector.collect(repositoryDirectory);
                 versionControl.checkoutParent(revision);
@@ -47,9 +52,9 @@ public class MetricHistory {
 
                 reporter.writeResults(revision, current, before);
             } catch (IOException e) {
-                System.err.println("Cannot write results for revision " + revision + ": " + e.getMessage());
+                logger.error("Cannot write results for revision {}:", revision, e);
             } catch (GitAPIException e) {
-                System.err.println("Checkout failure: " + e.getMessage());
+                logger.error("Checkout failure: ", e);
             }
         }
 
@@ -57,9 +62,9 @@ public class MetricHistory {
             reporter.finish();
             versionControl.checkout("master");
         } catch (IOException e) {
-            System.err.println("Cannot close output file: " + e.getMessage());
+            logger.error("Cannot close output file:", e);
         } catch (GitAPIException e) {
-            System.err.println("Failed to clean version history: " + e.getMessage());
+            logger.error("Failed to clean version history:", e);
         }
     }
 }

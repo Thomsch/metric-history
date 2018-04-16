@@ -2,6 +2,8 @@ package ch.thomsch;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,6 +16,7 @@ import java.util.List;
  * @author TSC
  */
 public class RMinerReader implements CommitReader {
+    private static final Logger logger = LoggerFactory.getLogger(RMinerReader.class);
 
     @Override
     public List<String> load(String filePath) {
@@ -46,9 +49,9 @@ public class RMinerReader implements CommitReader {
 
             return result;
         } catch (FileNotFoundException e) {
-            System.err.println("Can't open file");
+            logger.error("Can't open file:", e);
         } catch (IOException e) {
-            System.err.println("Can't parse file");
+            logger.error("Can't parse file:", e);
         }
         return result;
     }
