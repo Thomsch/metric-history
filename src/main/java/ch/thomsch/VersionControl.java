@@ -8,9 +8,24 @@ import java.io.IOException;
  * @author TSC
  */
 public interface VersionControl {
+
+    /**
+     * Define the repository that's going to be used.
+     *
+     * @param repositoryDirectory Path to the repository
+     * @throws IOException when the repository cannot be located
+     */
     void initializeRepository(String repositoryDirectory) throws IOException;
 
+    /**
+     * Checkout the repository to the revision.
+     * @param revision the full SHA of the revision
+     */
     void checkout(String revision) throws GitAPIException;
 
+    /**
+     * Checkout the parent of the given revision.
+     * @param revision the full SHA of the revision
+     */
     void checkoutParent(String revision) throws IOException, GitAPIException;
 }

@@ -25,10 +25,6 @@ public class GitProvider implements VersionControl {
         repository = builder.setGitDir(new File(repositoryDirectory, ".git")).build();
     }
 
-    /**
-     * Checkout the repository to the revision.
-     * @param revision the full SHA of the revision
-     */
     @Override
     public void checkout(String revision) throws GitAPIException {
         verifyRepositoryInitialization();
