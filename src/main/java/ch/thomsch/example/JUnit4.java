@@ -3,7 +3,7 @@ package ch.thomsch.example;
 import ch.thomsch.Collector;
 import ch.thomsch.MetricHistory;
 import ch.thomsch.Reporter;
-import ch.thomsch.VersionControl;
+import ch.thomsch.GitProvider;
 
 /**
  * @author TSC
@@ -15,7 +15,7 @@ public class JUnit4 {
     public static final String RESULTS_FILE = "./junit4-refactorings-metrics.csv";
 
     public static void main(String[] args) {
-        new MetricHistory(new Collector(), new VersionControl(), new Reporter())
+        new MetricHistory(new Collector(), new GitProvider(), new Reporter())
                 .collect(REVISION_FILE, REPOSITORY, RESULTS_FILE);
     }
 }

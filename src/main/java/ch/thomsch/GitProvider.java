@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * @author TSC
  */
-public class VersionControl {
+public class GitProvider {
 
     private Repository repository;
 
