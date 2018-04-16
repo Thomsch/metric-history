@@ -1,6 +1,9 @@
-package ch.thomsch;
+package ch.thomsch.example;
 
-import java.io.File;
+import ch.thomsch.Collector;
+import ch.thomsch.MetricHistory;
+import ch.thomsch.Reporter;
+import ch.thomsch.VersionControl;
 
 /**
  * @author TSC

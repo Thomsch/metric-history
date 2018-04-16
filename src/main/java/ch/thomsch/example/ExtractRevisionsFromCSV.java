@@ -1,6 +1,9 @@
-package ch.thomsch;
+package ch.thomsch.example;
 
 import java.util.List;
+
+import ch.thomsch.CommitReader;
+import ch.thomsch.RMinerReader;
 
 
 /**
