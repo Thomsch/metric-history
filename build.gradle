@@ -8,8 +8,10 @@ repositories {
 dependencies {
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
     compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.11.0.201803080745-r'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     compile files('lib/ck-0.2.1.jar')
 
+    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
     testCompile 'junit:junit:4.12'
 }
 
