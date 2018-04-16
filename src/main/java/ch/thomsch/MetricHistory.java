@@ -39,7 +39,7 @@ public class MetricHistory {
 
         for (String revision : revisions) {
             try {
-                System.out.println("Treating revision " + revision);
+                System.out.println("Processing revision " + revision);
                 versionControl.checkout(revision);
                 final Metric current = collector.collect(repositoryDirectory);
                 versionControl.checkoutParent(revision);
