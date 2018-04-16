@@ -10,10 +10,10 @@ import java.util.List;
  */
 public class MetricHistory {
     private final Collector collector;
-    private final GitProvider versionControl;
+    private final VersionControl versionControl;
     private final Reporter reporter;
 
-    public MetricHistory(Collector collector, GitProvider versionControl, Reporter reporter) {
+    public MetricHistory(Collector collector, VersionControl versionControl, Reporter reporter) {
         this.collector = collector;
         this.versionControl = versionControl;
         this.reporter = reporter;

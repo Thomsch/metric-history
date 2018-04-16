@@ -15,10 +15,11 @@ import java.io.IOException;
 /**
  * @author TSC
  */
-public class GitProvider {
+public class GitProvider implements VersionControl {
 
     private Repository repository;
 
+    @Override
     public void initializeRepository(String repositoryDirectory) throws IOException {
         final FileRepositoryBuilder builder = new FileRepositoryBuilder();
         repository = builder.setGitDir(new File(repositoryDirectory, ".git")).build();
@@ -28,6 +29,7 @@ public class GitProvider {
      * Checkout the repository to the revision.
      * @param revision the full SHA of the revision
      */
+    @Override
     public void checkout(String revision) throws GitAPIException {
         verifyRepositoryInitialization();
 
@@ -35,6 +37,7 @@ public class GitProvider {
         command.call();
     }
 
+    @Override
     public void checkoutParent(String revision) throws IOException, GitAPIException {
         verifyRepositoryInitialization();
 
