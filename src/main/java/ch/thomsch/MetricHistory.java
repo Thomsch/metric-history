@@ -50,7 +50,8 @@ public class MetricHistory {
                 versionControl.checkoutParent(revision);
                 final Metric before = collector.collect(repositoryDirectory);
 
-                reporter.writeResults(revision, current, before);
+                final DifferentialResult result = DifferentialResult.build(revision, before, current);
+                reporter.report(result);
             } catch (IOException e) {
                 logger.error("Cannot write results for revision {}:", revision, e);
             } catch (GitAPIException e) {

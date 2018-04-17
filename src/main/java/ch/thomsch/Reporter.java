@@ -5,9 +5,6 @@ import org.apache.commons.csv.CSVPrinter;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Write results in a CSV file.
@@ -34,25 +31,14 @@ public class Reporter {
                 "Response for a class", "Weight method class");
     }
 
-    private Collection<Object> exportMetric(Metric metric) {
-        return Arrays.asList(
-                metric.getLineOfCode(), metric.getCouplingBetweenObjects(), metric.getDepthInheritanceTree(),
-                metric.getNumberOfChildren(), metric.getNumberOfFields(), metric.getNumberOfMethods(),
-                metric.getResponseForAClass(), metric.getWeightMethodClass());
-    }
-
-    public void writeResults(String revision, Metric current, Metric before) throws IOException {
-        printer.printRecord(formatRevision("parent-"+revision, before));
-        printer.printRecord(formatRevision(revision, current));
-    }
-
-    private Iterable<?> formatRevision(String revision, Metric current) {
-        final ArrayList<Object> result = new ArrayList<>();
-
-        result.add(revision);
-        result.addAll(exportMetric(current));
-
-        return result;
+    /**
+     * Report a result for a revision.
+     *
+     * @param result the revision to report
+     * @throws IOException when the result cannot be printed
+     */
+    public void report(DifferentialResult result) throws IOException {
+        printer.printRecord(result.format());
     }
 
     /**
