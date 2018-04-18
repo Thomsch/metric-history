@@ -1,5 +1,6 @@
 package ch.thomsch.versioncontrol;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -13,8 +14,9 @@ import java.util.Collection;
  */
 public class GitRepositoryTest {
     @Test
-    public void name() throws IOException {
-        final Repository repository = GitRepository.get("C:\\Users\\Thomas\\Projets\\sgl-project\\metric-history");
+    @Ignore
+    public void changedFiles() throws IOException {
+        final Repository repository = GitRepository.get(".");
 
         final Collection<File> beforeFiles = new ArrayList<>();
         final Collection<File> afterFiles = new ArrayList<>();
