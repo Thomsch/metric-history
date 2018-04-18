@@ -7,7 +7,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -23,35 +22,26 @@ import java.util.List;
 /**
  * @author TSC
  */
-public class GitProvider implements VersionControl {
+public class GitRepository implements Repository {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitRepository.class);
 
-    private Repository repository;
+    private final org.eclipse.jgit.lib.Repository repository;
 
-    @Override
-    public void initializeRepository(String repositoryDirectory) throws IOException {
-        final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        repository = builder.setGitDir(new File(repositoryDirectory, ".git")).setMustExist(true).build();
+    public GitRepository(org.eclipse.jgit.lib.Repository repository) {
+        this.repository = repository;
     }
 
     @Override
     public void checkout(String revision) throws GitAPIException {
-        verifyRepositoryInitialization();
-
         final CheckoutCommand command = new Git(repository).checkout().setName(revision);
         command.call();
     }
 
     @Override
     public void checkoutParent(String revision) throws IOException, GitAPIException {
-        verifyRepositoryInitialization();
-
         final ObjectId revisionId = repository.resolve(revision);
-
-
         final RevWalk walk = new RevWalk(repository);
-
         final RevCommit commit = walk.parseCommit(revisionId);
         final RevCommit parentRevision = commit.getParent(0);
 
@@ -61,7 +51,6 @@ public class GitProvider implements VersionControl {
     @Override
     public void getChangedFiles(String revision, Collection<File> beforeFiles, Collection<File> afterFiles)
             throws IOException {
-        verifyRepositoryInitialization();
         final Git git = new Git(repository);
         final ObjectReader reader = repository.newObjectReader();
 
@@ -95,6 +84,11 @@ public class GitProvider implements VersionControl {
         }
     }
 
+    @Override
+    public String getDirectory() {
+        return FilenameUtils.normalize(repository.getDirectory().getParentFile().getAbsolutePath());
+    }
+
     /**
      * Converts a {@link DiffEntry} path to the corresponding absolute {@link File}.
      *
@@ -102,28 +96,27 @@ public class GitProvider implements VersionControl {
      * @return a new instance of the file
      */
     private File convertPathToFile(String path) {
-        return new File(FilenameUtils.concat(getFolder(), path));
+        final String concat = FilenameUtils.concat(getDirectory(), path);
+        return new File(concat);
     }
 
     /**
-     * Returns the folder of the repository on the filesystem.
-     * There is no trailing "/".
-     *
-     * @return the absolute path of the repository
+     * Creates a new instance for the repository located at <code>path</code>.
+     * @param path the location of the repository
+     * @return the instance
+     * @throws IOException when there is no repository at the specified location.
      */
-    private String getFolder() {
-        verifyRepositoryInitialization();
+    public static GitRepository get(String path) throws IOException {
+        final FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        final org.eclipse.jgit.lib.Repository repository = builder.setGitDir(new File(path, ".git")).setMustExist
+                (true).build();
 
-        try {
-            return repository.getDirectory().getParentFile().getCanonicalPath();
-        } catch (IOException e) {
-            return repository.getDirectory().getParentFile().getAbsolutePath();
-        }
+        return new GitRepository(repository);
     }
 
-    private void verifyRepositoryInitialization() {
-        if(repository == null) {
-            throw new IllegalStateException("Repository hasn't been initialized");
-        }
+    @Override
+    public void close() throws Exception {
+        checkout("master");
+        repository.close();
     }
 }

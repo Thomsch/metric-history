@@ -11,17 +11,15 @@ import java.util.Collection;
 /**
  * @author TSC
  */
-public class GitProviderTest {
+public class GitRepositoryTest {
     @Test
     public void name() throws IOException {
-        final VersionControl versionControl = new GitProvider();
-
-        versionControl.initializeRepository("C:\\Users\\Thomas\\Projets\\sgl-project\\metric-history");
+        final Repository repository = GitRepository.get("C:\\Users\\Thomas\\Projets\\sgl-project\\metric-history");
 
         final Collection<File> beforeFiles = new ArrayList<>();
         final Collection<File> afterFiles = new ArrayList<>();
 
-        versionControl.getChangedFiles("1ed6ac86d344fb17f8016f0362efa46f4d8d1eb3", beforeFiles, afterFiles);
+        repository.getChangedFiles("1ed6ac86d344fb17f8016f0362efa46f4d8d1eb3", beforeFiles, afterFiles);
 
         System.out.println("Files to examine before");
         System.out.println(Arrays.toString(beforeFiles.toArray()));

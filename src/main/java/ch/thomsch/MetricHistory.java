@@ -17,28 +17,25 @@ public class MetricHistory {
     private static final Logger logger = LoggerFactory.getLogger(MetricHistory.class);
 
     private final Collector collector;
-    private final VersionControl versionControl;
     private final Reporter reporter;
 
-    public MetricHistory(Collector collector, VersionControl versionControl, Reporter reporter) {
+    public MetricHistory(Collector collector, Reporter reporter) {
         this.collector = collector;
-        this.versionControl = versionControl;
         this.reporter = reporter;
     }
 
     /**
      * Collects the metrics before and after for each of the revisions found in the file <code>revisionFile</code>.
      * @param revisionFile Path to the CSV file containing the revisions
-     * @param repositoryDirectory Location of revisions' repository
+     * @param repository The repository containing the revisions.
      * @param outputFile Path to the file where the results will be printed
      */
-    public void collect(String revisionFile, String repositoryDirectory, String outputFile) {
+    public void collect(String revisionFile, Repository repository, String outputFile) {
         final CommitReader commitReader = new RMinerReader();
         final List<String> revisions = commitReader.load(revisionFile);
 
         try {
             reporter.initialize(outputFile);
-            versionControl.initializeRepository(repositoryDirectory);
         } catch (IOException e) {
             logger.error("Cannot initialize element:", e);
             return;
@@ -51,13 +48,13 @@ public class MetricHistory {
                 final Collection<File> beforeFiles = new ArrayList<>();
                 final Collection<File> afterFiles = new ArrayList<>();
 
-                versionControl.getChangedFiles(revision, beforeFiles, afterFiles);
+                repository.getChangedFiles(revision, beforeFiles, afterFiles);
 
-                versionControl.checkoutParent(revision);
-                final Metric before = collector.collect(repositoryDirectory, beforeFiles);
+                repository.checkoutParent(revision);
+                final Metric before = collector.collect(repository.getDirectory(), beforeFiles);
 
-                versionControl.checkout(revision);
-                final Metric current = collector.collect(repositoryDirectory, afterFiles);
+                repository.checkout(revision);
+                final Metric current = collector.collect(repository.getDirectory(), afterFiles);
 
                 final DifferentialResult result = DifferentialResult.build(revision, before, current);
                 reporter.report(result);
@@ -70,11 +67,11 @@ public class MetricHistory {
 
         try {
             reporter.finish();
-            versionControl.checkout("master");
+            repository.close();
         } catch (IOException e) {
             logger.error("Cannot close output file:", e);
-        } catch (GitAPIException e) {
-            logger.error("Failed to clean version history:", e);
+        } catch (Exception e) {
+            logger.error("Failed to properly close the repository", e);
         }
     }
 }

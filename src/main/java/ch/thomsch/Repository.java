@@ -7,32 +7,28 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
+ * Represents a repository from a version control system.
+ *
  * @author TSC
  */
-public interface VersionControl {
-
-    /**
-     * Define the repository that's going to be used.
-     *
-     * @param repositoryDirectory Path to the repository
-     * @throws IOException when the repository cannot be located
-     */
-    void initializeRepository(String repositoryDirectory) throws IOException;
+public interface Repository extends AutoCloseable {
 
     /**
      * Checkout the repository to the revision.
+     *
      * @param revision the full SHA of the revision
      */
     void checkout(String revision) throws GitAPIException;
 
     /**
      * Checkout the parent of the given revision.
+     *
      * @param revision the full SHA of the revision
      */
     void checkoutParent(String revision) throws IOException, GitAPIException;
 
     /**
-     * Fills <code>beforeFiles</code> and <code>afterFiles</code> for a revision.
+     * Retrieve the files changed for a revision and puts them in <code>beforeFiles</code> or <code>afterFiles</code>.
      *
      * @param revision    the revision
      * @param beforeFiles a list of changed files existing before the revision
@@ -42,4 +38,9 @@ public interface VersionControl {
             String revision,
             Collection<File> beforeFiles,
             Collection<File> afterFiles) throws IOException;
+
+    /**
+     * Return the location of this repository on the file system.
+     */
+    String getDirectory();
 }
