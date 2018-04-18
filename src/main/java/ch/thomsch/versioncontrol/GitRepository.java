@@ -100,6 +100,12 @@ public class GitRepository implements Repository {
         return new File(concat);
     }
 
+    @Override
+    public void close() throws Exception {
+        checkout("master");
+        repository.close();
+    }
+
     /**
      * Creates a new instance for the repository located at <code>path</code>.
      * @param path the location of the repository
@@ -112,11 +118,5 @@ public class GitRepository implements Repository {
                 (true).build();
 
         return new GitRepository(repository);
-    }
-
-    @Override
-    public void close() throws Exception {
-        checkout("master");
-        repository.close();
     }
 }
