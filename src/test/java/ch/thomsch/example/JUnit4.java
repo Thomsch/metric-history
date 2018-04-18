@@ -10,7 +10,7 @@ import ch.thomsch.Reporter;
  */
 public class JUnit4 {
 
-    public static final String REVISION_FILE = "src/main/resources/junit4-refactorings-master.csv";
+    public static final String REVISION_FILE = "src/test/resources/junit4-refactorings-master.csv";
     public static final String REPOSITORY = "../junit4";
     public static final String RESULTS_FILE = "./junit4-refactorings-metrics.csv";
 

@@ -10,7 +10,7 @@ import ch.thomsch.Reporter;
  */
 public class ToyExample {
 
-    public static final String REVISION_FILE = "src/main/resources/toy-refactorings.csv";
+    public static final String REVISION_FILE = "src/test/resources/toy-refactorings.csv";
     public static final String REPOSITORY = "../refactoring-toy-example";
     public static final String RESULTS_FILE = "./toy-refactorings-metrics.csv";
 
