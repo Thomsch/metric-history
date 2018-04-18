@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +34,7 @@ public class MetricHistory {
      * @param outputFile Path to the file where the results will be printed
      */
     public void collect(String revisionFile, Repository repository, String outputFile) {
+        final long beginning = System.nanoTime();
         final CommitReader commitReader = new RMinerReader();
         final List<String> revisions = commitReader.load(revisionFile);
 
@@ -75,5 +77,7 @@ public class MetricHistory {
         } catch (Exception e) {
             logger.error("Failed to properly close the repository", e);
         }
+        final long elapsed = System.nanoTime() - beginning;
+        logger.info("Task completed in {}", Duration.ofNanos(elapsed));
     }
 }
