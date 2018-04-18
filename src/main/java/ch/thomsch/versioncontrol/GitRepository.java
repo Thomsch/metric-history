@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.versioncontrol;
 
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.api.CheckoutCommand;
@@ -28,7 +28,7 @@ public class GitRepository implements Repository {
 
     private final org.eclipse.jgit.lib.Repository repository;
 
-    public GitRepository(org.eclipse.jgit.lib.Repository repository) {
+    GitRepository(org.eclipse.jgit.lib.Repository repository) {
         this.repository = repository;
     }
 

@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.versioncontrol;
 
 import org.junit.Test;
 
