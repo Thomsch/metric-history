@@ -4,7 +4,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -45,10 +48,16 @@ public class MetricHistory {
             try {
                 logger.info("Processing revision {}", revision);
 
-                versionControl.checkout(revision);
-                final Metric current = collector.collect(repositoryDirectory);
+                final Collection<File> beforeFiles = new ArrayList<>();
+                final Collection<File> afterFiles = new ArrayList<>();
+
+                versionControl.getChangedFiles(revision, beforeFiles, afterFiles);
+
                 versionControl.checkoutParent(revision);
-                final Metric before = collector.collect(repositoryDirectory);
+                final Metric before = collector.collect(repositoryDirectory, beforeFiles);
+
+                versionControl.checkout(revision);
+                final Metric current = collector.collect(repositoryDirectory, afterFiles);
 
                 final DifferentialResult result = DifferentialResult.build(revision, before, current);
                 reporter.report(result);

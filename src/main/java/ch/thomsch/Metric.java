@@ -5,14 +5,14 @@ package ch.thomsch;
  * @author TSC
  */
 public class Metric {
-    private final double couplingBetweenObjects;
-    private final double depthInheritanceTree;
-    private final double numberOfChildren;
-    private final double numberOfFields;
-    private final double numberOfMethods;
-    private final double responseForAClass;
-    private final double weightMethodClass;
-    private final double lineOfCode;
+    private double couplingBetweenObjects;
+    private double depthInheritanceTree;
+    private double numberOfChildren;
+    private double numberOfFields;
+    private double numberOfMethods;
+    private double responseForAClass;
+    private double weightMethodClass;
+    private double lineOfCode;
 
     Metric(
             double couplingBetweenObjects,
@@ -31,6 +31,10 @@ public class Metric {
         this.responseForAClass = responseForAClass;
         this.weightMethodClass = weightMethodClass;
         this.lineOfCode = lineOfCode;
+    }
+
+    public Metric() {
+        this(0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     public double getCouplingBetweenObjects() {
@@ -63,5 +67,16 @@ public class Metric {
 
     public double getLineOfCode() {
         return lineOfCode;
+    }
+
+    public void add(Metric metric) {
+        couplingBetweenObjects += metric.couplingBetweenObjects;
+        depthInheritanceTree += metric.depthInheritanceTree;
+        numberOfChildren += metric.numberOfChildren;
+        numberOfFields += metric.numberOfFields;
+        numberOfMethods += metric.numberOfMethods;
+        responseForAClass += metric.responseForAClass;
+        weightMethodClass += metric.weightMethodClass;
+        lineOfCode += metric.lineOfCode;
     }
 }

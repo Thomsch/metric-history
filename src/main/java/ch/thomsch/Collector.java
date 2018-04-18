@@ -4,6 +4,11 @@ import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNumber;
 import com.github.mauricioaniche.ck.CKReport;
 
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
+import java.util.Collection;
+
 /**
  * @author TSC
  */
@@ -17,26 +22,43 @@ public class Collector {
     public Metric collect(String folder) {
         final CKReport report = new CK().calculate(folder);
 
-        long couplingBetweenObjects = 0;
-        long depthInheritanceTree = 0;
-        long numberOfChildren = 0;
-        long numberOfFields = 0;
-        long numberOfMethods = 0;
-        long responseForAClass = 0;
-        long weightMethodClass = 0;
-        long lineOfCode = 0;
+        Metric metric = new Metric();
 
         for (CKNumber ckNumber : report.all()) {
-            couplingBetweenObjects += ckNumber.getCbo();
-            depthInheritanceTree += ckNumber.getDit();
-            numberOfChildren += ckNumber.getNoc();
-            numberOfFields += ckNumber.getNof();
-            numberOfMethods += ckNumber.getNom();
-            responseForAClass += ckNumber.getRfc();
-            weightMethodClass += ckNumber.getWmc();
-            lineOfCode += ckNumber.getLoc();
+            metric.add(convertToMetric(ckNumber));
         }
 
-        return new Metric(couplingBetweenObjects, depthInheritanceTree, numberOfChildren, numberOfFields, numberOfMethods, responseForAClass, weightMethodClass, lineOfCode);
+        return metric;
+    }
+
+    /**
+     * Computes the metrics for the whole folder and then filter the results for the files.
+     *
+     * @param folder the path to the folder.
+     * @param files  the files to which the results are filtered
+     * @return the metrics for this project
+     */
+    public Metric collect(String folder, Collection<File> files) {
+        final CKReport rawReport = new CK().calculate(folder);
+        final Metric total = new Metric();
+
+        final CKReport report = new CKReport();
+        rawReport.all().forEach(ckNumber -> {
+            ckNumber.setFile(FilenameUtils.normalize(ckNumber.getFile()));
+            report.add(ckNumber);
+        });
+
+        for (File file : files) {
+            final CKNumber fileMetrics = report.get(FilenameUtils.normalize(file.getAbsolutePath()));
+            total.add(convertToMetric(fileMetrics));
+        }
+
+        return total;
+    }
+
+    private Metric convertToMetric(CKNumber metric) {
+        return new Metric(
+                metric.getCbo(), metric.getDit(), metric.getNoc(), metric.getNof(),
+                metric.getNom(), metric.getRfc(), metric.getWmc(), metric.getLoc());
     }
 }
