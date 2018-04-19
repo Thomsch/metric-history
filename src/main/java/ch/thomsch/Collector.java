@@ -5,6 +5,8 @@ import com.github.mauricioaniche.ck.CKNumber;
 import com.github.mauricioaniche.ck.CKReport;
 
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collection;
@@ -14,6 +16,8 @@ import java.util.Collection;
  */
 public class Collector {
 
+    private static final Logger logger = LoggerFactory.getLogger(Collector.class);
+
     /**
      * Computes the metrics for the element in the folder.
      * @param folder the path to the folder.
@@ -21,8 +25,7 @@ public class Collector {
      */
     public Metric collect(String folder) {
         final CKReport report = new CK().calculate(folder);
-
-        Metric metric = new Metric();
+        final Metric metric = new Metric();
 
         for (CKNumber ckNumber : report.all()) {
             metric.add(convertToMetric(ckNumber));
@@ -33,6 +36,7 @@ public class Collector {
 
     /**
      * Computes the metrics for the whole folder and then filter the results for the files.
+     * Only java files that do not end with "Test(s)" are considered.
      *
      * @param folder the path to the folder.
      * @param files  the files to which the results are filtered
@@ -49,11 +53,27 @@ public class Collector {
         });
 
         for (File file : files) {
-            final CKNumber fileMetrics = report.get(FilenameUtils.normalize(file.getAbsolutePath()));
-            total.add(convertToMetric(fileMetrics));
-        }
+            if (isJavaFile(file) && !isTestFile(file)) {
+                final String fileName = FilenameUtils.normalize(file.getAbsolutePath());
 
+                final CKNumber fileMetrics = report.get(fileName);
+                if (fileMetrics == null) {
+                    logger.warn("Could not retrieve metrics for {}", fileName);
+                } else {
+                    total.add(convertToMetric(fileMetrics));
+                }
+            }
+        }
         return total;
+    }
+
+    private boolean isTestFile(File file) {
+        return FilenameUtils.getBaseName(file.getName()).endsWith("Test") || FilenameUtils.getBaseName(file.getName()
+        ).endsWith("Tests");
+    }
+
+    private boolean isJavaFile(File file) {
+        return FilenameUtils.getExtension(file.getName()).equals("java");
     }
 
     private Metric convertToMetric(CKNumber metric) {

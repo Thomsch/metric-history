@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ch.thomsch.Collector;
 import ch.thomsch.MetricHistory;
+import ch.thomsch.RMinerReader;
 import ch.thomsch.Reporter;
 import ch.thomsch.versioncontrol.GitRepository;
 
@@ -17,7 +18,7 @@ public final class JUnit4 {
     private static final String RESULTS_FILE = "./junit4-refactorings-metrics.csv";
 
     public static void main(String[] args) throws IOException {
-        new MetricHistory(new Collector(), new Reporter())
+        new MetricHistory(new Collector(), new Reporter(), new RMinerReader())
                 .collect(REVISION_FILE, GitRepository.get(REPOSITORY), RESULTS_FILE);
     }
 }

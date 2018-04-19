@@ -21,10 +21,12 @@ public class MetricHistory {
 
     private final Collector collector;
     private final Reporter reporter;
+    private final CommitReader commitReader;
 
-    public MetricHistory(Collector collector, Reporter reporter) {
+    public MetricHistory(Collector collector, Reporter reporter, CommitReader reader) {
         this.collector = collector;
         this.reporter = reporter;
+        this.commitReader = reader;
     }
 
     /**
@@ -35,7 +37,6 @@ public class MetricHistory {
      */
     public void collect(String revisionFile, Repository repository, String outputFile) {
         final long beginning = System.nanoTime();
-        final CommitReader commitReader = new RMinerReader();
         final List<String> revisions = commitReader.load(revisionFile);
 
         try {
