@@ -26,10 +26,22 @@ public class ProjectsData {
                 new ModifiedRMinerReader());
 
 
-//        collectProject(metricHistory, "dagger");
+        collectProject(metricHistory, "dagger");
         collectProject(metricHistory, "dagger2");
         collectProject(metricHistory, "jena");
         collectProject(metricHistory, "jfreechart");
+        collectNeo4j(metricHistory, "neo4j_HEAD_2.3.9");
+        collectNeo4j(metricHistory, "neo4j_2.3.9_pre_1.9.9");
+        collectNeo4j(metricHistory, "neo4j_pre_1.9.9_to_1.9.9");
+        collectNeo4j(metricHistory, "neo4j_1.9.9_start");
+    }
+
+    private static void collectNeo4j(MetricHistory metricHistory, String sliceName) {
+        try {
+            metricHistory.collect(getRevisionsLocation(sliceName), getRepository("neo4j"), getOutputFile(sliceName));
+        } catch (IOException e) {
+            logger.error("Repository not found for project {}", sliceName, e);
+        }
     }
 
     private static void collectProject(MetricHistory metricHistory, String projectName) {
