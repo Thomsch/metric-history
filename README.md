@@ -1,14 +1,13 @@
+# Metric history
 Given a list of revisions, it measures before and after each revision and stores the results in CSV file.
 
-# Example
-The file JUnit4.java provides an example of how to use the library (It measures the data from the junit4 repository).
+## Examples
+The files in `/src/test/java/ch/thomsch/example` contains examples of how to use the library. You **need** to have cloned the repositories for it to work.
 
-# Building
+## Running from command line
+There is currently no support to use the library from the command line. You need to write your own wrapper.
+
+## Building
 This projects uses Gradle to get all the dependencies. Depending on your IDE, you can compile/run/test through Gradle or your IDE. It's up to you.
-
-# Roadmap
-- Improve modularity for measurements
-- Improve modularity for writting results
-- Add logger support
 
 Suggestions are welcomed !
