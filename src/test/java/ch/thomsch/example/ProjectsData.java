@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import ch.thomsch.Collector;
 import ch.thomsch.MetricHistory;
 import ch.thomsch.ModifiedRMinerReader;
 import ch.thomsch.Reporter;
+import ch.thomsch.metric.CKMetrics;
 import ch.thomsch.versioncontrol.GitRepository;
 
 /**
@@ -21,7 +21,7 @@ public class ProjectsData {
 
     public static void main(String[] args) {
         final MetricHistory metricHistory = new MetricHistory(
-                new Collector(),
+                new CKMetrics(),
                 new Reporter(),
                 new ModifiedRMinerReader());
 

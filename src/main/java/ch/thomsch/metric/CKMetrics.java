@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.metric;
 
 import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNumber;
@@ -11,18 +11,18 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Collection;
 
+import ch.thomsch.Metric;
+
 /**
+ * Collects metrics using the CKMetrics library.
+ * https://github.com/mauricioaniche/ck
  * @author TSC
  */
-public class Collector {
+public class CKMetrics implements Collector {
 
-    private static final Logger logger = LoggerFactory.getLogger(Collector.class);
+    private static final Logger logger = LoggerFactory.getLogger(CKMetrics.class);
 
-    /**
-     * Computes the metrics for the element in the folder.
-     * @param folder the path to the folder.
-     * @return the metrics for this project
-     */
+    @Override
     public Metric collect(String folder) {
         final CKReport report = new CK().calculate(folder);
         final Metric metric = new Metric();
@@ -34,14 +34,7 @@ public class Collector {
         return metric;
     }
 
-    /**
-     * Computes the metrics for the whole folder and then filter the results for the files.
-     * Only java files that do not end with "Test(s)" are considered.
-     *
-     * @param folder the path to the folder.
-     * @param files  the files to which the results are filtered
-     * @return the metrics for this project
-     */
+    @Override
     public Metric collect(String folder, Collection<File> files) {
         final CKReport rawReport = new CK().calculate(folder);
         final Metric total = new Metric();

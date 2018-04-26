@@ -14,7 +14,7 @@ public class Metric {
     private double weightMethodClass;
     private double lineOfCode;
 
-    Metric(
+    public Metric(
             double couplingBetweenObjects,
             double depthInheritanceTree,
             double numberOfChildren,

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import ch.thomsch.metric.Collector;
 import ch.thomsch.versioncontrol.Repository;
 
 /**
