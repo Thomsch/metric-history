@@ -35,7 +35,7 @@ public class CKMetrics implements Collector {
     }
 
     @Override
-    public Metric collect(String folder, Collection<File> files) {
+    public Metric collect(String folder, Collection<File> files, String revision) {
         final CKReport rawReport = new CK().calculate(folder);
         final Metric total = new Metric();
 
@@ -51,7 +51,7 @@ public class CKMetrics implements Collector {
 
                 final CKNumber fileMetrics = report.get(fileName);
                 if (fileMetrics == null) {
-                    logger.warn("Could not retrieve metrics for {}", fileName);
+                    logger.warn("Could not retrieve metrics for {} at revision {}", fileName, revision);
                 } else {
                     total.add(convertToMetric(fileMetrics));
                 }

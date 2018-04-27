@@ -39,13 +39,12 @@ public class GitRepository implements Repository {
     }
 
     @Override
-    public void checkoutParent(String revision) throws IOException, GitAPIException {
+    public String getParent(String revision) throws IOException {
         final ObjectId revisionId = repository.resolve(revision);
         final RevWalk walk = new RevWalk(repository);
         final RevCommit commit = walk.parseCommit(revisionId);
         final RevCommit parentRevision = commit.getParent(0);
-
-        checkout(parentRevision.getId().getName());
+        return parentRevision.getName();
     }
 
     @Override

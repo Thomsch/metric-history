@@ -57,11 +57,13 @@ public class MetricHistory {
 
                 repository.getChangedFiles(revision, beforeFiles, afterFiles);
 
-                repository.checkoutParent(revision);
-                final Metric before = collector.collect(repository.getDirectory(), beforeFiles);
+                final String parent = repository.getParent(revision);
+
+                repository.checkout(parent);
+                final Metric before = collector.collect(repository.getDirectory(), beforeFiles, parent);
 
                 repository.checkout(revision);
-                final Metric current = collector.collect(repository.getDirectory(), afterFiles);
+                final Metric current = collector.collect(repository.getDirectory(), afterFiles, revision);
 
                 final DifferentialResult result = DifferentialResult.build(revision, before, current);
                 reporter.report(result);

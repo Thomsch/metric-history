@@ -21,13 +21,6 @@ public interface Repository extends AutoCloseable {
     void checkout(String revision) throws GitAPIException;
 
     /**
-     * Checkout the parent of the given revision.
-     *
-     * @param revision the full SHA of the revision
-     */
-    void checkoutParent(String revision) throws IOException, GitAPIException;
-
-    /**
      * Retrieve the files changed for a revision and puts them in <code>beforeFiles</code> or <code>afterFiles</code>.
      *
      * @param revision    the revision
@@ -43,4 +36,12 @@ public interface Repository extends AutoCloseable {
      * Return the location of this repository on the file system.
      */
     String getDirectory();
+
+    /**
+     * Return the parent/precedent revision for a revision
+     *
+     * @param revision the revision
+     * @return the parent of the revision
+     */
+    String getParent(String revision) throws IOException;
 }

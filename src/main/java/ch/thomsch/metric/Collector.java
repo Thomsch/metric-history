@@ -22,8 +22,9 @@ public interface Collector {
      * Only java files that do not end with "Test(s)" are considered.
      *
      * @param folder the path to the folder.
-     * @param files  the files to which the results are filtered
+     * @param files  the files to which the results are filtered.
+     * @param revision the revision currently collected.
      * @return the metrics for this project
      */
-    Metric collect(String folder, Collection<File> files);
+    Metric collect(String folder, Collection<File> files, String revision);
 }
