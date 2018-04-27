@@ -48,9 +48,10 @@ public class MetricHistory {
             return;
         }
 
+        int i = 0;
         for (String revision : revisions) {
             try {
-                logger.info("Processing revision {}", revision);
+                logger.info("Processing {} ({})", revision, ++i);
 
                 final Collection<File> beforeFiles = new ArrayList<>();
                 final Collection<File> afterFiles = new ArrayList<>();
