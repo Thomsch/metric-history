@@ -15,7 +15,8 @@ import ch.thomsch.versioncontrol.GitRepository;
  * @author TSC
  */
 public class ProjectsData {
-    private static final String BASE = "../mined-repositories/";
+    private static final String BASE_REPOSITORY = "../mined-repositories/";
+    private static final String BASE_DATA = "../data/";
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectsData.class);
 
@@ -24,7 +25,6 @@ public class ProjectsData {
                 new CKMetrics(),
                 new Reporter(),
                 new ModifiedRMinerReader());
-
 
         collectProject(metricHistory, "dagger");
         collectProject(metricHistory, "dagger2");
@@ -54,14 +54,14 @@ public class ProjectsData {
     }
 
     private static String getOutputFile(String projectName) {
-        return BASE + "results/" + projectName + "-metrics.csv";
+        return BASE_DATA + "metrics/" + projectName + "-metrics.csv";
     }
 
     private static GitRepository getRepository(String projectName) throws IOException {
-        return GitRepository.get(BASE + projectName);
+        return GitRepository.get(BASE_REPOSITORY + projectName);
     }
 
     private static String getRevisionsLocation(String projectName) {
-        return BASE + projectName + ".csv";
+        return BASE_DATA + "/revisions/" + projectName + ".csv";
     }
 }

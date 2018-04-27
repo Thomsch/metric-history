@@ -13,9 +13,9 @@ import ch.thomsch.versioncontrol.GitRepository;
  */
 public final class ToyExample {
 
-    private static final String REVISION_FILE = "../mined-repositories/toy-refactorings.csv";
+    private static final String REVISION_FILE = "../data/revisions/toy-refactorings.csv";
     private static final String REPOSITORY = "../mined-repositories/refactoring-toy-example";
-    private static final String RESULTS_FILE = "../mined-repositories/results/toy-refactorings-metrics.csv";
+    private static final String RESULTS_FILE = "../data/metrics/toy-refactorings-metrics.csv";
 
     public static void main(String[] args) throws IOException {
         new MetricHistory(new CKMetrics(), new Reporter(), new RMinerReader())
