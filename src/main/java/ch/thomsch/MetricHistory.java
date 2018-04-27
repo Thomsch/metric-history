@@ -39,6 +39,7 @@ public class MetricHistory {
     public void collect(String revisionFile, Repository repository, String outputFile) {
         final long beginning = System.nanoTime();
         final List<String> revisions = commitReader.load(revisionFile);
+        logger.info("Read {} distinct revisions", revisions.size());
 
         try {
             reporter.initialize(outputFile);
