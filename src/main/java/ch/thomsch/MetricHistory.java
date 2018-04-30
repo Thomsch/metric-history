@@ -5,11 +5,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,15 +60,10 @@ public class MetricHistory {
             try {
                 logger.info("Processing {} ({})", revision, ++i);
 
-                final Collection<File> beforeFiles = new ArrayList<>();
-                final Collection<File> afterFiles = new ArrayList<>();
-
-                repository.getChangedFiles(revision, beforeFiles, afterFiles);
-
                 final String parent = repository.getParent(revision);
 
-                final Metric before = collectCachedMetrics(repository, beforeFiles, parent);
-                final Metric current = collectCachedMetrics(repository, afterFiles, revision);
+                final Metric before = collectCachedMetrics(repository, parent);
+                final Metric current = collectCachedMetrics(repository, revision);
 
                 final DifferentialResult result = DifferentialResult.build(revision, before, current);
                 reporter.report(result);
@@ -96,7 +88,7 @@ public class MetricHistory {
         logger.info("Task completed in {}", Duration.ofNanos(elapsed));
     }
 
-    private Metric collectCachedMetrics(Repository repository, Collection<File> files, String revision) throws
+    private Metric collectCachedMetrics(Repository repository, String revision) throws
             GitAPIException {
         final Metric cachedMetrics = cache.get(revision);
         if (cachedMetrics != null) {
@@ -104,7 +96,7 @@ public class MetricHistory {
         }
 
         repository.checkout(revision);
-        final Metric metrics = collector.collect(repository.getDirectory(), files, revision);
+        final Metric metrics = collector.collect(repository.getDirectory(), revision);
         cache.put(revision, metrics);
         return metrics;
     }

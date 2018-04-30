@@ -4,15 +4,12 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,12 +54,7 @@ public class SourceMeter implements Collector {
     }
 
     @Override
-    public Metric collect(String folder) {
-        throw new NotImplementedException("Functionality not available");
-    }
-
-    @Override
-    public Metric collect(String folder, Collection<File> files, String revision) {
+    public Metric collect(String folder, String revision) {
         final DefaultExecutor executor = new DefaultExecutor();
         final DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
         map.put("currentDate", "-currentDate=" + revision);
