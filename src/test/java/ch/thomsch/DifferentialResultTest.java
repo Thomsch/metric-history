@@ -3,6 +3,8 @@ package ch.thomsch;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.thomsch.export.DifferentialResult;
+
 import static org.junit.Assert.assertEquals;
 
 /**

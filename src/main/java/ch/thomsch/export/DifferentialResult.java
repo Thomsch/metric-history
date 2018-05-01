@@ -1,8 +1,10 @@
-package ch.thomsch;
+package ch.thomsch.export;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
+import ch.thomsch.Metric;
 
 /**
  * Represents the results for a revision.

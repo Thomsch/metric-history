@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import ch.thomsch.MetricHistory;
 import ch.thomsch.ModifiedRMinerReader;
-import ch.thomsch.Reporter;
+import ch.thomsch.export.Reporter;
 import ch.thomsch.metric.CKMetrics;
 import ch.thomsch.versioncontrol.GitRepository;
 

@@ -7,7 +7,9 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import ch.thomsch.export.Reporter;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author TSC

@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.export;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;

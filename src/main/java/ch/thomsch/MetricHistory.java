@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.thomsch.export.Reporter;
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.MetricDump;
 import ch.thomsch.metric.SourceMeter;
