@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.thomsch.metric.Collector;
+import ch.thomsch.metric.MetricDump;
 import ch.thomsch.metric.SourceMeter;
 import ch.thomsch.versioncontrol.GitRepository;
 import ch.thomsch.versioncontrol.Repository;
@@ -26,7 +27,7 @@ public class MetricHistory {
     private final Reporter reporter;
     private final CommitReader commitReader;
 
-    private final Map<String, Metric> cache;
+    private final Map<String, MetricDump> cache;
 
     public MetricHistory(Collector collector, Reporter reporter, CommitReader reader) {
         this.collector = collector;
@@ -50,6 +51,7 @@ public class MetricHistory {
 
         try {
             reporter.initialize(outputFile);
+            reporter.printMetaInformation();
         } catch (IOException e) {
             logger.error("Cannot initialize element:", e);
             return;
@@ -62,11 +64,10 @@ public class MetricHistory {
 
                 final String parent = repository.getParent(revision);
 
-                final Metric before = collectCachedMetrics(repository, parent);
-                final Metric current = collectCachedMetrics(repository, revision);
+                final MetricDump before = collectCachedMetrics(repository, parent);
+                final MetricDump current = collectCachedMetrics(repository, revision);
 
-                final DifferentialResult result = DifferentialResult.build(revision, before, current);
-                reporter.report(result);
+                reporter.report(revision, parent, before, current);
             } catch (IOException e) {
                 logger.error("Cannot write results for revision {}:", revision, e);
             } catch (GitAPIException e) {
@@ -88,15 +89,15 @@ public class MetricHistory {
         logger.info("Task completed in {}", Duration.ofNanos(elapsed));
     }
 
-    private Metric collectCachedMetrics(Repository repository, String revision) throws
+    private MetricDump collectCachedMetrics(Repository repository, String revision) throws
             GitAPIException {
-        final Metric cachedMetrics = cache.get(revision);
+        final MetricDump cachedMetrics = cache.get(revision);
         if (cachedMetrics != null) {
             return cachedMetrics;
         }
 
         repository.checkout(revision);
-        final Metric metrics = collector.collect(repository.getDirectory(), revision);
+        final MetricDump metrics = collector.collect(repository.getDirectory(), revision);
         cache.put(revision, metrics);
         return metrics;
     }

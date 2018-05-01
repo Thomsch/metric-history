@@ -13,8 +13,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.thomsch.Metric;
-
 /**
  * Collects metrics from the command line.
  *
@@ -54,7 +52,7 @@ public class SourceMeter implements Collector {
     }
 
     @Override
-    public Metric collect(String folder, String revision) {
+    public MetricDump collect(String folder, String revision) {
         final DefaultExecutor executor = new DefaultExecutor();
         final DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
         map.put("currentDate", "-currentDate=" + revision);
@@ -66,7 +64,7 @@ public class SourceMeter implements Collector {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return new Metric();
+        return MetricDump.EMPTY;
     }
 
     public BufferedReader getOutput() {

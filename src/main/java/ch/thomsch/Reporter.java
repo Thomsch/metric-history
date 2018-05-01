@@ -2,9 +2,15 @@ package ch.thomsch;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import ch.thomsch.metric.MetricDump;
 
 /**
  * Write results in a CSV file.
@@ -12,6 +18,7 @@ import java.io.IOException;
  * @author TSC
  */
 public class Reporter {
+    private static final Logger logger = LoggerFactory.getLogger(Reporter.class);
 
     private FileWriter fileWriter;
     private CSVPrinter printer;
@@ -25,20 +32,20 @@ public class Reporter {
     public void initialize(String outputFile) throws IOException {
         fileWriter = new FileWriter(outputFile);
         printer = new CSVPrinter(fileWriter, CSVFormat.EXCEL.withDelimiter(';'));
-        printer.printRecord("revision",
-                "Lines of code", "Coupling between objects", "Depth inheritance tree",
-                "Number of children", "Number of fields", "Number of methods",
-                "Response for a class", "Weight method class");
+    }
+
+    public void printMetaInformation() throws IOException {
+        printer.printRecord(DefaultFormatter.getMetaData());
     }
 
     /**
      * Report a result for a revision.
      *
-     * @param result the revision to report
+     * @param line the data for one line
      * @throws IOException when the result cannot be printed
      */
-    public void report(DifferentialResult result) throws IOException {
-        printer.printRecord(result.format());
+    public void report(Object[] line) throws IOException {
+        printer.printRecord(line);
     }
 
     /**
@@ -47,6 +54,17 @@ public class Reporter {
     public void finish() throws IOException {
         if (fileWriter != null) {
             fileWriter.close();
+        }
+    }
+
+    public void report(String revision, String parent, MetricDump before, MetricDump current) {
+        final List<Object[]> lines = DefaultFormatter.format(revision, parent, before, current);
+        for (Object[] line : lines) {
+            try {
+                report(line);
+            } catch (IOException e) {
+                logger.error("Couldn't write results for line {}", Arrays.toString(line));
+            }
         }
     }
 }

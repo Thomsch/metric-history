@@ -1,7 +1,5 @@
 package ch.thomsch.metric;
 
-import ch.thomsch.Metric;
-
 /**
  * @author TSC
  */
@@ -14,5 +12,5 @@ public interface Collector {
      * @param revision the revision currently collected.
      * @return the metrics for this project
      */
-    Metric collect(String folder, String revision);
+    MetricDump collect(String folder, String revision);
 }

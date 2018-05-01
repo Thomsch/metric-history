@@ -4,7 +4,6 @@ import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNumber;
 import com.github.mauricioaniche.ck.CKReport;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,21 +20,15 @@ public class CKMetrics implements Collector {
     private static final Logger logger = LoggerFactory.getLogger(CKMetrics.class);
 
     @Override
-    public Metric collect(String folder, String revision) {
-        final CKReport rawReport = new CK().calculate(folder);
-        final Metric total = new Metric();
+    public MetricDump collect(String folder, String revision) {
+        final CKReport report = new CK().calculate(folder);
 
-        final CKReport report = new CKReport();
-        rawReport.all().forEach(ckNumber -> {
-            ckNumber.setFile(FilenameUtils.normalize(ckNumber.getFile()));
-            report.add(ckNumber);
-        });
+        final MetricDump dump = new MetricDump();
 
         report.all().stream()
                 .filter(ckNumber -> !isTestClass(ckNumber.getClassName()))
-                .forEachOrdered(ckNumber -> total.add(convertToMetric(ckNumber)));
-
-        return total;
+                .forEach(ckNumber -> dump.add(ckNumber.getClassName(), convertToMetric(ckNumber)));
+        return dump;
     }
 
     private boolean isTestClass(String name) {
