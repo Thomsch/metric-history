@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import ch.thomsch.Metric;
+import ch.thomsch.metric.Metric;
 
 /**
  * Represents the results for a revision.

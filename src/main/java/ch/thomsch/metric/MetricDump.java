@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.thomsch.Metric;
-
 /**
  * Contains the metrics for a project at different granularity.
  *

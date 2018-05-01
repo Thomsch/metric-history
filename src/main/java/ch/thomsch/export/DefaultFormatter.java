@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import ch.thomsch.Metric;
+import ch.thomsch.metric.Metric;
 import ch.thomsch.metric.MetricDump;
 
 /**

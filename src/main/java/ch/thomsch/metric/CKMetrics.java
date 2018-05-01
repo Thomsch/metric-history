@@ -8,8 +8,6 @@ import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.thomsch.Metric;
-
 /**
  * Collects metrics using the CKMetrics library.
  * https://github.com/mauricioaniche/ck

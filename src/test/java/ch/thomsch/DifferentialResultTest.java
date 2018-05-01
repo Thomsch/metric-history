@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.thomsch.export.DifferentialResult;
+import ch.thomsch.metric.Metric;
 
 import static org.junit.Assert.assertEquals;
 

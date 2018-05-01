@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.metric;
 
 /**
  * Metrics collected for a project.
