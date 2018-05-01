@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 import ch.thomsch.MetricHistory;
-import ch.thomsch.ModifiedRMinerReader;
 import ch.thomsch.export.Reporter;
+import ch.thomsch.loader.ModifiedRMinerReader;
 import ch.thomsch.metric.CKMetrics;
 import ch.thomsch.versioncontrol.GitRepository;
 

@@ -1,9 +1,11 @@
-package ch.thomsch;
+package ch.thomsch.loader;
 
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import ch.thomsch.CommitReader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;

@@ -3,8 +3,8 @@ package ch.thomsch.example;
 import java.io.IOException;
 
 import ch.thomsch.MetricHistory;
-import ch.thomsch.RMinerReader;
 import ch.thomsch.export.Reporter;
+import ch.thomsch.loader.RMinerReader;
 import ch.thomsch.metric.CKMetrics;
 import ch.thomsch.versioncontrol.GitRepository;
 

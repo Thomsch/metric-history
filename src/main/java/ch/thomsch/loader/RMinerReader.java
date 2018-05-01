@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.loader;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.thomsch.CommitReader;
 
 /**
  * @author TSC

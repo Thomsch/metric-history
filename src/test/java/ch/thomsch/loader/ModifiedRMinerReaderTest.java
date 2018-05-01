@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.loader;
 
 import org.junit.Test;
 
