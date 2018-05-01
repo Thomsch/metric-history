@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.thomsch.export.Reporter;
+import ch.thomsch.loader.CommitReader;
 import ch.thomsch.loader.ModifiedRMinerReader;
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.MetricDump;

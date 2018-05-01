@@ -12,8 +12,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.thomsch.CommitReader;
-
 /**
  * @author TSC
  */
