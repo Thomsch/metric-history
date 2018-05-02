@@ -12,13 +12,13 @@ import static org.junit.Assert.assertThat;
 /**
  * @author TSC
  */
-public class RMinerReaderTest {
+public class VanillaRefactoringMinerTest {
 
     private static final String TEST_FILE = "src/test/resources/test-revisions.csv";
 
     @Test
     public void reduceList() {
-        final RMinerReader reader = new RMinerReader();
+        final VanillaRefactoringMiner reader = new VanillaRefactoringMiner();
         final List<String> expected = Arrays.asList("A", "B", "C");
         final List<String> list = Arrays.asList("A", "A", "B", "B", "C", "C");
 
@@ -29,7 +29,7 @@ public class RMinerReaderTest {
 
     @Test
     public void loadFile() {
-        final CommitReader commitReader = new RMinerReader();
+        final CommitReader commitReader = new VanillaRefactoringMiner();
         final List<String> revisions = commitReader.load(TEST_FILE);
 
         final List<String> expected = Arrays.asList(

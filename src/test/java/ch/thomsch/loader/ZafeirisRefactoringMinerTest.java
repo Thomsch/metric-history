@@ -12,20 +12,20 @@ import static org.junit.Assert.assertThat;
 /**
  * @author TSC
  */
-public class ModifiedRMinerReaderTest {
+public class ZafeirisRefactoringMinerTest {
 
-    private static final String TEST_FILE = "src/test/resources/test-revisions-modified.csv";
+    private static final String TEST_FILE = "src/test/resources/zafeiris-refactorings.csv";
 
     @Test
-    public void loadShouldRemoveExtra() {
-        ModifiedRMinerReader reader = new ModifiedRMinerReader();
+    public void testLoad() {
+        final ZafeirisRefactoringMiner reader = new ZafeirisRefactoringMiner();
 
         final List<String> revisions = reader.load(TEST_FILE);
 
         final List<String> expected = Arrays.asList(
-                "8f4a753b8e1bf12454060f59807302576f9a16d9",
-                "ab33f3a83092065469800b472a78fe17b61f4662",
-                "728a41cb20df8ebb513a4d0549be6620ea5389a1");
+                "d4bce13a443cf12da40a77c16c1e591f4f985b47",
+                "9a5c33b16d07d62651ea80552e8782974c96bb8a",
+                "0bb0526b70870d57cbac9fcc8c4a7346a4ce5879");
 
         assertEquals(3, revisions.size());
         assertThat(revisions, is(expected));

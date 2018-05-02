@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import ch.thomsch.MetricHistory;
 import ch.thomsch.export.Reporter;
-import ch.thomsch.loader.ModifiedRMinerReader;
-import ch.thomsch.loader.RMinerReader;
+import ch.thomsch.loader.VanillaRefactoringMiner;
+import ch.thomsch.loader.ZafeirisRefactoringMiner;
 import ch.thomsch.versioncontrol.GitRepository;
 
 /**
@@ -35,7 +35,7 @@ public final class SourceMeter {
                         "jfreechart",
                         REPOSITORY),
                 new Reporter(),
-                new ModifiedRMinerReader());
+                new ZafeirisRefactoringMiner());
 
         metricHistory.collect(REVISION_FILE, GitRepository.get(REPOSITORY), RESULTS_FILE);
     }
@@ -51,7 +51,7 @@ public final class SourceMeter {
                         "dagger2",
                         REPOSITORY),
                 new Reporter(),
-                new ModifiedRMinerReader());
+                new ZafeirisRefactoringMiner());
 
         metricHistory.collect(REVISION_FILE, GitRepository.get(REPOSITORY), RESULTS_FILE);
     }
@@ -67,7 +67,7 @@ public final class SourceMeter {
                         "dagger",
                         REPOSITORY),
                 new Reporter(),
-                new ModifiedRMinerReader());
+                new ZafeirisRefactoringMiner());
 
         metricHistory.collect(REVISION_FILE, GitRepository.get(REPOSITORY), RESULTS_FILE);
     }
@@ -84,7 +84,7 @@ public final class SourceMeter {
                         "toy-example",
                         REPOSITORY),
                 new Reporter(),
-                new RMinerReader());
+                new VanillaRefactoringMiner());
 
         metricHistory.collect(REVISION_FILE, GitRepository.get(REPOSITORY), RESULTS_FILE);
     }

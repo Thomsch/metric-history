@@ -13,7 +13,7 @@ import java.util.Map;
 
 import ch.thomsch.export.Reporter;
 import ch.thomsch.loader.CommitReader;
-import ch.thomsch.loader.ModifiedRMinerReader;
+import ch.thomsch.loader.ZafeirisRefactoringMiner;
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.MetricDump;
 import ch.thomsch.metric.SourceMeter;
@@ -114,7 +114,7 @@ public class MetricHistory {
 
         try {
             Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
-            MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new ModifiedRMinerReader());
+            MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new ZafeirisRefactoringMiner());
             metricHistory.collect(revisionFile, GitRepository.get(project), "./output.csv");
         } catch (IOException e) {
             logger.error("Resource access problem", e);

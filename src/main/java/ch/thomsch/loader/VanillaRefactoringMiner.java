@@ -15,12 +15,12 @@ import java.util.List;
 /**
  * @author TSC
  */
-public class RMinerReader implements CommitReader {
-    private static final Logger logger = LoggerFactory.getLogger(RMinerReader.class);
+public class VanillaRefactoringMiner implements CommitReader {
+    private static final Logger logger = LoggerFactory.getLogger(VanillaRefactoringMiner.class);
 
     @Override
     public List<String> load(String filePath) {
-        final List<String> duplicatedRefactorings = loadAllCommits(filePath);
+        final List<String> duplicatedRefactorings = loadAllLines(filePath);
         return reduceCommits(duplicatedRefactorings);
     }
 
@@ -36,16 +36,16 @@ public class RMinerReader implements CommitReader {
         return results;
     }
 
-    private List<String> loadAllCommits(String filePath) {
+    List<String> loadAllLines(String filePath) {
         final List<String> result = new ArrayList<>();
 
         try (Reader in = new FileReader(filePath)) {
             final Iterable<CSVRecord> records = CSVFormat.RFC4180
-                    .withDelimiter(';')
+                    .withDelimiter(getSeparator())
                     .withFirstRecordAsHeader()
                     .parse(in);
 
-            records.forEach(record -> result.add(record.get(0)));
+            records.forEach(record -> result.add(getRevision(record)));
 
             return result;
         } catch (FileNotFoundException e) {
@@ -54,5 +54,13 @@ public class RMinerReader implements CommitReader {
             logger.error("Can't parse file:", e);
         }
         return result;
+    }
+
+    char getSeparator() {
+        return ';';
+    }
+
+    String getRevision(CSVRecord record) {
+        return record.get(0);
     }
 }

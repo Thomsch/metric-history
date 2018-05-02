@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import ch.thomsch.MetricHistory;
 import ch.thomsch.export.Reporter;
-import ch.thomsch.loader.RMinerReader;
+import ch.thomsch.loader.VanillaRefactoringMiner;
 import ch.thomsch.metric.CKMetrics;
 import ch.thomsch.versioncontrol.GitRepository;
 
@@ -18,7 +18,7 @@ public final class ToyExample {
     private static final String RESULTS_FILE = "../data/metrics/toy-refactorings-metrics.csv";
 
     public static void main(String[] args) throws IOException {
-        new MetricHistory(new CKMetrics(), new Reporter(), new RMinerReader())
+        new MetricHistory(new CKMetrics(), new Reporter(), new VanillaRefactoringMiner())
                 .collect(REVISION_FILE, GitRepository.get(REPOSITORY), RESULTS_FILE);
     }
 }

@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import ch.thomsch.MetricHistory;
 import ch.thomsch.export.Reporter;
-import ch.thomsch.loader.ModifiedRMinerReader;
+import ch.thomsch.loader.ZafeirisRefactoringMiner;
 import ch.thomsch.metric.CKMetrics;
 import ch.thomsch.versioncontrol.GitRepository;
 
@@ -24,7 +24,7 @@ public class ProjectsData {
         final MetricHistory metricHistory = new MetricHistory(
                 new CKMetrics(),
                 new Reporter(),
-                new ModifiedRMinerReader());
+                new ZafeirisRefactoringMiner());
 
         collectProject(metricHistory, "dagger");
         collectProject(metricHistory, "dagger2");
