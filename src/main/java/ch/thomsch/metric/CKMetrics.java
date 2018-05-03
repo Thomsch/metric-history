@@ -4,9 +4,12 @@ import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNumber;
 import com.github.mauricioaniche.ck.CKReport;
 
-import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.thomsch.filter.FileFilter;
+
 
 /**
  * Collects metrics using the CKMetrics library.
@@ -18,20 +21,15 @@ public class CKMetrics implements Collector {
     private static final Logger logger = LoggerFactory.getLogger(CKMetrics.class);
 
     @Override
-    public MetricDump collect(String folder, String revision) {
+    public MetricDump collect(String folder, String revision, FileFilter filter) {
         final CKReport report = new CK().calculate(folder);
 
         final MetricDump dump = new MetricDump();
 
         report.all().stream()
-                .filter(ckNumber -> !isTestClass(ckNumber.getClassName()))
+                .filter(ckNumber -> filter.accept(FilenameUtils.normalize(ckNumber.getFile())))
                 .forEach(ckNumber -> dump.add(ckNumber.getClassName(), convertToMetric(ckNumber)));
         return dump;
-    }
-
-    private boolean isTestClass(String name) {
-        name = ClassUtils.getShortClassName(name);
-        return name.endsWith("Test") || name.endsWith("Tests");
     }
 
     private Metric convertToMetric(CKNumber metric) {
