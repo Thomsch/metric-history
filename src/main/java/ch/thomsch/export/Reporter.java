@@ -20,6 +20,8 @@ import ch.thomsch.metric.MetricDump;
 public class Reporter {
     private static final Logger logger = LoggerFactory.getLogger(Reporter.class);
 
+    public static final char DELIMITER = ';';
+
     private FileWriter fileWriter;
     private CSVPrinter printer;
 
@@ -31,7 +33,7 @@ public class Reporter {
      */
     public void initialize(String outputFile) throws IOException {
         fileWriter = new FileWriter(outputFile);
-        printer = new CSVPrinter(fileWriter, CSVFormat.EXCEL.withDelimiter(';'));
+        printer = new CSVPrinter(fileWriter, CSVFormat.EXCEL.withDelimiter(DELIMITER));
     }
 
     public void printMetaInformation() throws IOException {
@@ -58,7 +60,9 @@ public class Reporter {
     }
 
     public void report(String revision, String parent, MetricDump before, MetricDump current) {
-        final List<Object[]> lines = DefaultFormatter.format(revision, parent, before, current);
+        final List<Object[]> lines = DefaultFormatter.format(revision, parent, current);
+        lines.addAll(DefaultFormatter.format(parent, null, before));
+
         for (Object[] line : lines) {
             try {
                 report(line);

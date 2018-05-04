@@ -14,26 +14,17 @@ import ch.thomsch.metric.MetricDump;
 public class DefaultFormatter {
 
     /**
-     * Returns the formatted output for a revision. Each item of the list contains the multiple rows of a CSV line.
+     * Returns the formatted output for a revision. Each item of the list contains the rows of a CSV line.
      *
      * @param revision       the data's revision number
      * @param parentRevision the parent's revision number
-     * @param before         the data for the previous revision
      * @param current        the data for the current version of the project
      * @return the formatted output
      */
-    public static List<Object[]> format(String revision, String parentRevision, MetricDump before, MetricDump current) {
+    public static List<Object[]> format(String revision, String parentRevision, MetricDump current) {
         final ArrayList<Object[]> result = new ArrayList<>();
-
-        result.addAll(formatRevision(parentRevision, null, before));
-        result.addAll(formatRevision(revision, parentRevision, current));
-
-        return result;
-    }
-
-    private static List<Object[]> formatRevision(String revision, String parentRevision, MetricDump dump) {
-        final ArrayList<Object[]> result = new ArrayList<>();
-        dump.getClasses().forEach(className -> result.add(formatClass(className, revision, parentRevision, dump)));
+        current.getClasses().forEach(className -> result.add(formatClass(className, revision, parentRevision,
+                current)));
         return result;
     }
 
