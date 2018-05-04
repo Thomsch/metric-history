@@ -1,9 +1,7 @@
 package ch.thomsch.export;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import ch.thomsch.metric.Metric;
 import ch.thomsch.metric.MetricDump;
@@ -14,8 +12,6 @@ import ch.thomsch.metric.MetricDump;
  * @author TSC
  */
 public class DefaultFormatter {
-
-    private static final Set<String> exported = new HashSet<>();
 
     /**
      * Returns the formatted output for a revision. Each item of the list contains the multiple rows of a CSV line.
@@ -29,15 +25,8 @@ public class DefaultFormatter {
     public static List<Object[]> format(String revision, String parentRevision, MetricDump before, MetricDump current) {
         final ArrayList<Object[]> result = new ArrayList<>();
 
-        if (!exported.contains(parentRevision)) {
-            result.addAll(formatRevision(parentRevision, null, before));
-            exported.add(parentRevision);
-        }
-
-        if (!exported.contains(revision)) {
-            result.addAll(formatRevision(revision, parentRevision, current));
-            exported.add(revision);
-        }
+        result.addAll(formatRevision(parentRevision, null, before));
+        result.addAll(formatRevision(revision, parentRevision, current));
 
         return result;
     }
