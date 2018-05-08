@@ -3,7 +3,7 @@ package ch.thomsch.metric;
 import ch.thomsch.filter.FileFilter;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public interface Collector {
     /**

@@ -18,7 +18,7 @@ import ch.thomsch.filter.FileFilter;
 /**
  * Collects metrics from the command line.
  *
- * @author TSC
+ * @author Thomsch
  */
 public class SourceMeter implements Collector {
 

@@ -9,7 +9,7 @@ import ch.thomsch.metric.Metric;
 /**
  * Represents the results for a revision.
  *
- * @author TSC
+ * @author Thomsch
  */
 public class DifferentialResult {
 

@@ -9,7 +9,7 @@ import ch.thomsch.metric.CKMetrics;
 import ch.thomsch.versioncontrol.GitRepository;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public final class ToyExample {
 

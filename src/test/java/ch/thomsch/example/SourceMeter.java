@@ -9,7 +9,7 @@ import ch.thomsch.loader.ZafeirisRefactoringMiner;
 import ch.thomsch.versioncontrol.GitRepository;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public final class SourceMeter {
 

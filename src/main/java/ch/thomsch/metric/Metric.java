@@ -2,7 +2,7 @@ package ch.thomsch.metric;
 
 /**
  * Metrics collected for a project.
- * @author TSC
+ * @author Thomsch
  */
 public class Metric {
     private double couplingBetweenObjects;

@@ -14,7 +14,7 @@ import ch.thomsch.filter.FileFilter;
 /**
  * Collects metrics using the CKMetrics library.
  * https://github.com/mauricioaniche/ck
- * @author TSC
+ * @author Thomsch
  */
 public class CKMetrics implements Collector {
 

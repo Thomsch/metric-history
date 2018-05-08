@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public class GitRepositoryTest {
     @Test

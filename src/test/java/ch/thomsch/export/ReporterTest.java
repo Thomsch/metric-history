@@ -10,7 +10,7 @@ import java.io.IOException;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public class ReporterTest {
 

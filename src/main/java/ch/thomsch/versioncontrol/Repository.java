@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Represents a repository from a version control system.
  *
- * @author TSC
+ * @author Thomsch
  */
 public interface Repository extends AutoCloseable {
 

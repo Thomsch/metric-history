@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public class ZafeirisRefactoringMiner extends VanillaRefactoringMiner {
 

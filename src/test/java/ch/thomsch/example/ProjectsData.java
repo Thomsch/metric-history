@@ -12,7 +12,7 @@ import ch.thomsch.metric.CKMetrics;
 import ch.thomsch.versioncontrol.GitRepository;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public class ProjectsData {
     private static final String BASE_REPOSITORY = "../mined-repositories/";

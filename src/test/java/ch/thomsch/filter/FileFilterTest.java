@@ -6,7 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public class FileFilterTest {
 

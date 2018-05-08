@@ -9,7 +9,7 @@ import ch.thomsch.metric.MetricDump;
 /**
  * Default CSV formatter
  *
- * @author TSC
+ * @author Thomsch
  */
 public class DefaultFormatter {
 

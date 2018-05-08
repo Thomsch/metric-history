@@ -15,7 +15,7 @@ import ch.thomsch.metric.MetricDump;
 /**
  * Write results in a CSV file.
  *
- * @author TSC
+ * @author Thomsch
  */
 public class Reporter {
     private static final Logger logger = LoggerFactory.getLogger(Reporter.class);

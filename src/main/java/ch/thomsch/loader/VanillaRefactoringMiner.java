@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public class VanillaRefactoringMiner implements CommitReader {
     private static final Logger logger = LoggerFactory.getLogger(VanillaRefactoringMiner.class);

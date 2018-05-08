@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Contains the metrics for a project at different granularity.
  *
- * @author TSC
+ * @author Thomsch
  */
 public class MetricDump {
     static final MetricDump EMPTY = new MetricDump();

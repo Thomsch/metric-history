@@ -3,7 +3,7 @@ package ch.thomsch.loader;
 import java.util.List;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public interface CommitReader {
 

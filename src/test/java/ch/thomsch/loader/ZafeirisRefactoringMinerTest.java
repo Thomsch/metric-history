@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
- * @author TSC
+ * @author Thomsch
  */
 public class ZafeirisRefactoringMinerTest {
 
