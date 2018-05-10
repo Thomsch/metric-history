@@ -1,9 +1,11 @@
 package ch.thomsch.converter;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -36,53 +37,92 @@ public class SourceMeterConverter {
     public static void convert(String inputPath, String outputPath) {
         SourceMeterConverter converter = new SourceMeterConverter();
 
-        File classResults = converter.getClassResultsFile(inputPath);
+        try (CSVPrinter printer = converter.getPrinter(outputPath)) {
+            if (printer == null) {
+                logger.error("Cannot create file {}", outputPath);
+                return;
+            }
 
-        try {
-            converter.convertClassResult(classResults, outputPath);
-        } catch (FileNotFoundException e) {
-            logger.error("{} does not exists", classResults.getAbsolutePath(), e);
+            String[] revisionFolders = converter.getRevisionFolders(inputPath);
+            converter.convertProject(revisionFolders, printer);
+
         } catch (IOException e) {
-            logger.error("Cannot read or write {}", classResults.getAbsolutePath(), e);
+            logger.error("Failed to close file {}", outputPath, e);
         }
+    }
+
+    public void convertProject(String[] revisionFolders, CSVPrinter printer) {
+        for (String folder : revisionFolders) {
+            File classResults = getClassResultsFile(folder);
+
+            try {
+                convertClassResult(classResults, printer);
+            } catch (FileNotFoundException e) {
+                logger.error("{} does not exists", classResults.getAbsolutePath(), e);
+            } catch (IOException e) {
+                logger.error("Cannot read or write {}", classResults.getAbsolutePath(), e);
+            }
+        }
+    }
+
+    /**
+     * Returns the printer to export the results.
+     * If the printer cannot be created, returns null.
+     *
+     * @param outputFile the path of the file where the results will be print.
+     * @return a new instance of {@link CSVPrinter}
+     */
+    CSVPrinter getPrinter(String outputFile) {
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
+            return new CSVPrinter(out, getOutputFormat());
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the absolute path of each folder containing the results for a revision of a project.
+     *
+     * @param project the root directory of the project
+     * @return the absolute paths of the revision folders
+     */
+    public String[] getRevisionFolders(String project) {
+        File file = new File(project);
+        final String[] list = file.list(DirectoryFileFilter.INSTANCE);
+
+        for (int i = 0; i < list.length; i++) {
+            list[i] = new File(file, list[i]).getAbsolutePath();
+        }
+
+        return list;
     }
 
     /**
      * Converts SourceMeter's results for classes in a common format.
      *
-     * @param classFile  the class file
-     * @param outputPath the path where the result is stored
+     * @param classFile the class file
+     * @param printer the printer where the results will be written
      * @throws IOException           if the file cannot be read
      * @throws FileNotFoundException if the file cannot be found
      */
-    public void convertClassResult(File classFile, String outputPath) throws IOException {
-        Reader in = null;
-        BufferedWriter out = null;
-        try {
-            in = new FileReader(classFile);
-            out = new BufferedWriter(new FileWriter(outputPath));
-
-            CSVPrinter printer = new CSVPrinter(out, getOutputFormat());
-
-            final Iterable<CSVRecord> records = CSVFormat.RFC4180
-                    .withFirstRecordAsHeader()
-                    .parse(in);
-
+    public void convertClassResult(File classFile, CSVPrinter printer) throws IOException {
+        try (CSVParser records = getParser(classFile)) {
             for (CSVRecord record : records) {
                 printer.printRecord(formatClassValues(record));
-                printer.flush();
-            }
-
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-
-            if (out != null) {
-                out.flush();
-                out.close();
             }
         }
+    }
+
+    /**
+     * Returns a  CSV parser for SourceMeter files.
+     *
+     * @param classFile the file to parse
+     * @return the parser
+     * @throws IOException if an I/O error occurs or the file does not exists
+     */
+    private CSVParser getParser(File classFile) throws IOException {
+        return CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(classFile));
     }
 
     private CSVFormat getOutputFormat() {
