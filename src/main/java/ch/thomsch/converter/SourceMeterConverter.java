@@ -60,14 +60,14 @@ public class SourceMeterConverter {
      */
     public void convertProject(String[] revisionFolders, CSVPrinter printer) {
         for (String folder : revisionFolders) {
-            File classResults = getClassResultsFile(folder);
 
             try {
+                File classResults = getClassResultsFile(folder);
                 convertClassResult(classResults, FilenameUtils.getBaseName(folder), printer);
             } catch (FileNotFoundException e) {
-                logger.error("{} does not exists", classResults.getAbsolutePath(), e);
+                logger.error(e.getMessage());
             } catch (IOException e) {
-                logger.error("Cannot read or write {}", classResults.getAbsolutePath(), e);
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -181,13 +181,17 @@ public class SourceMeterConverter {
      * @param folder the path of the folder
      * @return the file containing the class results
      * @throws IllegalArgumentException if there is more than one result file for classes in the directory
+     * @throws FileNotFoundException if the class result file doesn't exist in the folder
      */
-    private File getClassResultsFile(String folder) {
+    private File getClassResultsFile(String folder) throws FileNotFoundException {
         final Collection<File> files = FileUtils.listFiles(new File(folder), new SuffixFileFilter("-Class.csv"), null);
 
         if (files.size() > 1) {
             throw new IllegalArgumentException("There is more than one class result file in directory " + folder);
+        } else if (!files.iterator().hasNext()) {
+            throw new FileNotFoundException("There is no class result file in " + folder);
+        } else {
+            return files.iterator().next();
         }
-        return files.iterator().next();
     }
 }
