@@ -39,7 +39,7 @@ public class SourceMeterConverterTest {
     }
 
     @Test
-    public void convertProject() throws IOException {
+    public void convertProject() throws Exception {
         File reference = new File("src/test/resources/conversion/project/ref.csv");
         File actual = new File("src/test/resources/conversion/classes.csv");
         actual.deleteOnExit();
@@ -53,7 +53,7 @@ public class SourceMeterConverterTest {
     }
 
     @Test
-    public void getRevisionFolders() {
+    public void getRevisionFolders() throws Exception {
         final String[] actual = converter.getRevisionFolders("src/test/resources/conversion/project");
 
         for (int i = 0; i < actual.length; i++) {
@@ -61,5 +61,10 @@ public class SourceMeterConverterTest {
         }
 
         assertArrayEquals(new String[]{"abcdef", "ghijk"}, actual);
+    }
+
+    @Test(expected = FormatException.class)
+    public void strictDirectoryStructure() throws Exception {
+        converter.getRevisionFolders("src/test/resources/conversion/project/java");
     }
 }

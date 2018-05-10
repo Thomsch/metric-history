@@ -49,6 +49,8 @@ public class SourceMeterConverter {
 
         } catch (IOException e) {
             logger.error("Failed to close file {}", outputPath, e);
+        } catch (FormatException e) {
+            logger.error("{} is not a valid SourceMeter result directory", inputPath);
         }
     }
 
@@ -60,7 +62,6 @@ public class SourceMeterConverter {
      */
     public void convertProject(String[] revisionFolders, CSVPrinter printer) {
         for (String folder : revisionFolders) {
-
             try {
                 File classResults = getClassResultsFile(folder);
                 convertClassResult(classResults, FilenameUtils.getBaseName(folder), printer);
@@ -93,9 +94,15 @@ public class SourceMeterConverter {
      *
      * @param project the root directory of the project
      * @return the absolute paths of the revision folders
+     * @throws FormatException if the project is not using SourceMeter format
      */
-    public String[] getRevisionFolders(String project) {
-        File file = new File(project);
+    public String[] getRevisionFolders(String project) throws FormatException {
+        File file = new File(project, "java");
+
+        if (!file.exists()) {
+            throw new FormatException("Does not recognized Source Meter directory results");
+        }
+
         final String[] list = file.list(DirectoryFileFilter.INSTANCE);
 
         for (int i = 0; i < list.length; i++) {
