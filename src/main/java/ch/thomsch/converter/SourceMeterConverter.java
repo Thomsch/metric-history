@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.slf4j.Logger;
@@ -51,12 +52,18 @@ public class SourceMeterConverter {
         }
     }
 
+    /**
+     * Converts the SourceMeter results for classes and prints them to the printer.
+     *
+     * @param revisionFolders the folders containing the results
+     * @param printer         the instance responsible to write the results
+     */
     public void convertProject(String[] revisionFolders, CSVPrinter printer) {
         for (String folder : revisionFolders) {
             File classResults = getClassResultsFile(folder);
 
             try {
-                convertClassResult(classResults, printer);
+                convertClassResult(classResults, FilenameUtils.getBaseName(folder), printer);
             } catch (FileNotFoundException e) {
                 logger.error("{} does not exists", classResults.getAbsolutePath(), e);
             } catch (IOException e) {
@@ -102,14 +109,15 @@ public class SourceMeterConverter {
      * Converts SourceMeter's results for classes in a common format.
      *
      * @param classFile the class file
+     * @param revision the current revision of the file
      * @param printer the printer where the results will be written
      * @throws IOException           if the file cannot be read
      * @throws FileNotFoundException if the file cannot be found
      */
-    public void convertClassResult(File classFile, CSVPrinter printer) throws IOException {
+    public void convertClassResult(File classFile, String revision, CSVPrinter printer) throws IOException {
         try (CSVParser records = getParser(classFile)) {
             for (CSVRecord record : records) {
-                printer.printRecord(formatClassValues(record));
+                printer.printRecord(formatClassValues(revision, record));
             }
         }
     }
@@ -132,7 +140,7 @@ public class SourceMeterConverter {
     }
 
     private String[] getHeader() {
-        return new String[]{"class",
+        return new String[]{"revision", "class",
                 "LCOM5", "NL", "NLE", "WMC", "CBO", "CBOI", "NII", "NOI", "RFC", "AD",
                 "CD", "CLOC", "DLOC", "PDA", "PUA", "TCD", "TCLOC", "DIT", "NOA", "NOC",
                 "NOD", "NOP", "LLOC", "LOC", "NA", "NG", "NLA", "NLG", "NLM", "NLPA",
@@ -141,8 +149,9 @@ public class SourceMeterConverter {
                 "TNPM", "TNS"};
     }
 
-    private Object[] formatClassValues(CSVRecord sourceMeterRecord) {
+    private Object[] formatClassValues(String revision, CSVRecord sourceMeterRecord) {
         ArrayList<Object> result = new ArrayList<>();
+        result.add(revision);
         result.add(sourceMeterRecord.get(2));
         result.addAll(getRecordSlice(sourceMeterRecord, 10, 61));
         return result.toArray();

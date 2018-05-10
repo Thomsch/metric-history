@@ -31,7 +31,8 @@ public class SourceMeterConverterTest {
         actual.deleteOnExit();
 
         CSVPrinter parser = converter.getPrinter(actual.getAbsolutePath());
-        converter.convertClassResult(new File("src/test/resources/conversion/source-meter-classes.csv"), parser);
+        converter.convertClassResult(new File("src/test/resources/conversion/source-meter-classes.csv"), "mock",
+                parser);
         parser.close();
 
         assertTrue(FileUtils.contentEquals(reference, actual));
@@ -39,7 +40,7 @@ public class SourceMeterConverterTest {
 
     @Test
     public void convertProject() throws IOException {
-        File reference = new File("src/test/resources/conversion/ref.csv");
+        File reference = new File("src/test/resources/conversion/project/ref.csv");
         File actual = new File("src/test/resources/conversion/classes.csv");
         actual.deleteOnExit();
 
