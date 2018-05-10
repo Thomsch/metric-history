@@ -32,8 +32,8 @@ public class SourceMeterConverter {
     /**
      * Convert results in the SourceMeter format to the raw format.
      *
-     * @param inputPath  the path of the folder containing SourceMeter's results
-     * @param outputPath the path of the file that will contain the results
+     * @param inputPath  the absolute path of the folder containing SourceMeter's results
+     * @param outputPath the absolute path of the file that will contain the results
      */
     public static void convert(String inputPath, String outputPath) {
         SourceMeterConverter converter = new SourceMeterConverter();
