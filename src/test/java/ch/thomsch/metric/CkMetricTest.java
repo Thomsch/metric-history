@@ -7,21 +7,21 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Thomsch
  */
-public class MetricTest {
+public class CkMetricTest {
 
     private static final int NUM_METRICS = 8;
 
     @Test
     public void addShouldAddTheSameMetrics() {
-        final Metric a = new Metric(1, 2, 3, 4, 5, 6, 7, 8);
-        final Metric b = new Metric(10, 20, 30, 40, 50, 60, 70, 80);
+        final CkMetric a = new CkMetric(1, 2, 3, 4, 5, 6, 7, 8);
+        final CkMetric b = new CkMetric(10, 20, 30, 40, 50, 60, 70, 80);
 
         a.add(b);
 
         assertEqualsForAll(a, 11, 22, 33, 44, 55, 66, 77, 88);
     }
 
-    private void assertEqualsForAll(Metric metric, int... expected) {
+    private void assertEqualsForAll(CkMetric metric, int... expected) {
         if (expected.length != NUM_METRICS) {
             throw new IllegalArgumentException("Expected " + NUM_METRICS + ", got " + expected.length);
         }
@@ -38,7 +38,7 @@ public class MetricTest {
 
     @Test
     public void emptyConstructorShouldBeInitializedToZeros() {
-        final Metric metric = new Metric();
+        final CkMetric metric = new CkMetric();
 
         assertEqualsForAll(metric, 0, 0, 0, 0, 0, 0, 0, 0);
     }

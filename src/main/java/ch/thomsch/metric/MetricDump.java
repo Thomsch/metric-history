@@ -12,7 +12,7 @@ import java.util.Map;
 public class MetricDump {
     static final MetricDump EMPTY = new MetricDump();
 
-    private final Map<String, Metric> map;
+    private final Map<String, CkMetric> map;
 
     MetricDump() {
         map = new HashMap<>();
@@ -33,7 +33,7 @@ public class MetricDump {
      * @param className the canonical name of the class
      * @return the metrics
      */
-    public Metric getMetric(String className) {
+    public CkMetric getMetric(String className) {
         return map.get(className);
     }
 
@@ -43,7 +43,7 @@ public class MetricDump {
      * @param className the class
      * @param metric    the metrics
      */
-    public void add(String className, Metric metric) {
+    public void add(String className, CkMetric metric) {
         map.put(className, metric);
     }
 }

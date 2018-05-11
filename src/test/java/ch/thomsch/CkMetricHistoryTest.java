@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * @author Thomsch
  */
-public class MetricHistoryTest {
+public class CkMetricHistoryTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void convertDoNotAcceptMoreThanThreeArguments() {

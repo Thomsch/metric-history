@@ -3,7 +3,7 @@ package ch.thomsch.export;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.thomsch.metric.Metric;
+import ch.thomsch.metric.CkMetric;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,8 +16,8 @@ public class DifferentialResultTest {
 
     @Before
     public void setUp() {
-        final Metric before = new Metric(1, 2, 3, 4, 5, 6, 7, 8);
-        final Metric after = new Metric(10, 20, 30, 40, 50, 60, 70, 80);
+        final CkMetric before = new CkMetric(1, 2, 3, 4, 5, 6, 7, 8);
+        final CkMetric after = new CkMetric(10, 20, 30, 40, 50, 60, 70, 80);
 
         result = DifferentialResult.build("test", before, after);
     }

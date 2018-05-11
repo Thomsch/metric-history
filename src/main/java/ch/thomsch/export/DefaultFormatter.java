@@ -3,7 +3,7 @@ package ch.thomsch.export;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.thomsch.metric.Metric;
+import ch.thomsch.metric.CkMetric;
 import ch.thomsch.metric.MetricDump;
 
 /**
@@ -29,7 +29,7 @@ public class DefaultFormatter {
     }
 
     private static Object[] formatClass(String className, String revision, String parentRevision, MetricDump dump) {
-        final Metric metric = dump.getMetric(className);
+        final CkMetric metric = dump.getMetric(className);
 
         final Object[] result = new Object[11];
 

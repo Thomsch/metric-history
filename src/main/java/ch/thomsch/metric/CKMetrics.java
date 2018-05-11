@@ -32,8 +32,8 @@ public class CKMetrics implements Collector {
         return dump;
     }
 
-    private Metric convertToMetric(CKNumber metric) {
-        return new Metric(
+    private CkMetric convertToMetric(CKNumber metric) {
+        return new CkMetric(
                 metric.getCbo(), metric.getDit(), metric.getNoc(), metric.getNof(),
                 metric.getNom(), metric.getRfc(), metric.getWmc(), metric.getLoc());
     }

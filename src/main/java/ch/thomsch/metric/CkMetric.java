@@ -4,7 +4,7 @@ package ch.thomsch.metric;
  * Metrics collected for a project.
  * @author Thomsch
  */
-public class Metric {
+public class CkMetric {
     private double couplingBetweenObjects;
     private double depthInheritanceTree;
     private double numberOfChildren;
@@ -14,7 +14,7 @@ public class Metric {
     private double weightMethodClass;
     private double lineOfCode;
 
-    public Metric(
+    public CkMetric(
             double couplingBetweenObjects,
             double depthInheritanceTree,
             double numberOfChildren,
@@ -33,7 +33,7 @@ public class Metric {
         this.lineOfCode = lineOfCode;
     }
 
-    public Metric() {
+    public CkMetric() {
         this(0, 0, 0, 0, 0, 0, 0, 0);
     }
 
@@ -69,7 +69,7 @@ public class Metric {
         return lineOfCode;
     }
 
-    public void add(Metric metric) {
+    public void add(CkMetric metric) {
         couplingBetweenObjects += metric.couplingBetweenObjects;
         depthInheritanceTree += metric.depthInheritanceTree;
         numberOfChildren += metric.numberOfChildren;

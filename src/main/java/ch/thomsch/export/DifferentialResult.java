@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import ch.thomsch.metric.Metric;
+import ch.thomsch.metric.CkMetric;
 
 /**
  * Represents the results for a revision.
@@ -14,9 +14,9 @@ import ch.thomsch.metric.Metric;
 public class DifferentialResult {
 
     private final String revision;
-    private final Metric metric;
+    private final CkMetric metric;
 
-    private DifferentialResult(String revision, Metric metric) {
+    private DifferentialResult(String revision, CkMetric metric) {
         this.revision = revision;
         this.metric = metric;
     }
@@ -29,7 +29,7 @@ public class DifferentialResult {
      * @param after    the metrics after applying the revision
      * @return a new instance of results
      */
-    public static DifferentialResult build(String revision, Metric before, Metric after) {
+    public static DifferentialResult build(String revision, CkMetric before, CkMetric after) {
         final double cbo = after.getCouplingBetweenObjects() - before.getCouplingBetweenObjects();
         final double dit = after.getDepthInheritanceTree() - before.getDepthInheritanceTree();
         final double noc = after.getNumberOfChildren() - before.getNumberOfChildren();
@@ -38,7 +38,7 @@ public class DifferentialResult {
         final double rfc = after.getResponseForAClass() - before.getResponseForAClass();
         final double wmc = after.getWeightMethodClass() - before.getWeightMethodClass();
         final double loc = after.getLineOfCode() - before.getLineOfCode();
-        final Metric difference = new Metric(cbo, dit, noc, nof, nom, rfc, wmc, loc);
+        final CkMetric difference = new CkMetric(cbo, dit, noc, nof, nom, rfc, wmc, loc);
         return new DifferentialResult(revision, difference);
     }
 
@@ -56,7 +56,7 @@ public class DifferentialResult {
         return result;
     }
 
-    private Collection<Object> exportMetric(Metric metric) {
+    private Collection<Object> exportMetric(CkMetric metric) {
         return Arrays.asList(
                 metric.getLineOfCode(), metric.getCouplingBetweenObjects(), metric.getDepthInheritanceTree(),
                 metric.getNumberOfChildren(), metric.getNumberOfFields(), metric.getNumberOfMethods(),
