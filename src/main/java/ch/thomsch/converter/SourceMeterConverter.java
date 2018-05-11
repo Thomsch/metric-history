@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import ch.thomsch.Format;
-
 /**
  * @author Thomsch
  */
@@ -143,7 +141,7 @@ public class SourceMeterConverter {
     private CSVFormat getOutputFormat() {
         return CSVFormat.DEFAULT
                 .withHeader(getHeader())
-                .withDelimiter(Format.DELIMITER);
+                .withDelimiter(';');
     }
 
     private String[] getHeader() {
