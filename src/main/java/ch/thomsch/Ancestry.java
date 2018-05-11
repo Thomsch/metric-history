@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ public class Ancestry implements CommitReader {
         this.repository = repository;
         this.commitReader = commitReader;
 
-        parents = new HashMap<>();
+        parents = new LinkedHashMap<>();
     }
 
     @Override
@@ -49,6 +49,7 @@ public class Ancestry implements CommitReader {
 
     /**
      * Export the content of this instance to a CSVPrinter.
+     * The order of revisions is the same as the output of the {@link CommitReader}.
      *
      * @param printer the printer
      */
