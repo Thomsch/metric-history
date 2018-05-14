@@ -1,12 +1,18 @@
 package ch.thomsch;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,5 +74,30 @@ public class Ancestry implements CommitReader {
      */
     public CSVFormat getFormat() {
         return CSVFormat.RFC4180.withHeader("revision", "parent");
+    }
+
+    public void loadFromDisk(String file) throws IOException {
+        try (CSVParser parser = getParser(file)) {
+            for (CSVRecord record : parser) {
+                parents.put(record.get(0), record.get(1));
+            }
+        }
+    }
+
+    private CSVParser getParser(String file) throws IOException {
+        return CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(file));
+    }
+
+    public CSVPrinter getPrinter(String outputFile) throws IOException {
+        return new CSVPrinter(new BufferedWriter(new FileWriter(outputFile)), getFormat());
+    }
+
+    /**
+     * Returns a copy the revisions with their order preserved.
+     *
+     * @return the list
+     */
+    public List<Map.Entry<String, String>> getRevisions() {
+        return new LinkedList<>(parents.entrySet());
     }
 }
