@@ -49,7 +49,9 @@ public class Raw {
     }
 
     public static CSVFormat getFormat() {
-        return CSVFormat.RFC4180.withHeader(getHeader());
+        return CSVFormat.RFC4180
+                .withHeader(getHeader())
+                .withDelimiter(';');
     }
 
     public static String[] getHeader() {
