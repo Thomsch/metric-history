@@ -98,11 +98,16 @@ public class Raw {
     }
 
     /**
-     * Returns the classes for a version.
-     *
+     * Returns the classes for a version or null if this revision is unknown.
      * @param revision the revision
      */
     public Collection<String> getClasses(String revision) {
-        return data.get(revision).keySet();
+        final Map<String, Metric> metricMap = data.get(revision);
+
+        if (metricMap == null) {
+            return null;
+        }
+
+        return metricMap.keySet();
     }
 }

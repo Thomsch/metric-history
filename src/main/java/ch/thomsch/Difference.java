@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +35,12 @@ public class Difference {
             String revision = revisionParent.getKey();
             String parent = revisionParent.getValue();
 
-            for (String className : model.getClasses(revision)) {
+            final Collection<String> classes = model.getClasses(revision);
+            if (classes == null) {
+                logger.warn("No data for revision {}", revision);
+                continue;
+            }
+            for (String className : classes) {
                 Metric revisionMetric = model.getMetric(revision, className);
                 Metric parentMetric = model.getMetric(parent, className);
 
