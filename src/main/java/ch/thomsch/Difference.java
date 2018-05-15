@@ -35,6 +35,7 @@ public class Difference {
             String revision = revisionParent.getKey();
             String parent = revisionParent.getValue();
 
+            logger.info("Exporting revision {} parent is ({})", revision, parent);
             final Collection<String> classes = model.getClasses(revision);
             if (classes == null) {
                 logger.warn("No data for revision {}", revision);
