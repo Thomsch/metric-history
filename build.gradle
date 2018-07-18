@@ -21,4 +21,4 @@ dependencies {
 }
 
 applicationName = rootProject.name
-mainClassName = "ch.thomsch.MetricHistory"
+mainClassName = "ch.thomsch.Application"

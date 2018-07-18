@@ -5,15 +5,17 @@ import org.junit.Test;
 /**
  * @author Thomsch
  */
-public class CkMetricHistoryTest {
+public class ApplicationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void convertDoNotAcceptMoreThanThreeArguments() {
-        MetricHistory.processConvertCommand(new String[]{"A", "B", "C", "D"});
+        Application application = new Application();
+        application.processConvertCommand(new String[]{"A", "B", "C", "D"});
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void convertDoNotAcceptLessThanThreeArguments() {
-        MetricHistory.processConvertCommand(new String[]{"A", "B"});
+        Application application = new Application();
+        application.processConvertCommand(new String[]{"A", "B"});
     }
 }
