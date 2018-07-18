@@ -34,9 +34,10 @@ public final class Application {
      *             args[0] contains the action to execute.
      *             The remaining arguments are the parameters for the action.
      */
-    private void doMain(String[] args) {
+    void doMain(String[] args) {
         if (args.length == 0) {
             help();
+            return;
         }
 
         switch (args[0]) {
