@@ -140,6 +140,7 @@ public class SourceMeterConverter {
 
     private CSVFormat getOutputFormat() {
         return CSVFormat.DEFAULT
+                .withRecordSeparator('\n')
                 .withHeader(getHeader())
                 .withDelimiter(';');
     }
