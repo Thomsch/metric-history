@@ -22,3 +22,10 @@ dependencies {
 
 applicationName = rootProject.name
 mainClassName = "ch.thomsch.Application"
+
+test {
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+    }
+}
