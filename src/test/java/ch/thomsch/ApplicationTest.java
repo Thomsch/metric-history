@@ -19,14 +19,4 @@ public class ApplicationTest {
     public void doMain_ShouldPrintHelp_WhenZeroArguments() {
         application.doMain(new String[0]);
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void convertDoNotAcceptMoreThanThreeArguments() {
-        application.processConvertCommand(new String[]{"A", "B", "C", "D"});
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void convertDoNotAcceptLessThanThreeArguments() {
-        application.processConvertCommand(new String[]{"A", "B"});
-    }
 }
