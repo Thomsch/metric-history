@@ -1,5 +1,7 @@
 package ch.thomsch;
 
+import ch.thomsch.loader.CommitReader;
+import ch.thomsch.versioncontrol.Repository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -7,17 +9,11 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import ch.thomsch.loader.CommitReader;
-import ch.thomsch.versioncontrol.Repository;
 
 /**
  * Contains the revisions and their respective parents.
@@ -40,8 +36,8 @@ public class Ancestry implements CommitReader {
     }
 
     @Override
-    public List<String> load(String revisionFile) {
-        final List<String> revisions = commitReader.load(revisionFile);
+    public List<String> make(String revisionFile) {
+        final List<String> revisions = commitReader.make(revisionFile);
 
         for (String revision : revisions) {
             try {
@@ -72,32 +68,31 @@ public class Ancestry implements CommitReader {
     /**
      * Returns the format to express the relation of revisions and their parents.
      */
-    public CSVFormat getFormat() {
+    static public CSVFormat getFormat() {
         return CSVFormat.RFC4180.withHeader("revision", "parent");
-    }
-
-    public void loadFromDisk(String file) throws IOException {
-        try (CSVParser parser = getParser(file)) {
-            for (CSVRecord record : parser) {
-                parents.put(record.get(0), record.get(1));
-            }
-        }
-    }
-
-    private CSVParser getParser(String file) throws IOException {
-        return CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(file));
     }
 
     public CSVPrinter getPrinter(String outputFile) throws IOException {
         return new CSVPrinter(new BufferedWriter(new FileWriter(outputFile)), getFormat());
     }
 
-    /**
-     * Returns a copy the revisions with their order preserved.
-     *
-     * @return the list
-     */
-    public List<Map.Entry<String, String>> getRevisions() {
-        return new LinkedList<>(parents.entrySet());
+    public static HashMap<String, String> load(String ancestryFile) {
+        HashMap<String, String> ancestry = new LinkedHashMap<>();
+
+        try (CSVParser parser = getParser(ancestryFile)) {
+            for (CSVRecord record : parser) {
+                ancestry.put(record.get(0), record.get(1));
+            }
+        }catch (FileNotFoundException e) {
+            logger.error("The file " + ancestryFile + " doesn't exists", e);
+        } catch (IOException e) {
+            logger.error("Error while reading the file " + ancestryFile);
+        }
+
+        return ancestry;
+    }
+
+    private static CSVParser getParser(String file) throws IOException {
+        return CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(file));
     }
 }

@@ -1,35 +1,22 @@
 package ch.thomsch;
 
+import ch.thomsch.metric.Metric;
+import ch.thomsch.model.Raw;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import ch.thomsch.metric.Metric;
-import ch.thomsch.model.Raw;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Thomsch
  */
 public class DifferenceTest {
-
-    private Ancestry ancestry;
-
-    @Before
-    public void setUp() {
-        ancestry = mock(Ancestry.class);
-    }
 
     @Test
     public void computesShouldMakeDifference() {
@@ -64,7 +51,7 @@ public class DifferenceTest {
     @Test
     public void export() throws IOException {
         Difference difference = new Difference();
-        setupAncestry();
+        HashMap<String, String> ancestry = setupAncestry();
 
         Raw model = setupModel();
 
@@ -101,12 +88,11 @@ public class DifferenceTest {
         return raw;
     }
 
-    private void setupAncestry() {
-        List<Map.Entry<String, String>> ancestry = new ArrayList<>();
-        ancestry.add(new AbstractMap.SimpleEntry<>("a", "b"));
-        ancestry.add(new AbstractMap.SimpleEntry<>("d", "e"));
-        ancestry.add(new AbstractMap.SimpleEntry<>("e", "f"));
-
-        when(this.ancestry.getRevisions()).thenReturn(ancestry);
+    private HashMap<String, String> setupAncestry() {
+        HashMap<String, String> ancestry = new LinkedHashMap<>();
+        ancestry.put("a", "b");
+        ancestry.put("d", "e");
+        ancestry.put("e", "f");
+        return ancestry;
     }
 }

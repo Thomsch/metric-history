@@ -30,7 +30,7 @@ public class VanillaRefactoringMinerTest {
     @Test
     public void loadFile() {
         final CommitReader commitReader = new VanillaRefactoringMiner();
-        final List<String> revisions = commitReader.load(TEST_FILE);
+        final List<String> revisions = commitReader.make(TEST_FILE);
 
         final List<String> expected = Arrays.asList(
                 "f7d4f2835ec7dde25356d923ade0eb93f11cf1c9",

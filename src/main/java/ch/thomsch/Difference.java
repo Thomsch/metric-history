@@ -1,18 +1,13 @@
 package ch.thomsch;
 
+import ch.thomsch.metric.Metric;
+import ch.thomsch.model.Raw;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import ch.thomsch.metric.Metric;
-import ch.thomsch.model.Raw;
+import java.util.*;
 
 /**
  * @author Thomsch
@@ -29,8 +24,9 @@ public class Difference {
      * @param model    contains the metrics in relation with their revisions and classes
      * @param writer   where the results are written
      */
-    public void export(Ancestry ancestry, Raw model, CSVPrinter writer) {
-        for (Map.Entry<String, String> revisionParent : ancestry.getRevisions()) {
+    public void export(HashMap<String, String> ancestry, Raw model, CSVPrinter writer) {
+        LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
+        for (Map.Entry<String, String> revisionParent : entries) {
 
             String revision = revisionParent.getKey();
             String parent = revisionParent.getValue();

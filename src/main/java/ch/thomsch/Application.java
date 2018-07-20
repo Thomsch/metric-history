@@ -1,5 +1,14 @@
 package ch.thomsch;
 
+import ch.thomsch.converter.SourceMeterConverter;
+import ch.thomsch.database.Database;
+import ch.thomsch.database.MongoAdapter;
+import ch.thomsch.export.Reporter;
+import ch.thomsch.loader.ZafeirisRefactoringMiner;
+import ch.thomsch.metric.Collector;
+import ch.thomsch.metric.SourceMeter;
+import ch.thomsch.model.Raw;
+import ch.thomsch.versioncontrol.GitRepository;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
@@ -10,14 +19,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import ch.thomsch.converter.SourceMeterConverter;
-import ch.thomsch.export.Reporter;
-import ch.thomsch.loader.ZafeirisRefactoringMiner;
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.model.Raw;
-import ch.thomsch.versioncontrol.GitRepository;
+import java.util.HashMap;
 
 import static ch.thomsch.model.Raw.getFormat;
 
@@ -82,11 +84,8 @@ public final class Application {
         String rawFile = normalizePath(args[2]);
         String outputFile = normalizePath(args[3]);
 
-        Ancestry ancestry = new Ancestry(null, null);
-        try {
-            ancestry.loadFromDisk(ancestryFile);
-        } catch (IOException e) {
-            logger.error("I/O error while reading ancestry file");
+        HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
+        if(ancestry.isEmpty()) {
             return;
         }
 
@@ -120,7 +119,7 @@ public final class Application {
         } catch (IOException e) {
             throw new IllegalArgumentException("This repository doesn't have version control: " + repository);
         }
-        ancestry.load(revisionFile);
+        ancestry.make(revisionFile);
 
         try (CSVPrinter writer = ancestry.getPrinter(outputFile)) {
             ancestry.export(writer);
@@ -160,12 +159,31 @@ public final class Application {
     }
 
     public void processConvertCommand(String[] args) {
-        verifyArguments(args, 3);
+        verifyArguments(args, 1);
 
-        String inputFolder = normalizePath(args[1]);
-        String outputFile = normalizePath(args[2]);
+        File source = new File(args[1]);
+        if(source.isFile()) {
+            verifyArguments(args, 2);
 
-        SourceMeterConverter.convert(inputFolder, outputFile);
+            String ancestryFile = normalizePath(args[1]);
+
+            HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
+            if(ancestry.isEmpty()) {
+                logger.warn("No ancestry was found...");
+                return;
+            }
+
+            Database database = new MongoAdapter();
+            database.persist(ancestry);
+        } else {
+            verifyArguments(args, 3);
+            String inputFolder = normalizePath(args[1]);
+            String outputFile = normalizePath(args[2]);
+
+            SourceMeterConverter.convert(inputFolder, outputFile);
+        }
+
+
     }
 
     private String normalizePath(String arg) {
@@ -180,7 +198,7 @@ public final class Application {
      * @throws IllegalArgumentException if the number of arguments doesn't match the actual number of arguments
      */
     private void verifyArguments(String[] args, int expected) {
-        if (args.length != expected) {
+        if (args.length < expected) {
             throw new IllegalArgumentException("Incorrect number of arguments (" + args.length + ") expected " +
                     expected);
         }

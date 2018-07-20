@@ -14,7 +14,7 @@ public class ZafeirisRefactoringMiner extends VanillaRefactoringMiner {
     private static final Logger logger = LoggerFactory.getLogger(ZafeirisRefactoringMiner.class);
 
     @Override
-    public List<String> load(String filePath) {
+    public List<String> make(String filePath) {
         return loadAllLines(filePath);
     }
 

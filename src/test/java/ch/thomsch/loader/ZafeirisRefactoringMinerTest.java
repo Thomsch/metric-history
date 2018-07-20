@@ -20,7 +20,7 @@ public class ZafeirisRefactoringMinerTest {
     public void testLoad() {
         final ZafeirisRefactoringMiner reader = new ZafeirisRefactoringMiner();
 
-        final List<String> revisions = reader.load(TEST_FILE);
+        final List<String> revisions = reader.make(TEST_FILE);
 
         final List<String> expected = Arrays.asList(
                 "d4bce13a443cf12da40a77c16c1e591f4f985b47",

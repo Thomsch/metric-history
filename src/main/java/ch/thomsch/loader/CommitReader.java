@@ -13,5 +13,5 @@ public interface CommitReader {
      * @param filePath The location of the file
      * @return A list containing all the commits, sorted by date
      */
-    List<String> load(String filePath);
+    List<String> make(String filePath);
 }

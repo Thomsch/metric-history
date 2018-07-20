@@ -19,7 +19,7 @@ public class VanillaRefactoringMiner implements CommitReader {
     private static final Logger logger = LoggerFactory.getLogger(VanillaRefactoringMiner.class);
 
     @Override
-    public List<String> load(String filePath) {
+    public List<String> make(String filePath) {
         final List<String> duplicatedRefactorings = loadAllLines(filePath);
         return reduceCommits(duplicatedRefactorings);
     }

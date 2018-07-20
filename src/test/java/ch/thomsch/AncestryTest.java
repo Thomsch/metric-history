@@ -19,7 +19,7 @@ public class AncestryTest {
         actual.deleteOnExit();
 
         final File expected = new File("src/test/resources/ancestry.csv");
-        ancestry.loadFromDisk(expected.getAbsolutePath());
+        Ancestry.load(expected.getAbsolutePath());
 
         try (CSVPrinter printer = ancestry.getPrinter(actual.getAbsolutePath())) {
             ancestry.export(printer);
