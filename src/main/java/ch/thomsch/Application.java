@@ -1,14 +1,5 @@
 package ch.thomsch;
 
-import ch.thomsch.converter.SourceMeterConverter;
-import ch.thomsch.database.Database;
-import ch.thomsch.database.MongoAdapter;
-import ch.thomsch.export.Reporter;
-import ch.thomsch.loader.ZafeirisRefactoringMiner;
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.model.Raw;
-import ch.thomsch.versioncontrol.GitRepository;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
@@ -20,6 +11,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+
+import ch.thomsch.converter.SourceMeterConverter;
+import ch.thomsch.database.Database;
+import ch.thomsch.database.MongoAdapter;
+import ch.thomsch.export.Reporter;
+import ch.thomsch.loader.ZafeirisRefactoringMiner;
+import ch.thomsch.metric.Collector;
+import ch.thomsch.metric.SourceMeter;
+import ch.thomsch.model.Raw;
+import ch.thomsch.versioncontrol.GitRepository;
 
 import static ch.thomsch.model.Raw.getFormat;
 
@@ -130,21 +131,21 @@ public final class Application {
     }
 
     public void processCollectCommand(String[] args) {
-        verifyArguments(args, 6);
+        verifyArguments(args, 7);
 
-        String revisionFile = normalizePath(args[0]);
-        String executable = normalizePath(args[1]);
-        String project = normalizePath(args[2]);
+        String revisionFile = normalizePath(args[1]);
+        String executable = normalizePath(args[2]);
+        String project = normalizePath(args[3]);
 
-        String repository = args[3];
+        String repository = args[4];
         if (repository.equalsIgnoreCase("same")) {
             repository = project;
         } else {
             repository = normalizePath(repository);
         }
 
-        String executableOutput = normalizePath(args[4]);
-        String projectName = args[5];
+        String executableOutput = normalizePath(args[5]);
+        String projectName = args[6];
 
         try {
             Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
