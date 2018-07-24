@@ -44,16 +44,16 @@ public final class Application {
         }
 
         switch (args[0]) {
-            case "convert":
-                processConvertCommand(args);
-                break;
-
             case "collect":
                 processCollectCommand(args);
                 break;
 
             case "ancestry":
                 processAncestryCommand(args);
+                break;
+
+            case "convert":
+                processConvertCommand(args);
                 break;
 
             case "diff":
@@ -78,60 +78,8 @@ public final class Application {
                 "https://github.com/Thomsch/metric-history for the full list of commands");
     }
 
-    public void processDiffCommand(String[] args) {
-        verifyArguments(args, 4);
-
-        String ancestryFile = normalizePath(args[1]);
-        String rawFile = normalizePath(args[2]);
-        String outputFile = normalizePath(args[3]);
-
-        HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
-        if(ancestry.isEmpty()) {
-            return;
-        }
-
-        CSVParser parser;
-        try {
-            parser = new CSVParser(new FileReader(rawFile), getFormat().withSkipHeaderRecord());
-        } catch (IOException e) {
-            logger.error("I/O error while reading raw file: {}" + e.getMessage());
-            return;
-        }
-        Raw model = Raw.load(parser);
-
-        Difference difference = new Difference();
-        try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), getFormat())) {
-            difference.export(ancestry, model, writer);
-        } catch (IOException e) {
-            logger.error("I/O error with file {}", outputFile, e);
-        }
-    }
-
-    public void processAncestryCommand(String[] args) {
-        verifyArguments(args, 4);
-
-        String revisionFile = normalizePath(args[1]);
-        String repository = normalizePath(args[2]);
-        String outputFile = normalizePath(args[3]);
-
-        Ancestry ancestry;
-        try {
-            ancestry = new Ancestry(GitRepository.get(repository), new ZafeirisRefactoringMiner());
-        } catch (IOException e) {
-            throw new IllegalArgumentException("This repository doesn't have version control: " + repository);
-        }
-        ancestry.make(revisionFile);
-
-        try (CSVPrinter writer = ancestry.getPrinter(outputFile)) {
-            ancestry.export(writer);
-        } catch (IOException e) {
-            logger.error("I/O error with file {}", outputFile, e);
-        }
-
-    }
-
     public void processCollectCommand(String[] args) {
-        verifyArguments(args, 7);
+        atLeast(7, args);
 
         String revisionFile = normalizePath(args[1]);
         String executable = normalizePath(args[2]);
@@ -159,12 +107,35 @@ public final class Application {
         }
     }
 
+    public void processAncestryCommand(String[] args) {
+        atLeast(4, args);
+
+        String revisionFile = normalizePath(args[1]);
+        String repository = normalizePath(args[2]);
+        String outputFile = normalizePath(args[3]);
+
+        Ancestry ancestry;
+        try {
+            ancestry = new Ancestry(GitRepository.get(repository), new ZafeirisRefactoringMiner());
+        } catch (IOException e) {
+            throw new IllegalArgumentException("This repository doesn't have version control: " + repository);
+        }
+        ancestry.make(revisionFile);
+
+        try (CSVPrinter writer = ancestry.getPrinter(outputFile)) {
+            ancestry.export(writer);
+        } catch (IOException e) {
+            logger.error("I/O error with file {}", outputFile, e);
+        }
+
+    }
+
     public void processConvertCommand(String[] args) {
-        verifyArguments(args, 1);
+        atLeast(1, args);
 
         File source = new File(args[1]);
         if(source.isFile()) {
-            verifyArguments(args, 2);
+            atLeast(2, args);
 
             String ancestryFile = normalizePath(args[1]);
 
@@ -177,7 +148,7 @@ public final class Application {
             Database database = new MongoAdapter();
             database.persist(ancestry);
         } else {
-            verifyArguments(args, 3);
+            atLeast(3, args);
             String inputFolder = normalizePath(args[1]);
             String outputFile = normalizePath(args[2]);
 
@@ -187,6 +158,35 @@ public final class Application {
 
     }
 
+    public void processDiffCommand(String[] args) {
+        atLeast(4, args);
+
+        String ancestryFile = normalizePath(args[1]);
+        String rawFile = normalizePath(args[2]);
+        String outputFile = normalizePath(args[3]);
+
+        HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
+        if (ancestry.isEmpty()) {
+            return;
+        }
+
+        CSVParser parser;
+        try {
+            parser = new CSVParser(new FileReader(rawFile), getFormat().withSkipHeaderRecord());
+        } catch (IOException e) {
+            logger.error("I/O error while reading raw file: {}" + e.getMessage());
+            return;
+        }
+        Raw model = Raw.load(parser);
+
+        Difference difference = new Difference();
+        try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), getFormat())) {
+            difference.export(ancestry, model, writer);
+        } catch (IOException e) {
+            logger.error("I/O error with file {}", outputFile, e);
+        }
+    }
+
     private String normalizePath(String arg) {
         return FilenameUtils.normalize(new File(arg).getAbsolutePath());
     }
@@ -194,12 +194,12 @@ public final class Application {
     /**
      * Verify the number of arguments.
      *
-     * @param args     the container of arguments
      * @param expected the number of arguments expected
+     * @param args     the container of arguments
      * @throws IllegalArgumentException if the number of arguments doesn't match the actual number of arguments
      */
-    private void verifyArguments(String[] args, int expected) {
-        if (args.length < expected) {
+    private void atLeast(int expected, String[] args) {
+        if (expected > args.length) {
             throw new IllegalArgumentException("Incorrect number of arguments (" + args.length + ") expected " +
                     expected);
         }
