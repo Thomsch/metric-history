@@ -16,4 +16,11 @@ public interface Collector {
      * @return the metrics for this project
      */
     MetricDump collect(String folder, String revision, FileFilter filter);
+
+    /**
+     * Is invoked automatically by {@link ch.thomsch.MetricHistory} after {@link #collect(String, String, FileFilter)}.
+     *
+     * @param revision the revision that has been collected.
+     */
+    void afterCollect(String revision);
 }

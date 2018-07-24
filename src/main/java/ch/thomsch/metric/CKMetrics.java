@@ -32,6 +32,11 @@ public class CKMetrics implements Collector {
         return dump;
     }
 
+    @Override
+    public void afterCollect(String revision) {
+        // Nothing needs to be done
+    }
+
     private CkMetric convertToMetric(CKNumber metric) {
         return new CkMetric(
                 metric.getCbo(), metric.getDit(), metric.getNoc(), metric.getNof(),

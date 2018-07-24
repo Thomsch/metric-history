@@ -3,13 +3,19 @@ package ch.thomsch.metric;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.eclipse.jgit.util.Paths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,15 +27,19 @@ import ch.thomsch.filter.FileFilter;
  * @author Thomsch
  */
 public class SourceMeter implements Collector {
+    private static final Logger logger = LoggerFactory.getLogger(SourceMeter.class);
 
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     private final CommandLine commandLine;
 
     private final Map<String, Object> map = new HashMap<>();
+    private final String resultDir;
+    private final String projectName;
 
     public SourceMeter(String executable, String resultDir, String projectName, String projectDir) {
-        resultDir = FilenameUtils.normalize(resultDir);
+        this.projectName = projectName;
+        this.resultDir = FilenameUtils.normalize(resultDir);
 
         commandLine = new CommandLine(executable);
         enableOnlyMetrics();
@@ -67,6 +77,28 @@ public class SourceMeter implements Collector {
             throw new RuntimeException(e);
         }
         return MetricDump.EMPTY;
+    }
+
+    @Override
+    public void afterCollect(String revision) {
+        String baseDir = Paths.stripTrailingSeparator(resultDir) + File.separatorChar + projectName + File
+                .separatorChar + "java" + File.separatorChar + revision;
+
+        try {
+            deleteFile(baseDir, projectName + ".graph");
+            deleteFile(baseDir, projectName + ".xml");
+            FileUtils.deleteDirectory(new File(baseDir + File.separatorChar + "sourcemeter"));
+        } catch (IOException e) {
+            logger.error("An error occurred while cleaning up revision " + revision, e);
+        }
+    }
+
+    private void deleteFile(String baseDir, String file) throws IOException {
+        File currentFile = new File(baseDir + File.separatorChar + file);
+        boolean result = Files.deleteIfExists(currentFile.toPath());
+        if (!result) {
+            logger.error("File " + currentFile.getAbsolutePath() + " could not be deleted.");
+        }
     }
 
     public BufferedReader getOutput() {

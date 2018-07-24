@@ -1,11 +1,5 @@
 package ch.thomsch;
 
-import ch.thomsch.export.Reporter;
-import ch.thomsch.filter.FileFilter;
-import ch.thomsch.loader.CommitReader;
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.MetricDump;
-import ch.thomsch.versioncontrol.Repository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +9,13 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import ch.thomsch.export.Reporter;
+import ch.thomsch.filter.FileFilter;
+import ch.thomsch.loader.CommitReader;
+import ch.thomsch.metric.Collector;
+import ch.thomsch.metric.MetricDump;
+import ch.thomsch.versioncontrol.Repository;
 
 /**
  * Builds and run {@link Collector}.
@@ -100,6 +101,7 @@ public class MetricHistory {
         repository.checkout(revision);
         final MetricDump metrics = collector.collect(repository.getDirectory(), revision, filter);
         cache.put(revision, metrics);
+        collector.afterCollect(revision);
         return metrics;
     }
 }
