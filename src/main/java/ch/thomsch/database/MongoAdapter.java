@@ -23,10 +23,12 @@ import static com.mongodb.client.model.Filters.eq;
  */
 public class MongoAdapter implements Database{
 
-    private static final String METRICS_FIELD = "metrics";
-    private static final String DIFF_FIELD = "fluctuations";
-    private static final String REVISION_FIELD = "revision";
-    private static final String CLASS_NAME_FIELD = "name";
+    private static final String COLLECTION_REVISION = "revisions";
+    private static final String COLLECTION_CLASS = "classes";
+    private static final String FIELD_METRICS = "metrics";
+    private static final String FIELD_DIFF = "fluctuations";
+    private static final String FIELD_REVISION = "revision";
+    private static final String FIELD_CLASS_NAME = "name";
 
     private final MongoDatabase database;
 
@@ -37,29 +39,29 @@ public class MongoAdapter implements Database{
 
     @Override
     public void persist(HashMap<String, String> ancestry) {
-        MongoCollection<Document> revisions = database.getCollection("revisions");
+        MongoCollection<Document> revisions = database.getCollection(COLLECTION_REVISION);
         List<Document> documents = createDocuments(ancestry);
         revisions.insertMany(documents);
     }
 
     @Override
     public void setRaw(Raw raw) {
-        setsClassMeasurement(raw, METRICS_FIELD);
+        setsClassMeasurement(raw, FIELD_METRICS);
     }
 
     @Override
     public void setDiff(Raw data) {
-        setsClassMeasurement(data, DIFF_FIELD);
+        setsClassMeasurement(data, FIELD_DIFF);
     }
 
     private void setsClassMeasurement(Raw data, String measurementName) {
-        final MongoCollection<Document> collection = database.getCollection("classes");
+        final MongoCollection<Document> collection = database.getCollection(COLLECTION_CLASS);
 
         List<Document> pendingDocuments = new ArrayList<>();
 
         for (String revision : data.getVersions()) {
             for (String className : data.getClasses(revision)) {
-                final Bson documentFilter = Filters.and(eq(REVISION_FIELD, revision), eq(CLASS_NAME_FIELD, className));
+                final Bson documentFilter = Filters.and(eq(FIELD_REVISION, revision), eq(FIELD_CLASS_NAME, className));
 
                 Document document = collection.find(documentFilter).first();
                 if (document == null) {
@@ -77,8 +79,8 @@ public class MongoAdapter implements Database{
 
     private Document createDocument(String revision, String className, Metric metric, String measurementName) {
         Document result = new Document();
-        result.append(REVISION_FIELD, revision);
-        result.append(CLASS_NAME_FIELD, className);
+        result.append(FIELD_REVISION, revision);
+        result.append(FIELD_CLASS_NAME, className);
         result.append(measurementName, createDocument(metric));
         return result;
     }
@@ -93,7 +95,7 @@ public class MongoAdapter implements Database{
 
     private List<Document> createDocuments(HashMap<String, String> ancestry) {
         ArrayList<Document> documents = new ArrayList<>(ancestry.size());
-        ancestry.forEach((s, s2) -> documents.add(new Document(REVISION_FIELD, s).append("parent", s2)));
+        ancestry.forEach((s, s2) -> documents.add(new Document(FIELD_REVISION, s).append("parent", s2)));
         return documents;
     }
 }
