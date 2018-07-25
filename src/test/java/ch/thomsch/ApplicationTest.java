@@ -33,6 +33,17 @@ public class ApplicationTest {
     }
 
     @Test
+    public void processConvertCommand_ShouldThrowException_WhenNoParameterForDiffCommand() {
+        try {
+            application.doMain(new String[]{"convert"});
+        } catch (IllegalArgumentException e) {
+            assertTrue(out.toString().isEmpty());
+            return;
+        }
+        fail();
+    }
+
+    @Test
     public void processMongoCommand_ShouldThrowException_WhenNoParametersForMongoCommand() {
         try {
             application.doMain(new String[]{"mongo"});
@@ -58,6 +69,17 @@ public class ApplicationTest {
     public void processMongoCommand_ShouldThrowException_WhenNoParameterForDiffSubCommand() {
         try {
             application.doMain(new String[]{"mongo", "diff"});
+        } catch (IllegalArgumentException e) {
+            assertTrue(out.toString().isEmpty());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void processMongoCommand_ShouldThrowException_WhenNoParameterForAncestrySubCommand() {
+        try {
+            application.doMain(new String[]{"mongo", "ancestry"});
         } catch (IllegalArgumentException e) {
             assertTrue(out.toString().isEmpty());
             return;

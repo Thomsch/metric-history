@@ -134,29 +134,12 @@ public final class Application {
     }
 
     public void processConvertCommand(String[] args) {
-        atLeast(1, args);
+        atLeast(3, args);
 
-        File source = new File(args[1]);
-        if(source.isFile()) {
-            atLeast(2, args);
+        String inputFolder = normalizePath(args[1]);
+        String outputFile = normalizePath(args[2]);
 
-            String ancestryFile = normalizePath(args[1]);
-
-            HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
-            if(ancestry.isEmpty()) {
-                logger.warn("No ancestry was found...");
-                return;
-            }
-
-            Database database = new MongoAdapter();
-            database.persist(ancestry);
-        } else {
-            atLeast(3, args);
-            String inputFolder = normalizePath(args[1]);
-            String outputFile = normalizePath(args[2]);
-
-            SourceMeterConverter.convert(inputFolder, outputFile);
-        }
+        SourceMeterConverter.convert(inputFolder, outputFile);
     }
 
     public void processDiffCommand(String[] args) {
@@ -213,10 +196,26 @@ public final class Application {
                 database.persistDiff(data);
                 break;
 
+            case "ancestry":
+                atLeast(3, args);
+
+                String ancestryFile = normalizePath(args[2]);
+
+                HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
+                if (ancestry.isEmpty()) {
+                    logger.warn("No ancestry was found...");
+                    return;
+                }
+
+                database = new MongoAdapter();
+                database.persist(ancestry);
+                break;
+
             default:
                 System.out.println("Usages:");
                 System.out.println("     metric-history mongo raw <raw file>");
                 System.out.println("     metric-history mongo diff <diff file>");
+                System.out.println("     metric-history mongo ancestry <ancestry file>");
                 break;
         }
     }
