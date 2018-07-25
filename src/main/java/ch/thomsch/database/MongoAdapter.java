@@ -43,7 +43,7 @@ public class MongoAdapter implements Database{
      * @param uri a {@link MongoClientURI} or null to connect in local.
      *            <p>Example: mongodb+srv://username:password@host/test?retryWrites=true</p>
      */
-    public MongoAdapter(String uri) {
+    public MongoAdapter(String uri, String dbName) {
         MongoClient mongoClient;
 
         if (uri == null) {
@@ -55,7 +55,7 @@ public class MongoAdapter implements Database{
             mongoClient = new MongoClient(uri1);
         }
 
-        database = mongoClient.getDatabase("main");
+        database = mongoClient.getDatabase(dbName);
     }
 
     @Override

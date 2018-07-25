@@ -170,8 +170,13 @@ public final class Application {
         atLeast(2, args);
 
         String connectionString = null;
-        if (args.length == 4) {
-            connectionString = args[3];
+        if (args.length == 5) {
+            connectionString = args[4];
+        }
+
+        String databaseName = null;
+        if (args.length >= 4) {
+            databaseName = args[3];
         }
 
         Database database;
@@ -179,30 +184,30 @@ public final class Application {
         CSVParser parser;
         switch (args[1]) {
             case "raw":
-                atLeast(3, args);
+                atLeast(4, args);
 
                 parser = rawParser(args[2]);
                 if (parser == null) return;
 
                 data = Raw.load(parser);
 
-                database = new MongoAdapter(connectionString);
+                database = new MongoAdapter(connectionString, databaseName);
                 database.setRaw(data);
                 break;
 
             case "diff":
-                atLeast(3, args);
+                atLeast(4, args);
 
                 parser = rawParser(args[2]);
                 if (parser == null) return;
 
                 data = Raw.load(parser);
-                database = new MongoAdapter(connectionString);
+                database = new MongoAdapter(connectionString, databaseName);
                 database.setDiff(data);
                 break;
 
             case "ancestry":
-                atLeast(3, args);
+                atLeast(4, args);
 
                 String ancestryFile = normalizePath(args[2]);
 
@@ -212,17 +217,21 @@ public final class Application {
                     return;
                 }
 
-                database = new MongoAdapter(connectionString);
+                database = new MongoAdapter(connectionString, databaseName);
                 database.persist(ancestry);
                 break;
 
             default:
-                System.out.println("Usages:");
-                System.out.println("     metric-history mongo raw <raw file>");
-                System.out.println("     metric-history mongo diff <diff file>");
-                System.out.println("     metric-history mongo ancestry <ancestry file>");
+                printMongoUsage();
                 break;
         }
+    }
+
+    private void printMongoUsage() {
+        System.out.println("Usages:");
+        System.out.println("     metric-history mongo raw <raw file> <database name> [remote URI]");
+        System.out.println("     metric-history mongo diff <diff file> <database name> [remote URI]");
+        System.out.println("     metric-history mongo ancestry <ancestry file> <database name> [remote URI]");
     }
 
     private CSVParser rawParser(String rawFile) {

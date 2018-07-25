@@ -79,7 +79,7 @@ public class ApplicationTest {
     @Test
     public void processMongoCommand_ShouldThrowException_WhenNoParameterForAncestrySubCommand() {
         try {
-            application.doMain(new String[]{"mongo", "ancestry"});
+            application.doMain(new String[]{"mongo", "ancestry", "file"});
         } catch (IllegalArgumentException e) {
             assertTrue(out.toString().isEmpty());
             return;
