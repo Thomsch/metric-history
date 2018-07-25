@@ -60,6 +60,10 @@ public final class Application {
                 processDiffCommand(args);
                 break;
 
+            case "mongo":
+                processMongoCommand(args);
+                break;
+
             default:
                 System.out.println("Unknown command '" + args[0] + "'. Verify the spelling and make sure your command" +
                         " is in lowercase.");
@@ -127,7 +131,6 @@ public final class Application {
         } catch (IOException e) {
             logger.error("I/O error with file {}", outputFile, e);
         }
-
     }
 
     public void processConvertCommand(String[] args) {
@@ -154,8 +157,6 @@ public final class Application {
 
             SourceMeterConverter.convert(inputFolder, outputFile);
         }
-
-
     }
 
     public void processDiffCommand(String[] args) {
@@ -170,13 +171,8 @@ public final class Application {
             return;
         }
 
-        CSVParser parser;
-        try {
-            parser = new CSVParser(new FileReader(rawFile), getFormat().withSkipHeaderRecord());
-        } catch (IOException e) {
-            logger.error("I/O error while reading raw file: {}" + e.getMessage());
-            return;
-        }
+        CSVParser parser = rawParser(rawFile);
+        if (parser == null) return;
         Raw model = Raw.load(parser);
 
         Difference difference = new Difference();
@@ -185,6 +181,38 @@ public final class Application {
         } catch (IOException e) {
             logger.error("I/O error with file {}", outputFile, e);
         }
+    }
+
+    public void processMongoCommand(String[] args) {
+        atLeast(2, args);
+
+        switch (args[1]) {
+            case "raw":
+                atLeast(3, args);
+
+                final CSVParser parser = rawParser(args[2]);
+                if (parser == null) return;
+
+                final Raw data = Raw.load(parser);
+                Database database = new MongoAdapter();
+
+                database.persistRaw(data);
+                break;
+            default:
+                System.out.println("Usage: metric-history mongo raw <raw file>");
+                break;
+        }
+    }
+
+    private CSVParser rawParser(String rawFile) {
+        CSVParser parser;
+        try {
+            parser = new CSVParser(new FileReader(rawFile), getFormat().withSkipHeaderRecord());
+        } catch (IOException e) {
+            logger.error("I/O error while reading raw file: {}" + e.getMessage());
+            return null;
+        }
+        return parser;
     }
 
     private String normalizePath(String arg) {
