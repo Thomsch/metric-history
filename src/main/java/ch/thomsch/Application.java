@@ -182,7 +182,7 @@ public final class Application {
                 data = Raw.load(parser);
                 database = new MongoAdapter();
 
-                database.persistRaw(data);
+                database.setRaw(data);
                 break;
 
             case "diff":
@@ -193,7 +193,7 @@ public final class Application {
 
                 data = Raw.load(parser);
                 database = new MongoAdapter();
-                database.persistDiff(data);
+                database.setDiff(data);
                 break;
 
             case "ancestry":

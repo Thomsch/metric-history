@@ -11,16 +11,16 @@ public interface Database {
     void persist(HashMap<String, String> ancestry);
 
     /**
-     * Imports raw data into the database. Cleans all previous data.
+     * Imports raw data into the database. Replaces previous metrics.
      *
      * @param data the data to import
      */
-    void persistRaw(Raw data);
+    void setRaw(Raw data);
 
     /**
-     * Imports metric fluctuation data into the database. Cleans all previous data.
+     * Imports metric fluctuation data into the database. Replaces previous metric fluctuations.
      *
      * @param data the data to import.
      */
-    void persistDiff(Raw data);
+    void setDiff(Raw data);
 }
