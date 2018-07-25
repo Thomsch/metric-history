@@ -88,7 +88,10 @@ public class MongoAdapter implements Database{
                 }
             }
         }
-        collection.insertMany(pendingDocuments);
+
+        if (!pendingDocuments.isEmpty()) {
+            collection.insertMany(pendingDocuments);
+        }
     }
 
     private Document createDocument(String revision, String className, Metric metric, String measurementName) {
