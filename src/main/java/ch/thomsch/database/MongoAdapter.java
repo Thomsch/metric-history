@@ -8,6 +8,8 @@ import com.mongodb.client.model.Filters;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,8 @@ import static com.mongodb.client.model.Filters.eq;
  * @author Thomsch
  */
 public class MongoAdapter implements Database{
+
+    private static final Logger logger = LoggerFactory.getLogger(MongoAdapter.class);
 
     private static final String COLLECTION_REVISION = "revisions";
     private static final String COLLECTION_CLASS = "classes";
@@ -43,9 +47,12 @@ public class MongoAdapter implements Database{
         MongoClient mongoClient;
 
         if (uri == null) {
+            logger.info("Connecting to local database...");
             mongoClient = new MongoClient();
         } else {
-            mongoClient = new MongoClient(new MongoClientURI(uri));
+            logger.info("Connecting to remote database...");
+            final MongoClientURI uri1 = new MongoClientURI(uri);
+            mongoClient = new MongoClient(uri1);
         }
 
         database = mongoClient.getDatabase("main");
@@ -69,6 +76,7 @@ public class MongoAdapter implements Database{
     }
 
     private void setsClassMeasurement(Raw data, String measurementName) {
+        logger.info("Exporting class measurements...");
         final MongoCollection<Document> collection = database.getCollection(COLLECTION_CLASS);
 
         List<Document> pendingDocuments = new ArrayList<>();
@@ -92,6 +100,8 @@ public class MongoAdapter implements Database{
         if (!pendingDocuments.isEmpty()) {
             collection.insertMany(pendingDocuments);
         }
+
+        logger.info("Exportation finished");
     }
 
     private Document createDocument(String revision, String className, Metric metric, String measurementName) {
