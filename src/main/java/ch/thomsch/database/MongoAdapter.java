@@ -1,6 +1,7 @@
 package ch.thomsch.database;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -32,8 +33,21 @@ public class MongoAdapter implements Database{
 
     private final MongoDatabase database;
 
-    public MongoAdapter() {
-        MongoClient mongoClient = new MongoClient();
+    /**
+     * Create a new connection to the database
+     *
+     * @param uri a {@link MongoClientURI} or null to connect in local.
+     *            <p>Example: mongodb+srv://username:password@host/test?retryWrites=true</p>
+     */
+    public MongoAdapter(String uri) {
+        MongoClient mongoClient;
+
+        if (uri == null) {
+            mongoClient = new MongoClient();
+        } else {
+            mongoClient = new MongoClient(new MongoClientURI(uri));
+        }
+
         database = mongoClient.getDatabase("main");
     }
 

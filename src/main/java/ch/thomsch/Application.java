@@ -169,6 +169,11 @@ public final class Application {
     public void processMongoCommand(String[] args) {
         atLeast(2, args);
 
+        String connectionString = null;
+        if (args.length == 4) {
+            connectionString = args[3];
+        }
+
         Database database;
         Raw data;
         CSVParser parser;
@@ -180,8 +185,8 @@ public final class Application {
                 if (parser == null) return;
 
                 data = Raw.load(parser);
-                database = new MongoAdapter();
 
+                database = new MongoAdapter(connectionString);
                 database.setRaw(data);
                 break;
 
@@ -192,7 +197,7 @@ public final class Application {
                 if (parser == null) return;
 
                 data = Raw.load(parser);
-                database = new MongoAdapter();
+                database = new MongoAdapter(connectionString);
                 database.setDiff(data);
                 break;
 
@@ -207,7 +212,7 @@ public final class Application {
                     return;
                 }
 
-                database = new MongoAdapter();
+                database = new MongoAdapter(connectionString);
                 database.persist(ancestry);
                 break;
 
