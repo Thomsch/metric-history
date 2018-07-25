@@ -13,7 +13,14 @@ public interface Database {
     /**
      * Imports raw data into the database. Cleans all previous data.
      *
-     * @param raw the data to import
+     * @param data the data to import
      */
-    void persistRaw(Raw raw);
+    void persistRaw(Raw data);
+
+    /**
+     * Imports metric fluctuation data into the database. Cleans all previous data.
+     *
+     * @param data the data to import.
+     */
+    void persistDiff(Raw data);
 }

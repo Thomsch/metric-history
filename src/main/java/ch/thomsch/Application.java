@@ -186,20 +186,37 @@ public final class Application {
     public void processMongoCommand(String[] args) {
         atLeast(2, args);
 
+        Database database;
+        Raw data;
+        CSVParser parser;
         switch (args[1]) {
             case "raw":
                 atLeast(3, args);
 
-                final CSVParser parser = rawParser(args[2]);
+                parser = rawParser(args[2]);
                 if (parser == null) return;
 
-                final Raw data = Raw.load(parser);
-                Database database = new MongoAdapter();
+                data = Raw.load(parser);
+                database = new MongoAdapter();
 
                 database.persistRaw(data);
                 break;
+
+            case "diff":
+                atLeast(3, args);
+
+                parser = rawParser(args[2]);
+                if (parser == null) return;
+
+                data = Raw.load(parser);
+                database = new MongoAdapter();
+                database.persistDiff(data);
+                break;
+
             default:
-                System.out.println("Usage: metric-history mongo raw <raw file>");
+                System.out.println("Usages:");
+                System.out.println("     metric-history mongo raw <raw file>");
+                System.out.println("     metric-history mongo diff <diff file>");
                 break;
         }
     }

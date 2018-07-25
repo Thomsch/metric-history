@@ -55,6 +55,17 @@ public class ApplicationTest {
     }
 
     @Test
+    public void processMongoCommand_ShouldThrowException_WhenNoParameterForDiffSubCommand() {
+        try {
+            application.doMain(new String[]{"mongo", "diff"});
+        } catch (IllegalArgumentException e) {
+            assertTrue(out.toString().isEmpty());
+            return;
+        }
+        fail();
+    }
+
+    @Test
     public void processMongoCommand_ShouldPrintHelp_WhenUnknownSubCommand() {
         application.doMain(new String[]{"mongo", "unsupported sub-command"});
 

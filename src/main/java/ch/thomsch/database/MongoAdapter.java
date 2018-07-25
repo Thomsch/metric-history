@@ -35,23 +35,32 @@ public class MongoAdapter implements Database{
 
     @Override
     public void persistRaw(Raw raw) {
+        persistsClassMeasurements(raw, "metrics");
+    }
+
+    @Override
+    public void persistDiff(Raw data) {
+        persistsClassMeasurements(data, "metrics fluctuations");
+    }
+
+    private void persistsClassMeasurements(Raw data, String measurementName) {
         final MongoCollection<Document> collection = database.getCollection("classes");
 
         if (collection.countDocuments() > 0) {
             collection.drop();
         }
 
-        List<Document> documents = createDocuments(raw);
+        List<Document> documents = createDocuments(data, measurementName);
         collection.insertMany(documents);
     }
 
-    private List<Document> createDocuments(Raw raw) {
+    private List<Document> createDocuments(Raw raw, String measurementName) {
         ArrayList<Document> documents = new ArrayList<>();
         for (String revision : raw.getVersions()) {
             for (String className : raw.getClasses(revision)) {
                 Document document = new Document("name", className)
                         .append("revision", revision)
-                        .append("metrics", createDocument(raw.getMetric(revision, className)));
+                        .append(measurementName, createDocument(raw.getMetric(revision, className)));
 
                 documents.add(document);
             }
