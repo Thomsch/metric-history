@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 import ch.thomsch.converter.SourceMeterConverter;
 import ch.thomsch.database.Database;
-import ch.thomsch.database.MongoAdapter;
+import ch.thomsch.database.DatabaseBuilder;
 import ch.thomsch.export.Reporter;
 import ch.thomsch.loader.ZafeirisRefactoringMiner;
 import ch.thomsch.metric.Collector;
@@ -191,7 +191,7 @@ public final class Application {
 
                 data = Raw.load(parser);
 
-                database = new MongoAdapter(connectionString, databaseName);
+                database = DatabaseBuilder.build(connectionString, databaseName);
                 database.setRaw(data);
                 break;
 
@@ -202,7 +202,7 @@ public final class Application {
                 if (parser == null) return;
 
                 data = Raw.load(parser);
-                database = new MongoAdapter(connectionString, databaseName);
+                database = DatabaseBuilder.build(connectionString, databaseName);
                 database.setDiff(data);
                 break;
 
@@ -217,7 +217,7 @@ public final class Application {
                     return;
                 }
 
-                database = new MongoAdapter(connectionString, databaseName);
+                database = DatabaseBuilder.build(connectionString, databaseName);
                 database.persist(ancestry);
                 break;
 

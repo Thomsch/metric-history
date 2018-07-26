@@ -1,7 +1,5 @@
 package ch.thomsch.database;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -24,7 +22,7 @@ import ch.thomsch.model.Raw;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
- * @author Thomsch
+ * Represents a connection to a database instance of mongodb. Builds with {@link DatabaseBuilder}.
  */
 public class MongoAdapter implements Database{
 
@@ -41,24 +39,11 @@ public class MongoAdapter implements Database{
     private final MongoDatabase database;
 
     /**
-     * Create a new connection to the database
-     *
-     * @param uri a {@link MongoClientURI} or null to connect in local.
-     *            <p>Example: mongodb+srv://username:password@host/test?retryWrites=true</p>
+     * Create a new connection to the database.
+     * @param database the database
      */
-    public MongoAdapter(String uri, String dbName) {
-        MongoClient mongoClient;
-
-        if (uri == null) {
-            logger.info("Connecting to local database...");
-            mongoClient = new MongoClient();
-        } else {
-            logger.info("Connecting to remote database...");
-            final MongoClientURI uri1 = new MongoClientURI(uri);
-            mongoClient = new MongoClient(uri1);
-        }
-
-        database = mongoClient.getDatabase(dbName);
+    MongoAdapter(MongoDatabase database) {
+        this.database = database;
     }
 
     @Override
