@@ -20,6 +20,7 @@ Where `<command>` is one of:
 * convert
 * ancestry
 * diff
+* mongo
 
 You can see each command's parameters in [Application.java](https://github.com/Thomsch/metric-history/blob/master/src/main/java/ch/thomsch/Application.java).
 
