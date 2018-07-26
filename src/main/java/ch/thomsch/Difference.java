@@ -1,13 +1,20 @@
 package ch.thomsch;
 
-import ch.thomsch.metric.Metric;
-import ch.thomsch.model.Raw;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import ch.thomsch.metric.Metrics;
+import ch.thomsch.model.Raw;
 
 /**
  * @author Thomsch
@@ -38,11 +45,11 @@ public class Difference {
                 continue;
             }
             for (String className : classes) {
-                Metric revisionMetric = model.getMetric(revision, className);
-                Metric parentMetric = model.getMetric(parent, className);
+                Metrics revisionMetrics = model.getMetric(revision, className);
+                Metrics parentMetrics = model.getMetric(parent, className);
 
-                if (revisionMetric != null && parentMetric != null) {
-                    Metric result = computes(parentMetric, revisionMetric);
+                if (revisionMetrics != null && parentMetrics != null) {
+                    Metrics result = computes(parentMetrics, revisionMetrics);
                     try {
                         writer.printRecord(format(revision, className, result));
                     } catch (IOException e) {
@@ -53,7 +60,7 @@ public class Difference {
         }
     }
 
-    private Object[] format(String revision, String className, Metric metrics) {
+    private Object[] format(String revision, String className, Metrics metrics) {
         ArrayList<Object> result = new ArrayList<>();
         result.add(revision);
         result.add(className);
@@ -64,7 +71,7 @@ public class Difference {
 
     /**
      * Computes the difference between a and b (b - a) for each of their metrics.
-     * It uses the order of the metrics given by {@link Metric#get()}.
+     * It uses the order of the metrics given by {@link Metrics#get()}.
      *
      * @param a the left operand
      * @param b the right operand
@@ -72,7 +79,7 @@ public class Difference {
      * @throws IllegalArgumentException if the metrics are not comparable
      * @throws NullPointerException     if a or b are null
      */
-    public Metric computes(Metric a, Metric b) {
+    public Metrics computes(Metrics a, Metrics b) {
         Objects.requireNonNull(a);
         Objects.requireNonNull(b);
 
@@ -83,7 +90,7 @@ public class Difference {
             throw new IllegalArgumentException("These metrics are not from the same source!");
         }
 
-        Metric result = new Metric();
+        Metrics result = new Metrics();
         for (int i = 0; i < as.size(); i++) {
             result.add(bs.get(i) - as.get(i));
         }

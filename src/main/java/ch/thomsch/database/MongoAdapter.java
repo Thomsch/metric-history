@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.thomsch.metric.Metric;
+import ch.thomsch.metric.Metrics;
 import ch.thomsch.model.Raw;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -109,15 +109,15 @@ public class MongoAdapter implements Database{
         logger.info("-> Created missing index '{}'", INDEX_NAME);
     }
 
-    private Document createDocument(String revision, String className, Metric metric, String measurementName) {
+    private Document createDocument(String revision, String className, Metrics metrics, String measurementName) {
         Document result = new Document();
         result.append(FIELD_REVISION, revision);
         result.append(FIELD_CLASS_NAME, className);
-        result.append(measurementName, createDocument(metric));
+        result.append(measurementName, createDocument(metrics));
         return result;
     }
 
-    private Document createDocument(Metric metric) {
+    private Document createDocument(Metrics metric) {
         Map<String, Double> metrics = metric.convertToSourceMeterFormat();
 
         Document result = new Document();

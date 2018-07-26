@@ -21,18 +21,18 @@ public class MetricTest {
     @Test
     public void constructorShouldPreserveOrder() {
         Double[] expected = new Double[]{1.0, 2.0, 3.0, 4.0, 5.0};
-        Metric metric = new Metric(expected);
+        Metrics metrics = new Metrics(expected);
 
-        assertEquals(5, metric.get().size());
-        assertArrayEquals(expected, metric.get().toArray());
+        assertEquals(5, metrics.get().size());
+        assertArrayEquals(expected, metrics.get().toArray());
     }
 
     @Test
     public void constructorShouldAddAllArguments() {
         Collection<Double> expected = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0);
-        Metric metric = new Metric(1.0, 2.0, 3.0, 4.0, 5.0);
+        Metrics metrics = new Metrics(1.0, 2.0, 3.0, 4.0, 5.0);
 
-        List<Double> actual = metric.get();
+        List<Double> actual = metrics.get();
 
         assertEquals(expected.size(), actual.size());
         assertTrue(actual.containsAll(expected));
@@ -40,38 +40,38 @@ public class MetricTest {
 
     @Test
     public void addingAMetric() {
-        Metric metric = new Metric();
+        Metrics metrics = new Metrics();
 
-        metric.add(1.0);
+        metrics.add(1.0);
 
-        assertEquals(1, metric.get().size());
-        assertEquals(1.0, metric.get().get(0), 0);
+        assertEquals(1, metrics.get().size());
+        assertEquals(1.0, metrics.get().get(0), 0);
     }
 
     @Test
     public void addShouldPreserveOrder() {
-        Metric metric = new Metric(1.0);
+        Metrics metrics = new Metrics(1.0);
 
-        metric.add(2.0);
-        assertEquals(2, metric.get().size());
-        assertArrayEquals(new Double[]{1.0, 2.0}, metric.get().toArray());
+        metrics.add(2.0);
+        assertEquals(2, metrics.get().size());
+        assertArrayEquals(new Double[]{1.0, 2.0}, metrics.get().toArray());
 
-        metric.add(3.0);
-        metric.add(4.0);
-        assertEquals(4, metric.get().size());
-        assertArrayEquals(new Double[]{1.0, 2.0, 3.0, 4.0}, metric.get().toArray());
+        metrics.add(3.0);
+        metrics.add(4.0);
+        assertEquals(4, metrics.get().size());
+        assertArrayEquals(new Double[]{1.0, 2.0, 3.0, 4.0}, metrics.get().toArray());
     }
 
     @Test(expected = IllegalStateException.class)
     public void convertToSourceMeterFormat_ShouldThrowIllegalStateException_WhenTheMetricsAreFromOtherProvider() {
-        Metric metric = new Metric(1.0, 2.0, 3.0);
+        Metrics metrics = new Metrics(1.0, 2.0, 3.0);
 
-        metric.convertToSourceMeterFormat();
+        metrics.convertToSourceMeterFormat();
     }
 
     @Test
     public void convertToSourceMeterFormat_ShouldReturnLabelledMetrics() {
-        Metric metric = new Metric(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0,
+        Metrics metrics = new Metrics(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0,
                 16.0, 17.0, 18.0,
                 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0,
                 36.0, 37.0, 38.0,
@@ -82,7 +82,7 @@ public class MetricTest {
                 "tloc", "tna", "tng", "tnla", "tnlg", "tnlm", "tnlpa", "tnlpm", "tnls", "tnm", "tnos", "tnpa", "tnpm",
                 "tns");
 
-        final Map<String, Double> labelledMetrics = metric.convertToSourceMeterFormat();
+        final Map<String, Double> labelledMetrics = metrics.convertToSourceMeterFormat();
 
         assertContainsKeys(expectedKeys, new HashSet<>(labelledMetrics.keySet()));
         for (int i = 0; i < expectedKeys.size(); i++) {

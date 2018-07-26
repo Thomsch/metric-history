@@ -1,7 +1,5 @@
 package ch.thomsch;
 
-import ch.thomsch.metric.Metric;
-import ch.thomsch.model.Raw;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.junit.Test;
@@ -10,6 +8,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+
+import ch.thomsch.metric.Metrics;
+import ch.thomsch.model.Raw;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -22,13 +23,13 @@ public class DifferenceTest {
     public void computesShouldMakeDifference() {
         Difference difference = new Difference();
 
-        Metric a = new Metric(1.0);
-        Metric b = new Metric(1.0);
-        Metric c = new Metric(2.0);
+        Metrics a = new Metrics(1.0);
+        Metrics b = new Metrics(1.0);
+        Metrics c = new Metrics(2.0);
 
-        Metric adiffb = difference.computes(a, b);
-        Metric bdiffc = difference.computes(b, c);
-        Metric cdiffb = difference.computes(c, b);
+        Metrics adiffb = difference.computes(a, b);
+        Metrics bdiffc = difference.computes(b, c);
+        Metrics cdiffb = difference.computes(c, b);
 
         assertArrayEquals(new Double[]{0.0}, adiffb.get().toArray());
         assertArrayEquals(new Double[]{1.0}, bdiffc.get().toArray());
@@ -39,10 +40,10 @@ public class DifferenceTest {
     public void computesShouldRespectOrder() {
         Difference difference = new Difference();
 
-        Metric a = new Metric(1.0, 2.0, 3.0);
-        Metric b = new Metric(10.0, 20.0, 30.0);
+        Metrics a = new Metrics(1.0, 2.0, 3.0);
+        Metrics b = new Metrics(10.0, 20.0, 30.0);
 
-        final Metric actual = difference.computes(a, b);
+        final Metrics actual = difference.computes(a, b);
 
         final Double[] expected = {9.0, 18.0, 27.0};
         assertArrayEquals(expected, actual.get().toArray());
@@ -74,16 +75,16 @@ public class DifferenceTest {
     private Raw setupModel() {
         Raw raw = new Raw();
 
-        raw.addMetric("a", "X", new Metric(0.0, 1.0, 10.0));
-        raw.addMetric("a", "Y", new Metric(0.1, 0.5, 10.0));
-        raw.addMetric("a", "W", new Metric(Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL));
-        raw.addMetric("b", "X", new Metric(0.1, 0.5, 10.0));
-        raw.addMetric("b", "Y", new Metric(0.0, 0.5, 5.0));
-        raw.addMetric("b", "Z", new Metric(0.0, 0.5, 5.0));
-        raw.addMetric("c", "X", new Metric(Double.NaN, Double.NaN, Double.NaN));
-        raw.addMetric("d", "X", new Metric(6.0, 5.0, 1.0));
-        raw.addMetric("e", "X", new Metric(5.0, 10.0, -20.0));
-        raw.addMetric("f", "X", new Metric(5.0, 10.0, -20.0));
+        raw.addMetric("a", "X", new Metrics(0.0, 1.0, 10.0));
+        raw.addMetric("a", "Y", new Metrics(0.1, 0.5, 10.0));
+        raw.addMetric("a", "W", new Metrics(Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL));
+        raw.addMetric("b", "X", new Metrics(0.1, 0.5, 10.0));
+        raw.addMetric("b", "Y", new Metrics(0.0, 0.5, 5.0));
+        raw.addMetric("b", "Z", new Metrics(0.0, 0.5, 5.0));
+        raw.addMetric("c", "X", new Metrics(Double.NaN, Double.NaN, Double.NaN));
+        raw.addMetric("d", "X", new Metrics(6.0, 5.0, 1.0));
+        raw.addMetric("e", "X", new Metrics(5.0, 10.0, -20.0));
+        raw.addMetric("f", "X", new Metrics(5.0, 10.0, -20.0));
 
         return raw;
     }

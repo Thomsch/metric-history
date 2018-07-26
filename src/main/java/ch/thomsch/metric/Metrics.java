@@ -13,12 +13,12 @@ import ch.thomsch.model.Raw;
  *
  * @author Thomsch
  */
-public class Metric {
-    public static final int NUMBER_OF_SOURCEMETER_METRICS = 52;
+public class Metrics {
+    private static final int NUMBER_OF_SOURCEMETER_METRICS = 52;
 
     private final ArrayList<Double> metrics;
 
-    public Metric(Double... metrics) {
+    public Metrics(Double... metrics) {
         this.metrics = new ArrayList<>(Arrays.asList(metrics));
     }
 

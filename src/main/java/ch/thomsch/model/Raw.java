@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import ch.thomsch.metric.Metric;
+import ch.thomsch.metric.Metrics;
 
 /**
  * Represent metrics associated to a class for multiple revisions.
@@ -22,7 +22,7 @@ import ch.thomsch.metric.Metric;
 public class Raw {
     private static final Logger logger = LoggerFactory.getLogger(Raw.class);
 
-    private final Map<String, Map<String, Metric>> data;
+    private final Map<String, Map<String, Metrics>> data;
 
     public Raw() {
         data = new HashMap<>();
@@ -38,14 +38,14 @@ public class Raw {
         return raw;
     }
 
-    private static Metric convertMetrics(CSVRecord record) {
-        Metric metric = new Metric();
+    private static Metrics convertMetrics(CSVRecord record) {
+        Metrics metrics = new Metrics();
 
         for (int i = 2; i < record.size(); i++) {
-            metric.add(Double.parseDouble(record.get(i)));
+            metrics.add(Double.parseDouble(record.get(i)));
         }
 
-        return metric;
+        return metrics;
     }
 
     public static CSVFormat getFormat() {
@@ -64,14 +64,14 @@ public class Raw {
                 "TNPM", "TNS"};
     }
 
-    public void addMetric(String revision, String className, Metric metric) {
-        addClassData(revision, className, metric);
+    public void addMetric(String revision, String className, Metrics metrics) {
+        addClassData(revision, className, metrics);
     }
 
-    private void addClassData(String revision, String className, Metric metric) {
-        Map<String, Metric> dump = data.computeIfAbsent(revision, key -> new LinkedHashMap<>());
+    private void addClassData(String revision, String className, Metrics metrics) {
+        Map<String, Metrics> dump = data.computeIfAbsent(revision, key -> new LinkedHashMap<>());
 
-        dump.put(className, metric);
+        dump.put(className, metrics);
     }
 
     /**
@@ -81,8 +81,8 @@ public class Raw {
      * @param className the class
      * @return the metric or null.
      */
-    public Metric getMetric(String revision, String className) {
-        final Map<String, Metric> metricDump = data.get(revision);
+    public Metrics getMetric(String revision, String className) {
+        final Map<String, Metrics> metricDump = data.get(revision);
         if (metricDump == null) {
             logger.warn("No such revision {}", revision);
             return null;
@@ -102,7 +102,7 @@ public class Raw {
      * @param revision the revision
      */
     public Collection<String> getClasses(String revision) {
-        final Map<String, Metric> metricMap = data.get(revision);
+        final Map<String, Metrics> metricMap = data.get(revision);
 
         if (metricMap == null) {
             return null;
