@@ -5,6 +5,8 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -34,6 +36,7 @@ public class MongoAdapter implements Database{
     private static final String FIELD_DIFF = "fluctuations";
     private static final String FIELD_REVISION = "revision";
     private static final String FIELD_CLASS_NAME = "name";
+    private static final String INDEX_NAME = "compound_revision_name_1";
 
     private final MongoDatabase database;
 
@@ -76,8 +79,13 @@ public class MongoAdapter implements Database{
     }
 
     private void setsClassMeasurement(Raw data, String measurementName) {
-        logger.info("Exporting class measurements...");
+        logger.info("Loading collection...");
         final MongoCollection<Document> collection = database.getCollection(COLLECTION_CLASS);
+
+        logger.info("Verifying indexes...");
+        verifyIndexes(collection);
+
+        logger.info("Exporting class measurements...");
 
         List<Document> pendingDocuments = new ArrayList<>();
 
@@ -102,6 +110,18 @@ public class MongoAdapter implements Database{
         }
 
         logger.info("Exportation finished");
+    }
+
+    private void verifyIndexes(MongoCollection<Document> collection) {
+        for (Document document : collection.listIndexes()) {
+            if (document.containsKey("name") && document.getString("name").equalsIgnoreCase(INDEX_NAME)) {
+                return;
+            }
+        }
+
+        collection.createIndex(Indexes.ascending(FIELD_REVISION, FIELD_CLASS_NAME),
+                new IndexOptions().name(INDEX_NAME));
+        logger.info("-> Created missing index '{}'", INDEX_NAME);
     }
 
     private Document createDocument(String revision, String className, Metric metric, String measurementName) {
