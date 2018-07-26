@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 import ch.thomsch.converter.SourceMeterConverter;
 import ch.thomsch.database.Database;
-import ch.thomsch.database.MongoAdapter;
+import ch.thomsch.database.DatabaseBuilder;
 import ch.thomsch.export.Reporter;
 import ch.thomsch.loader.ZafeirisRefactoringMiner;
 import ch.thomsch.metric.Collector;
@@ -58,6 +58,10 @@ public final class Application {
 
             case "diff":
                 processDiffCommand(args);
+                break;
+
+            case "mongo":
+                processMongoCommand(args);
                 break;
 
             default:
@@ -127,35 +131,15 @@ public final class Application {
         } catch (IOException e) {
             logger.error("I/O error with file {}", outputFile, e);
         }
-
     }
 
     public void processConvertCommand(String[] args) {
-        atLeast(1, args);
+        atLeast(3, args);
 
-        File source = new File(args[1]);
-        if(source.isFile()) {
-            atLeast(2, args);
+        String inputFolder = normalizePath(args[1]);
+        String outputFile = normalizePath(args[2]);
 
-            String ancestryFile = normalizePath(args[1]);
-
-            HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
-            if(ancestry.isEmpty()) {
-                logger.warn("No ancestry was found...");
-                return;
-            }
-
-            Database database = new MongoAdapter();
-            database.persist(ancestry);
-        } else {
-            atLeast(3, args);
-            String inputFolder = normalizePath(args[1]);
-            String outputFile = normalizePath(args[2]);
-
-            SourceMeterConverter.convert(inputFolder, outputFile);
-        }
-
-
+        SourceMeterConverter.convert(inputFolder, outputFile);
     }
 
     public void processDiffCommand(String[] args) {
@@ -170,13 +154,8 @@ public final class Application {
             return;
         }
 
-        CSVParser parser;
-        try {
-            parser = new CSVParser(new FileReader(rawFile), getFormat().withSkipHeaderRecord());
-        } catch (IOException e) {
-            logger.error("I/O error while reading raw file: {}" + e.getMessage());
-            return;
-        }
+        CSVParser parser = rawParser(rawFile);
+        if (parser == null) return;
         Raw model = Raw.load(parser);
 
         Difference difference = new Difference();
@@ -185,6 +164,85 @@ public final class Application {
         } catch (IOException e) {
             logger.error("I/O error with file {}", outputFile, e);
         }
+    }
+
+    public void processMongoCommand(String[] args) {
+        atLeast(2, args);
+
+        String connectionString = null;
+        if (args.length == 5) {
+            connectionString = args[4];
+        }
+
+        String databaseName = null;
+        if (args.length >= 4) {
+            databaseName = args[3];
+        }
+
+        Database database;
+        Raw data;
+        CSVParser parser;
+        switch (args[1]) {
+            case "raw":
+                atLeast(4, args);
+
+                parser = rawParser(args[2]);
+                if (parser == null) return;
+
+                data = Raw.load(parser);
+
+                database = DatabaseBuilder.build(connectionString, databaseName);
+                database.setRaw(data);
+                break;
+
+            case "diff":
+                atLeast(4, args);
+
+                parser = rawParser(args[2]);
+                if (parser == null) return;
+
+                data = Raw.load(parser);
+                database = DatabaseBuilder.build(connectionString, databaseName);
+                database.setDiff(data);
+                break;
+
+            case "ancestry":
+                atLeast(4, args);
+
+                String ancestryFile = normalizePath(args[2]);
+
+                HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
+                if (ancestry.isEmpty()) {
+                    logger.warn("No ancestry was found...");
+                    return;
+                }
+
+                database = DatabaseBuilder.build(connectionString, databaseName);
+                database.persist(ancestry);
+                break;
+
+            default:
+                printMongoUsage();
+                break;
+        }
+    }
+
+    private void printMongoUsage() {
+        System.out.println("Usages:");
+        System.out.println("     metric-history mongo raw <raw file> <database name> [remote URI]");
+        System.out.println("     metric-history mongo diff <diff file> <database name> [remote URI]");
+        System.out.println("     metric-history mongo ancestry <ancestry file> <database name> [remote URI]");
+    }
+
+    private CSVParser rawParser(String rawFile) {
+        CSVParser parser;
+        try {
+            parser = new CSVParser(new FileReader(rawFile), getFormat().withSkipHeaderRecord());
+        } catch (IOException e) {
+            logger.error("I/O error while reading raw file: {}" + e.getMessage());
+            return null;
+        }
+        return parser;
     }
 
     private String normalizePath(String arg) {

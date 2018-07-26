@@ -12,4 +12,5 @@
 
     <logger name="org.eclipse.jgit.util" level="warn"/>
     <logger name="com.github.mauricioaniche.ck" level="warn"/>
+    <logger name="org.mongodb.driver" level="warn"/>
 </configuration>
