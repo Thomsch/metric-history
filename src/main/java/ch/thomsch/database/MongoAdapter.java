@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.thomsch.metric.Metrics;
-import ch.thomsch.model.Raw;
+import ch.thomsch.model.ClassStore;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -54,16 +54,16 @@ public class MongoAdapter implements Database{
     }
 
     @Override
-    public void setRaw(Raw raw) {
-        setsClassMeasurement(raw, FIELD_METRICS);
+    public void setRaw(ClassStore classStore) {
+        setsClassMeasurement(classStore, FIELD_METRICS);
     }
 
     @Override
-    public void setDiff(Raw data) {
+    public void setDiff(ClassStore data) {
         setsClassMeasurement(data, FIELD_DIFF);
     }
 
-    private void setsClassMeasurement(Raw data, String measurementName) {
+    private void setsClassMeasurement(ClassStore data, String measurementName) {
         logger.info("Loading collection...");
         final MongoCollection<Document> collection = database.getCollection(COLLECTION_CLASS);
 

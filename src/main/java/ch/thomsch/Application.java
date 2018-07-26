@@ -19,10 +19,10 @@ import ch.thomsch.export.Reporter;
 import ch.thomsch.loader.ZafeirisRefactoringMiner;
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.model.Raw;
+import ch.thomsch.model.ClassStore;
 import ch.thomsch.versioncontrol.GitRepository;
 
-import static ch.thomsch.model.Raw.getFormat;
+import static ch.thomsch.model.ClassStore.getFormat;
 
 /**
  * Entry point for the application.
@@ -156,7 +156,7 @@ public final class Application {
 
         CSVParser parser = rawParser(rawFile);
         if (parser == null) return;
-        Raw model = Raw.load(parser);
+        ClassStore model = ClassStore.load(parser);
 
         Difference difference = new Difference();
         try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), getFormat())) {
@@ -180,7 +180,7 @@ public final class Application {
         }
 
         Database database;
-        Raw data;
+        ClassStore data;
         CSVParser parser;
         switch (args[1]) {
             case "raw":
@@ -189,7 +189,7 @@ public final class Application {
                 parser = rawParser(args[2]);
                 if (parser == null) return;
 
-                data = Raw.load(parser);
+                data = ClassStore.load(parser);
 
                 database = DatabaseBuilder.build(connectionString, databaseName);
                 database.setRaw(data);
@@ -201,7 +201,7 @@ public final class Application {
                 parser = rawParser(args[2]);
                 if (parser == null) return;
 
-                data = Raw.load(parser);
+                data = ClassStore.load(parser);
                 database = DatabaseBuilder.build(connectionString, databaseName);
                 database.setDiff(data);
                 break;

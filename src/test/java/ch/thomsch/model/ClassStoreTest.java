@@ -14,14 +14,14 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Thomsch
  */
-public class RawTest {
+public class ClassStoreTest {
 
-    private Raw instance;
+    private ClassStore instance;
     private Metrics dummy;
 
     @Before
     public void setUp() throws Exception {
-        instance = new Raw();
+        instance = new ClassStore();
         dummy = new Metrics();
     }
 

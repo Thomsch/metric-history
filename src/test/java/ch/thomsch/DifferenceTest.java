@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import ch.thomsch.metric.Metrics;
-import ch.thomsch.model.Raw;
+import ch.thomsch.model.ClassStore;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -54,7 +54,7 @@ public class DifferenceTest {
         Difference difference = new Difference();
         HashMap<String, String> ancestry = setupAncestry();
 
-        Raw model = setupModel();
+        ClassStore model = setupModel();
 
         final StringWriter out = new StringWriter();
         CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT);
@@ -72,21 +72,21 @@ public class DifferenceTest {
         };
     }
 
-    private Raw setupModel() {
-        Raw raw = new Raw();
+    private ClassStore setupModel() {
+        ClassStore classStore = new ClassStore();
 
-        raw.addMetric("a", "X", new Metrics(0.0, 1.0, 10.0));
-        raw.addMetric("a", "Y", new Metrics(0.1, 0.5, 10.0));
-        raw.addMetric("a", "W", new Metrics(Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL));
-        raw.addMetric("b", "X", new Metrics(0.1, 0.5, 10.0));
-        raw.addMetric("b", "Y", new Metrics(0.0, 0.5, 5.0));
-        raw.addMetric("b", "Z", new Metrics(0.0, 0.5, 5.0));
-        raw.addMetric("c", "X", new Metrics(Double.NaN, Double.NaN, Double.NaN));
-        raw.addMetric("d", "X", new Metrics(6.0, 5.0, 1.0));
-        raw.addMetric("e", "X", new Metrics(5.0, 10.0, -20.0));
-        raw.addMetric("f", "X", new Metrics(5.0, 10.0, -20.0));
+        classStore.addMetric("a", "X", new Metrics(0.0, 1.0, 10.0));
+        classStore.addMetric("a", "Y", new Metrics(0.1, 0.5, 10.0));
+        classStore.addMetric("a", "W", new Metrics(Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL));
+        classStore.addMetric("b", "X", new Metrics(0.1, 0.5, 10.0));
+        classStore.addMetric("b", "Y", new Metrics(0.0, 0.5, 5.0));
+        classStore.addMetric("b", "Z", new Metrics(0.0, 0.5, 5.0));
+        classStore.addMetric("c", "X", new Metrics(Double.NaN, Double.NaN, Double.NaN));
+        classStore.addMetric("d", "X", new Metrics(6.0, 5.0, 1.0));
+        classStore.addMetric("e", "X", new Metrics(5.0, 10.0, -20.0));
+        classStore.addMetric("f", "X", new Metrics(5.0, 10.0, -20.0));
 
-        return raw;
+        return classStore;
     }
 
     private HashMap<String, String> setupAncestry() {

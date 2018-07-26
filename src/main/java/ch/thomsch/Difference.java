@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import ch.thomsch.metric.Metrics;
-import ch.thomsch.model.Raw;
+import ch.thomsch.model.ClassStore;
 
 /**
  * @author Thomsch
@@ -31,7 +31,7 @@ public class Difference {
      * @param model    contains the metrics in relation with their revisions and classes
      * @param writer   where the results are written
      */
-    public void export(HashMap<String, String> ancestry, Raw model, CSVPrinter writer) {
+    public void export(HashMap<String, String> ancestry, ClassStore model, CSVPrinter writer) {
         LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
         for (Map.Entry<String, String> revisionParent : entries) {
 

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.thomsch.model.Raw;
+import ch.thomsch.model.ClassStore;
 
 /**
  * Represents a collection of metrics unlabelled. One must use their order to identify them.
@@ -40,7 +40,7 @@ public class Metrics {
             throw new IllegalStateException("These metrics are not compatible with the SourceMeter's format");
         }
 
-        final String[] labels = Arrays.copyOfRange(Raw.getHeader(), 2, Raw.getHeader().length);
+        final String[] labels = Arrays.copyOfRange(ClassStore.getHeader(), 2, ClassStore.getHeader().length);
         HashMap<String, Double> map = new HashMap<>();
         for (int i = 0; i < labels.length; i++) {
             String label = labels[i].toLowerCase();
