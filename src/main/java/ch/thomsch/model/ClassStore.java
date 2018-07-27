@@ -1,8 +1,5 @@
 package ch.thomsch.model;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +33,9 @@ public class ClassStore {
      * @param metrics   the metrics associated for the class at the given version.
      */
     public void addMetric(String revision, String className, Metrics metrics) {
-        addClassData(revision, className, metrics);
+        Map<String, Metrics> dump = data.computeIfAbsent(revision, key -> new LinkedHashMap<>());
+
+        dump.put(className, metrics);
     }
 
     /**
@@ -74,47 +73,5 @@ public class ClassStore {
         }
 
         return metricMap.keySet();
-    }
-
-    private void addClassData(String revision, String className, Metrics metrics) {
-        Map<String, Metrics> dump = data.computeIfAbsent(revision, key -> new LinkedHashMap<>());
-
-        dump.put(className, metrics);
-    }
-
-    public static ClassStore load(CSVParser parser) {
-        ClassStore classStore = new ClassStore();
-
-        for (CSVRecord record : parser) {
-            classStore.addClassData(record.get(0), record.get(1), convertMetrics(record));
-        }
-
-        return classStore;
-    }
-
-    private static Metrics convertMetrics(CSVRecord record) {
-        Metrics metrics = new Metrics();
-
-        for (int i = 2; i < record.size(); i++) {
-            metrics.add(Double.parseDouble(record.get(i)));
-        }
-
-        return metrics;
-    }
-
-    public static CSVFormat getFormat() {
-        return CSVFormat.RFC4180
-                .withHeader(getHeader())
-                .withDelimiter(';');
-    }
-
-    public static String[] getHeader() {
-        return new String[]{"revision", "class",
-                "LCOM5", "NL", "NLE", "WMC", "CBO", "CBOI", "NII", "NOI", "RFC", "AD",
-                "CD", "CLOC", "DLOC", "PDA", "PUA", "TCD", "TCLOC", "DIT", "NOA", "NOC",
-                "NOD", "NOP", "LLOC", "LOC", "NA", "NG", "NLA", "NLG", "NLM", "NLPA",
-                "NLPM", "NLS", "NM", "NOS", "NPA", "NPM", "NS", "TLLOC", "TLOC", "TNA",
-                "TNG", "TNLA", "TNLG", "TNLM", "TNLPA", "TNLPM", "TNLS", "TNM", "TNOS", "TNPA",
-                "TNPM", "TNS"};
     }
 }

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.thomsch.csv.Stores;
 import ch.thomsch.metric.Metrics;
 import ch.thomsch.model.ClassStore;
 
@@ -118,7 +119,7 @@ public class MongoAdapter implements Database{
     }
 
     private Document createDocument(Metrics metric) {
-        Map<String, Double> metrics = metric.convertToSourceMeterFormat();
+        Map<String, Double> metrics = Stores.convertToSourceMeterFormat(metric);
 
         Document result = new Document();
         metrics.forEach(result::append);

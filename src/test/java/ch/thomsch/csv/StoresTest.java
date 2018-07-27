@@ -1,72 +1,24 @@
-package ch.thomsch.metric;
+package ch.thomsch.csv;
 
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertArrayEquals;
+import ch.thomsch.metric.Metrics;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Thomsch
- */
-public class MetricTest {
-
-    @Test
-    public void constructorShouldPreserveOrder() {
-        Double[] expected = new Double[]{1.0, 2.0, 3.0, 4.0, 5.0};
-        Metrics metrics = new Metrics(expected);
-
-        assertEquals(5, metrics.get().size());
-        assertArrayEquals(expected, metrics.get().toArray());
-    }
-
-    @Test
-    public void constructorShouldAddAllArguments() {
-        Collection<Double> expected = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0);
-        Metrics metrics = new Metrics(1.0, 2.0, 3.0, 4.0, 5.0);
-
-        List<Double> actual = metrics.get();
-
-        assertEquals(expected.size(), actual.size());
-        assertTrue(actual.containsAll(expected));
-    }
-
-    @Test
-    public void addingAMetric() {
-        Metrics metrics = new Metrics();
-
-        metrics.add(1.0);
-
-        assertEquals(1, metrics.get().size());
-        assertEquals(1.0, metrics.get().get(0), 0);
-    }
-
-    @Test
-    public void addShouldPreserveOrder() {
-        Metrics metrics = new Metrics(1.0);
-
-        metrics.add(2.0);
-        assertEquals(2, metrics.get().size());
-        assertArrayEquals(new Double[]{1.0, 2.0}, metrics.get().toArray());
-
-        metrics.add(3.0);
-        metrics.add(4.0);
-        assertEquals(4, metrics.get().size());
-        assertArrayEquals(new Double[]{1.0, 2.0, 3.0, 4.0}, metrics.get().toArray());
-    }
-
+public class StoresTest {
     @Test(expected = IllegalStateException.class)
     public void convertToSourceMeterFormat_ShouldThrowIllegalStateException_WhenTheMetricsAreFromOtherProvider() {
         Metrics metrics = new Metrics(1.0, 2.0, 3.0);
 
-        metrics.convertToSourceMeterFormat();
+        Stores.convertToSourceMeterFormat(metrics);
     }
 
     @Test
@@ -82,7 +34,9 @@ public class MetricTest {
                 "tloc", "tna", "tng", "tnla", "tnlg", "tnlm", "tnlpa", "tnlpm", "tnls", "tnm", "tnos", "tnpa", "tnpm",
                 "tns");
 
-        final Map<String, Double> labelledMetrics = metrics.convertToSourceMeterFormat();
+        final Map<String, Double> labelledMetrics = Stores.convertToSourceMeterFormat(metrics);
+        ;
+
 
         assertContainsKeys(expectedKeys, new HashSet<>(labelledMetrics.keySet()));
         for (int i = 0; i < expectedKeys.size(); i++) {
@@ -100,5 +54,4 @@ public class MetricTest {
 
         assertTrue(labelledMetrics.isEmpty());
     }
-
 }

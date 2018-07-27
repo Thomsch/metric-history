@@ -2,50 +2,46 @@ package ch.thomsch.metric;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import ch.thomsch.model.ClassStore;
 
 /**
- * Represents a collection of metrics unlabelled. One must use their order to identify them.
- *
- * @author Thomsch
+ * Represents an ordered collection of unlabelled metrics.
  */
 public class Metrics {
-    private static final int NUMBER_OF_SOURCEMETER_METRICS = 52;
-
     private final ArrayList<Double> metrics;
 
     public Metrics(Double... metrics) {
         this.metrics = new ArrayList<>(Arrays.asList(metrics));
     }
 
-    public List<Double> get() {
-        return metrics;
-    }
-
-    public void add(double v) {
-        metrics.add(v);
+    /**
+     * Add a metric in the next position.
+     *
+     * @param metric the metric to add
+     */
+    public void add(double metric) {
+        metrics.add(metric);
     }
 
     /**
-     * Transforms the list of metric into a labelled list.
-     *
-     * @return the map
+     * Return the number of metrics in this instance.
      */
-    public Map<String, Double> convertToSourceMeterFormat() {
-        if (metrics.size() != NUMBER_OF_SOURCEMETER_METRICS) {
-            throw new IllegalStateException("These metrics are not compatible with the SourceMeter's format");
-        }
+    public int size() {
+        return metrics.size();
+    }
 
-        final String[] labels = Arrays.copyOfRange(ClassStore.getHeader(), 2, ClassStore.getHeader().length);
-        HashMap<String, Double> map = new HashMap<>();
-        for (int i = 0; i < labels.length; i++) {
-            String label = labels[i].toLowerCase();
-            map.put(label, metrics.get(i));
-        }
-        return map;
+    /**
+     * Return the metric at the position.
+     *
+     * @param i the position
+     * @return the metric
+     * @throws IndexOutOfBoundsException if there is no metric at the position
+     */
+    public Double get(int i) {
+        return metrics.get(i);
+    }
+
+    public List<Double> get() {
+        return metrics;
     }
 }

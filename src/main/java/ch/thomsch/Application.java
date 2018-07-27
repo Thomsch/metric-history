@@ -7,12 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
 import ch.thomsch.converter.SourceMeterConverter;
+import ch.thomsch.csv.Stores;
 import ch.thomsch.database.Database;
 import ch.thomsch.database.DatabaseBuilder;
 import ch.thomsch.export.Reporter;
@@ -21,8 +21,6 @@ import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.SourceMeter;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.versioncontrol.GitRepository;
-
-import static ch.thomsch.model.ClassStore.getFormat;
 
 /**
  * Entry point for the application.
@@ -43,6 +41,14 @@ public final class Application {
             return;
         }
 
+        try {
+            processSubCommand(args);
+        } catch (IOException e) {
+            logger.error("An I/O error occurred while reading or writing a file", e);
+        }
+    }
+
+    private void processSubCommand(String[] args) throws IOException {
         switch (args[0]) {
             case "collect":
                 processCollectCommand(args);
@@ -142,7 +148,7 @@ public final class Application {
         SourceMeterConverter.convert(inputFolder, outputFile);
     }
 
-    public void processDiffCommand(String[] args) {
+    public void processDiffCommand(String[] args) throws IOException {
         atLeast(4, args);
 
         String ancestryFile = normalizePath(args[1]);
@@ -154,19 +160,17 @@ public final class Application {
             return;
         }
 
-        CSVParser parser = rawParser(rawFile);
-        if (parser == null) return;
-        ClassStore model = ClassStore.load(parser);
+        ClassStore model = Stores.loadClasses(rawFile);
 
         Difference difference = new Difference();
-        try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), getFormat())) {
+        try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), Stores.getFormat())) {
             difference.export(ancestry, model, writer);
         } catch (IOException e) {
             logger.error("I/O error with file {}", outputFile, e);
         }
     }
 
-    public void processMongoCommand(String[] args) {
+    public void processMongoCommand(String[] args) throws IOException {
         atLeast(2, args);
 
         String connectionString = null;
@@ -186,10 +190,7 @@ public final class Application {
             case "raw":
                 atLeast(4, args);
 
-                parser = rawParser(args[2]);
-                if (parser == null) return;
-
-                data = ClassStore.load(parser);
+                data = Stores.loadClasses(args[2]);
 
                 database = DatabaseBuilder.build(connectionString, databaseName);
                 database.setRaw(data);
@@ -198,10 +199,7 @@ public final class Application {
             case "diff":
                 atLeast(4, args);
 
-                parser = rawParser(args[2]);
-                if (parser == null) return;
-
-                data = ClassStore.load(parser);
+                data = Stores.loadClasses(args[2]);
                 database = DatabaseBuilder.build(connectionString, databaseName);
                 database.setDiff(data);
                 break;
@@ -232,17 +230,6 @@ public final class Application {
         System.out.println("     metric-history mongo raw <raw file> <database name> [remote URI]");
         System.out.println("     metric-history mongo diff <diff file> <database name> [remote URI]");
         System.out.println("     metric-history mongo ancestry <ancestry file> <database name> [remote URI]");
-    }
-
-    private CSVParser rawParser(String rawFile) {
-        CSVParser parser;
-        try {
-            parser = new CSVParser(new FileReader(rawFile), getFormat().withSkipHeaderRecord());
-        } catch (IOException e) {
-            logger.error("I/O error while reading raw file: {}" + e.getMessage());
-            return null;
-        }
-        return parser;
     }
 
     private String normalizePath(String arg) {
