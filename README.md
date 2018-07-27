@@ -22,8 +22,7 @@ Where `<command>` is one of:
 * diff
 * mongo
 
-You can see each command's parameters in [Application.java](https://github.com/Thomsch/metric-history/blob/master/src/main/java/ch/thomsch/Application.java).
-
+Use `./metric-history <command>` to learn more about a command !
 
 ## Building
 This projects uses Gradle to get all the dependencies. Depending on your IDE, you can compile/run/test through Gradle or your IDE. It's up to you.
