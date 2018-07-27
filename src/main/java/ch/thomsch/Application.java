@@ -211,54 +211,39 @@ public final class Application {
     }
 
     public void processMongoCommand(String[] args) throws IOException {
-        if (args.length == 1) {
+        if (args.length <= 2) {
             printMongoUsage();
             return;
         }
-        atLeast(2, args);
+        atLeast(4, args);
 
-        String connectionString = null;
-        if (args.length == 5) {
-            connectionString = args[4];
-        }
+        final String action = args[1];
+        final String file = normalizePath(args[2]);
+        String databaseName = args[3];
 
-        String databaseName = null;
-        if (args.length >= 4) {
-            databaseName = args[3];
-        }
+        String connectionString = args.length == 5 ? args[4] : null;
 
-        Database database;
-        ClassStore data;
-        switch (args[1]) {
+        Database database = DatabaseBuilder.build(connectionString, databaseName);
+
+        switch (action) {
             case "raw":
-                atLeast(4, args);
-
-                data = Stores.loadClasses(args[2]);
-
-                database = DatabaseBuilder.build(connectionString, databaseName);
-                database.setRaw(data);
+                ClassStore raw = Stores.loadClasses(file);
+                database.setRaw(raw);
                 break;
 
             case "diff":
-                atLeast(4, args);
-
-                data = Stores.loadClasses(args[2]);
-                database = DatabaseBuilder.build(connectionString, databaseName);
-                database.setDiff(data);
+                ClassStore diff = Stores.loadClasses(file);
+                database.setDiff(diff);
                 break;
 
             case "ancestry":
-                atLeast(4, args);
+                HashMap<String, String> ancestry = Ancestry.load(file);
 
-                String ancestryFile = normalizePath(args[2]);
-
-                HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
                 if (ancestry.isEmpty()) {
                     logger.warn("No ancestry was found...");
                     return;
                 }
 
-                database = DatabaseBuilder.build(connectionString, databaseName);
                 database.persist(ancestry);
                 break;
 

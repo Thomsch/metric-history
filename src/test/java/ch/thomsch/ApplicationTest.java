@@ -113,9 +113,16 @@ public class ApplicationTest {
     }
 
     @Test
-    public void processMongoCommand_ShouldThrowException_WhenNotEnoughParameters() {
+    public void processMongoCommand_ShouldPrintHelp_WhenNoRawParameters() {
+        application.doMain(new String[]{"mongo", "raw"});
+
+        assertFalse(out.toString().isEmpty());
+    }
+
+    @Test
+    public void processMongoCommand_ShouldThrowException_WhenNotEnoughRawParameters() {
         try {
-            application.doMain(new String[]{"mongo", "raw"});
+            application.doMain(new String[]{"mongo", "raw", "A"});
         } catch (IllegalArgumentException e) {
             assertTrue(out.toString().isEmpty());
             return;
@@ -124,20 +131,34 @@ public class ApplicationTest {
     }
 
     @Test
-    public void processMongoCommand_ShouldThrowException_WhenNoParameterForDiffSubCommand() {
+    public void processMongoCommand_ShouldPrintHelp_WhenNoDiffParameters() {
+        application.doMain(new String[]{"mongo", "diff"});
+
+        assertFalse(out.toString().isEmpty());
+    }
+
+    @Test
+    public void processMongoCommand_ShouldThrowException_WhenNotEnoughDiffParameters() {
         try {
-            application.doMain(new String[]{"mongo", "diff"});
+            application.doMain(new String[]{"mongo", "diff", "A"});
         } catch (IllegalArgumentException e) {
             assertTrue(out.toString().isEmpty());
             return;
         }
         fail();
+    }
+
+    @Test
+    public void processMongoCommand_ShouldPrintHelp_WhenNoAncestryParameters() {
+        application.doMain(new String[]{"mongo", "ancestry"});
+
+        assertFalse(out.toString().isEmpty());
     }
 
     @Test
     public void processMongoCommand_ShouldThrowException_WhenNoParameterForAncestrySubCommand() {
         try {
-            application.doMain(new String[]{"mongo", "ancestry", "file"});
+            application.doMain(new String[]{"mongo", "ancestry", "A"});
         } catch (IllegalArgumentException e) {
             assertTrue(out.toString().isEmpty());
             return;
