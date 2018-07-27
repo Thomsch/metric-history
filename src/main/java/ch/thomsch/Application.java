@@ -1,6 +1,5 @@
 package ch.thomsch;
 
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ public final class Application {
      */
     void doMain(String[] args) {
         if (args.length == 0) {
-            help();
+            printHelp();
             return;
         }
 
@@ -74,7 +73,7 @@ public final class Application {
                 System.out.println("Unknown command '" + args[0] + "'. Verify the spelling and make sure your command" +
                         " is in lowercase.");
                 System.out.println();
-                help();
+                printHelp();
                 break;
         }
     }
@@ -82,13 +81,29 @@ public final class Application {
     /**
      * Prints usage instructions in the terminal
      */
-    private void help() {
+    private void printHelp() {
         System.out.println("Usage: metric-history <command> <parameters>...");
-        System.out.println("Refer to the source code of file " + getClass().getSimpleName() + ".java at " +
-                "https://github.com/Thomsch/metric-history for the full list of commands");
+        System.out.println("or metric-history <command> to learn more.");
+        System.out.println();
+        System.out.println("Where <command> = collect|ancestry|convert|diff|mongo");
     }
 
     public void processCollectCommand(String[] args) {
+        if (args.length == 1) {
+            System.out.println("Usage: metric-history collect <revision file> <executable path> <project path> " +
+                    "<repository path> <output dir> <project name>");
+            System.out.println();
+            System.out.println("<revision file>     is the path to the file containing the revision to analyse.");
+            System.out.println("<executable path>   is the path to the executable to collect metrics.");
+            System.out.println("<project path>      is the path to the folder containing the source code or the " +
+                    "project.");
+            System.out.println("<repository path>   is the path to the folder containing .git folder. It can also be " +
+                    "set to 'same' if it's the same as <project path>.");
+            System.out.println("<output dir>        is the path to the folder where the results should be extracted.");
+            System.out.println("<project name>      is the name of the project.");
+            return;
+        }
+
         atLeast(7, args);
 
         String revisionFile = normalizePath(args[1]);
@@ -118,6 +133,15 @@ public final class Application {
     }
 
     public void processAncestryCommand(String[] args) {
+        if (args.length == 1) {
+            System.out.println("Usage: metric-history ancestry <revision file> <repository path> <output file> ");
+            System.out.println();
+            System.out.println("<revision file>     is the path to the file containing the revision to analyse.");
+            System.out.println("<repository path>   is the path to the folder containing .git folder");
+            System.out.println("<output file>       is the path of the file where the results will be stored.");
+            return;
+        }
+
         atLeast(4, args);
 
         String revisionFile = normalizePath(args[1]);
@@ -140,6 +164,14 @@ public final class Application {
     }
 
     public void processConvertCommand(String[] args) {
+        if (args.length == 1) {
+            System.out.println("Usage: metric-history convert <folder> <output file> ");
+            System.out.println();
+            System.out.println("<folder>            is the path of the root folder containing the results from the " +
+                    "third party tool");
+            System.out.println("<output file>       is the path of the file where the results will be stored.");
+            return;
+        }
         atLeast(3, args);
 
         String inputFolder = normalizePath(args[1]);
@@ -149,6 +181,14 @@ public final class Application {
     }
 
     public void processDiffCommand(String[] args) throws IOException {
+        if (args.length == 1) {
+            System.out.println("Usage: metric-history diff <ancestry file> <raw file> <output file>");
+            System.out.println();
+            System.out.println("<ancestry file>     is the path of the file produced by 'ancestry' command");
+            System.out.println("<raw file>          is the path of the file produced by 'convert' command");
+            System.out.println("<output file>       is the path of the file where the results will be stored.");
+            return;
+        }
         atLeast(4, args);
 
         String ancestryFile = normalizePath(args[1]);
@@ -171,6 +211,10 @@ public final class Application {
     }
 
     public void processMongoCommand(String[] args) throws IOException {
+        if (args.length == 1) {
+            printMongoUsage();
+            return;
+        }
         atLeast(2, args);
 
         String connectionString = null;
@@ -185,7 +229,6 @@ public final class Application {
 
         Database database;
         ClassStore data;
-        CSVParser parser;
         switch (args[1]) {
             case "raw":
                 atLeast(4, args);

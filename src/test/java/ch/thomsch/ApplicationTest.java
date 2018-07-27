@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -33,9 +34,16 @@ public class ApplicationTest {
     }
 
     @Test
-    public void processConvertCommand_ShouldThrowException_WhenNoParameterForDiffCommand() {
+    public void processCollectCommand_ShouldPrintHelp_WhenNoParameters() {
+        application.doMain(new String[]{"collect"});
+
+        assertFalse(out.toString().isEmpty());
+    }
+
+    @Test
+    public void processCollectCommand_ShouldThrowException_WhenNotEnoughParameters() {
         try {
-            application.doMain(new String[]{"convert"});
+            application.doMain(new String[]{"collect", "A", "B"});
         } catch (IllegalArgumentException e) {
             assertTrue(out.toString().isEmpty());
             return;
@@ -44,9 +52,16 @@ public class ApplicationTest {
     }
 
     @Test
-    public void processMongoCommand_ShouldThrowException_WhenNoParametersForMongoCommand() {
+    public void processAncestryCommand_ShouldPrintHelp_WhenWhenNoParameters() {
+        application.doMain(new String[]{"ancestry"});
+
+        assertFalse(out.toString().isEmpty());
+    }
+
+    @Test
+    public void processAncestryCommand_ShouldThrowException_WhenNotEnoughParameters() {
         try {
-            application.doMain(new String[]{"mongo"});
+            application.doMain(new String[]{"ancestry", "A", "B"});
         } catch (IllegalArgumentException e) {
             assertTrue(out.toString().isEmpty());
             return;
@@ -55,7 +70,50 @@ public class ApplicationTest {
     }
 
     @Test
-    public void processMongoCommand_ShouldThrowException_WhenNoParameterForRawSubCommand() {
+    public void processConvertCommand_ShouldPrintHelp_WhenWhenNoParameters() {
+        application.doMain(new String[]{"convert"});
+
+        assertFalse(out.toString().isEmpty());
+    }
+
+    @Test
+    public void processConvertCommand_ShouldThrowException_WhenNotEnoughParameters() {
+        try {
+            application.doMain(new String[]{"convert", "A"});
+        } catch (IllegalArgumentException e) {
+            assertTrue(out.toString().isEmpty());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void processDiffCommand_ShouldPrintHelp_WhenWhenNoParameters() throws IOException {
+        application.doMain(new String[]{"diff"});
+
+        assertFalse(out.toString().isEmpty());
+    }
+
+    @Test
+    public void processDiffCommand_ShouldThrowException_WhenNotEnoughParameters() {
+        try {
+            application.doMain(new String[]{"diff", "A", "B"});
+        } catch (IllegalArgumentException e) {
+            assertTrue(out.toString().isEmpty());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void processMongoCommand_ShouldPrintHelp_WhenNoParameters() throws IOException {
+        application.doMain(new String[]{"mongo"});
+
+        assertFalse(out.toString().isEmpty());
+    }
+
+    @Test
+    public void processMongoCommand_ShouldThrowException_WhenNotEnoughParameters() {
         try {
             application.doMain(new String[]{"mongo", "raw"});
         } catch (IllegalArgumentException e) {
