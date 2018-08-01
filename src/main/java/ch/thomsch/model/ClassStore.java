@@ -33,9 +33,9 @@ public class ClassStore {
      * @param metrics   the metrics associated for the class at the given version.
      */
     public void addMetric(String revision, String className, Metrics metrics) {
-        Map<String, Metrics> dump = data.computeIfAbsent(revision, key -> new LinkedHashMap<>());
+        final Map<String, Metrics> dump = data.computeIfAbsent(revision, key -> new LinkedHashMap<>());
 
-        dump.put(className, metrics);
+        dump.put(className.intern(), metrics);
     }
 
     /**
@@ -73,5 +73,25 @@ public class ClassStore {
         }
 
         return metricMap.keySet();
+    }
+
+    /**
+     * Returns the number of class versions stored in this object.
+     */
+    public long instances() {
+        long instances = 0;
+
+        for (String version : getVersions()) {
+            instances += getClasses(version).size();
+        }
+
+        return instances;
+    }
+
+    /**
+     * Returns the number of revisions stored.
+     */
+    public long revisions() {
+        return getVersions().size();
     }
 }

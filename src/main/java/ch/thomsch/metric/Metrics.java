@@ -10,6 +10,8 @@ import java.util.List;
 public class Metrics {
     private final ArrayList<Double> metrics;
 
+    private final static Double ZERO = 0.0;
+
     public Metrics(Double... metrics) {
         this.metrics = new ArrayList<>(Arrays.asList(metrics));
     }
@@ -20,7 +22,11 @@ public class Metrics {
      * @param metric the metric to add
      */
     public void add(double metric) {
-        metrics.add(metric);
+        if(metric == ZERO) {
+            metrics.add(ZERO);
+        } else {
+            metrics.add(metric);
+        }
     }
 
     /**
