@@ -35,7 +35,7 @@ public class ClassStore {
     public void addMetric(String revision, String className, Metrics metrics) {
         final Map<String, Metrics> dump = data.computeIfAbsent(revision, key -> new LinkedHashMap<>());
 
-        dump.put(className, metrics);
+        dump.put(className.intern(), metrics);
     }
 
     /**
