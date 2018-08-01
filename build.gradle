@@ -23,6 +23,7 @@ dependencies {
 
 applicationName = rootProject.name
 mainClassName = "ch.thomsch.Application"
+applicationDefaultJvmArgs = ["-Xmx5G"]
 
 test {
     testLogging {
