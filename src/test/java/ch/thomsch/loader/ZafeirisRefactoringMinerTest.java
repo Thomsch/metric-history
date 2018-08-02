@@ -1,5 +1,6 @@
 package ch.thomsch.loader;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -14,13 +15,16 @@ import static org.junit.Assert.assertThat;
  */
 public class ZafeirisRefactoringMinerTest {
 
-    private static final String TEST_FILE = "src/test/resources/zafeiris-refactorings.csv";
+    private ZafeirisRefactoringMiner reader;
+
+    @Before
+    public void setUp() {
+        reader = new ZafeirisRefactoringMiner();
+    }
 
     @Test
     public void testLoad() {
-        final ZafeirisRefactoringMiner reader = new ZafeirisRefactoringMiner();
-
-        final List<String> revisions = reader.make(TEST_FILE);
+        final List<String> revisions = reader.make("src/test/resources/zafeiris-refactorings.csv");
 
         final List<String> expected = Arrays.asList(
                 "d4bce13a443cf12da40a77c16c1e591f4f985b47",
@@ -29,5 +33,10 @@ public class ZafeirisRefactoringMinerTest {
 
         assertEquals(3, revisions.size());
         assertThat(revisions, is(expected));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void make_ShouldThrowException_WhenFileContainsQuoteImmediatelyAfterSeparator() {
+        reader.make("src/test/resources/invalid-refactorings.csv");
     }
 }
