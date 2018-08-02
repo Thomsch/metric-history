@@ -13,13 +13,13 @@ import static org.junit.Assert.assertThat;
 /**
  * @author Thomsch
  */
-public class ZafeirisRefactoringMinerTest {
+public class RefactoringMinerTest {
 
-    private ZafeirisRefactoringMiner reader;
+    private RefactoringMiner reader;
 
     @Before
     public void setUp() {
-        reader = new ZafeirisRefactoringMiner();
+        reader = new RefactoringMiner();
     }
 
     @Test

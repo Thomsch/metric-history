@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * @author Thomsch
  */
-public class ZafeirisRefactoringMiner extends VanillaRefactoringMiner {
+public class RefactoringMiner extends VanillaRefactoringMiner {
 
-    private static final Logger logger = LoggerFactory.getLogger(ZafeirisRefactoringMiner.class);
+    private static final Logger logger = LoggerFactory.getLogger(RefactoringMiner.class);
 
     @Override
     public List<String> make(String filePath) {

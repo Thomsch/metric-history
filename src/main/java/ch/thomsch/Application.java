@@ -15,7 +15,7 @@ import ch.thomsch.csv.Stores;
 import ch.thomsch.database.Database;
 import ch.thomsch.database.DatabaseBuilder;
 import ch.thomsch.export.Reporter;
-import ch.thomsch.loader.ZafeirisRefactoringMiner;
+import ch.thomsch.loader.RefactoringMiner;
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.SourceMeter;
 import ch.thomsch.model.ClassStore;
@@ -122,7 +122,7 @@ public final class Application {
 
         try {
             Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
-            MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new ZafeirisRefactoringMiner());
+            MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new RefactoringMiner());
 
             metricHistory.collect(revisionFile, GitRepository.get(repository), "./output.csv");
         } catch (IOException e) {
@@ -150,7 +150,7 @@ public final class Application {
 
         Ancestry ancestry;
         try {
-            ancestry = new Ancestry(GitRepository.get(repository), new ZafeirisRefactoringMiner());
+            ancestry = new Ancestry(GitRepository.get(repository), new RefactoringMiner());
         } catch (IOException e) {
             throw new IllegalArgumentException("This repository doesn't have version control: " + repository);
         }
