@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Thomsch/metric-history.svg?branch=master)](https://travis-ci.com/Thomsch/metric-history)
+[![Build Status](https://travis-ci.com/Thomsch/metric-history.svg?token=kEZ3SvFYosMEzwAWUkVz&branch=master)](https://travis-ci.com/Thomsch/metric-history)
 # Metric history
 Metric History extracts metrics for multiple revisions of a project. Other functionalities include data transformation (computation of the changes in metrics) and creation of ancestry table.
 The tool calls directly the command line version of SourceMeter. It can be easily modified to connect any third party command line tool.
