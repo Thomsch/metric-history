@@ -37,8 +37,10 @@ public class Ancestry implements CommitReader {
 
     @Override
     public List<String> make(String revisionFile) {
+        logger.info("Loading {}", revisionFile);
         final List<String> revisions = commitReader.make(revisionFile);
 
+        logger.info("Retrieving parents...");
         for (String revision : revisions) {
             try {
                 parents.put(revision, repository.getParent(revision));
@@ -56,6 +58,7 @@ public class Ancestry implements CommitReader {
      * @param printer the printer
      */
     public void export(CSVPrinter printer) {
+        logger.info("Saving results...");
         parents.forEach((revision, parent) -> {
             try {
                 printer.printRecord(revision, parent);

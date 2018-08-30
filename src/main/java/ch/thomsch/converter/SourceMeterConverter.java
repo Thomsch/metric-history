@@ -42,7 +42,10 @@ public class SourceMeterConverter {
                 return;
             }
 
+            logger.info("Scanning {}", inputPath);
             String[] revisionFolders = converter.getRevisionFolders(inputPath);
+
+            logger.info("Saving contents to {}", outputPath);
             converter.convertProject(revisionFolders, printer);
 
         } catch (IOException e) {
