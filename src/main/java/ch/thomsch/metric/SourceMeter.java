@@ -70,7 +70,6 @@ public class SourceMeter implements Collector {
         map.put("currentDate", "-currentDate=" + revision);
 
         try {
-//            executor.setStreamHandler(new PumpStreamHandler(outputStream));
             executor.execute(commandLine, resultHandler);
             resultHandler.waitFor();
         } catch (IOException | InterruptedException e) {
