@@ -19,6 +19,11 @@ import ch.thomsch.versioncontrol.Repository;
 
 /**
  * Builds and run {@link Collector}.
+ * Example of utilisation:
+ * <code>
+ * new MetricHistory(new CKMetrics(), new Reporter(), new RefactoringMiner())
+ * .collect(REVISION_FILE, GitRepository.get(REPOSITORY), RESULTS_FILE);
+ * </code>
  */
 public class MetricHistory {
     private static final Logger logger = LoggerFactory.getLogger(MetricHistory.class);
