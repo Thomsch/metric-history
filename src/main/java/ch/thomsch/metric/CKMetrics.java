@@ -18,8 +18,6 @@ import ch.thomsch.filter.FileFilter;
  */
 public class CKMetrics implements Collector {
 
-    private static final Logger logger = LoggerFactory.getLogger(CKMetrics.class);
-
     @Override
     public MetricDump collect(String folder, String revision, FileFilter filter) {
         final CKReport report = new CK().calculate(folder);
@@ -37,9 +35,9 @@ public class CKMetrics implements Collector {
         // Nothing needs to be done
     }
 
-    private CkMetric convertToMetric(CKNumber metric) {
-        return new CkMetric(
-                metric.getCbo(), metric.getDit(), metric.getNoc(), metric.getNof(),
-                metric.getNom(), metric.getRfc(), metric.getWmc(), metric.getLoc());
+    private Metrics convertToMetric(CKNumber metric) {
+        return new Metrics(
+                (double) metric.getCbo(), (double) metric.getDit(), (double) metric.getNoc(), (double) metric.getNof(),
+                (double) metric.getNom(), (double) metric.getRfc(), (double) metric.getWmc(), (double) metric.getLoc());
     }
 }

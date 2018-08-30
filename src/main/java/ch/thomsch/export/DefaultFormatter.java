@@ -3,8 +3,8 @@ package ch.thomsch.export;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.thomsch.metric.CkMetric;
 import ch.thomsch.metric.MetricDump;
+import ch.thomsch.metric.Metrics;
 
 /**
  * Default CSV formatter
@@ -29,21 +29,22 @@ public class DefaultFormatter {
     }
 
     private static Object[] formatClass(String className, String revision, String parentRevision, MetricDump dump) {
-        final CkMetric metric = dump.getMetric(className);
+        final Metrics metric = dump.getMetric(className);
 
         final Object[] result = new Object[11];
 
         result[0] = revision;
         result[1] = parentRevision;
         result[2] = className;
-        result[3] = metric.getLineOfCode();
-        result[4] = metric.getCouplingBetweenObjects();
-        result[5] = metric.getDepthInheritanceTree();
-        result[6] = metric.getNumberOfChildren();
-        result[7] = metric.getNumberOfFields();
-        result[8] = metric.getNumberOfMethods();
-        result[9] = metric.getResponseForAClass();
-        result[10] = metric.getWeightMethodClass();
+        result[3] = CkMetricSuite.getLineOfCode(metric);
+        result[3] = CkMetricSuite.getLineOfCode(metric);
+        result[4] = CkMetricSuite.getCouplingBetweenObjects(metric);
+        result[5] = CkMetricSuite.getDepthInheritanceTree(metric);
+        result[6] = CkMetricSuite.getNumberOfChildren(metric);
+        result[7] = CkMetricSuite.getNumberOfFields(metric);
+        result[8] = CkMetricSuite.getNumberOfMethods(metric);
+        result[9] = CkMetricSuite.getResponseForAClass(metric);
+        result[10] = CkMetricSuite.getWeightMethodClass(metric);
 
         return result;
     }
