@@ -1,4 +1,4 @@
-package ch.thomsch.database;
+package ch.thomsch.storage;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -16,14 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.thomsch.csv.Stores;
 import ch.thomsch.metric.Metrics;
-import ch.thomsch.model.ClassStore;
 
 import static com.mongodb.client.model.Filters.eq;
 
 /**
- * Represents a connection to a database instance of mongodb. Builds with {@link DatabaseBuilder}.
+ * Represents a connection to a storage instance of mongodb. Builds with {@link DatabaseBuilder}.
  */
 public class MongoAdapter implements Database{
 
@@ -40,8 +38,8 @@ public class MongoAdapter implements Database{
     private final MongoDatabase database;
 
     /**
-     * Create a new connection to the database.
-     * @param database the database
+     * Create a new connection to the storage.
+     * @param database the storage
      */
     MongoAdapter(MongoDatabase database) {
         this.database = database;
@@ -49,8 +47,8 @@ public class MongoAdapter implements Database{
 
     @Override
     public void persist(HashMap<String, String> ancestry) {
-        MongoCollection<Document> revisions = database.getCollection(COLLECTION_REVISION);
-        List<Document> documents = createDocuments(ancestry);
+        final MongoCollection<Document> revisions = database.getCollection(COLLECTION_REVISION);
+        final List<Document> documents = createDocuments(ancestry);
         revisions.insertMany(documents);
     }
 
@@ -73,7 +71,7 @@ public class MongoAdapter implements Database{
 
         logger.info("Exporting class measurements...");
 
-        List<Document> pendingDocuments = new ArrayList<>();
+        final List<Document> pendingDocuments = new ArrayList<>();
 
         for (String revision : data.getVersions()) {
             for (String className : data.getClasses(revision)) {
@@ -111,7 +109,7 @@ public class MongoAdapter implements Database{
     }
 
     private Document createDocument(String revision, String className, Metrics metrics, String measurementName) {
-        Document result = new Document();
+        final Document result = new Document();
         result.append(FIELD_REVISION, revision);
         result.append(FIELD_CLASS_NAME, className);
         result.append(measurementName, createDocument(metrics));
@@ -119,15 +117,15 @@ public class MongoAdapter implements Database{
     }
 
     private Document createDocument(Metrics metric) {
-        Map<String, Double> metrics = Stores.convertToSourceMeterFormat(metric);
+        final Map<String, Double> metrics = Stores.convertToSourceMeterFormat(metric);
 
-        Document result = new Document();
+        final Document result = new Document();
         metrics.forEach(result::append);
         return result;
     }
 
     private List<Document> createDocuments(HashMap<String, String> ancestry) {
-        ArrayList<Document> documents = new ArrayList<>(ancestry.size());
+        final ArrayList<Document> documents = new ArrayList<>(ancestry.size());
         ancestry.forEach((s, s2) -> documents.add(new Document(FIELD_REVISION, s).append("parent", s2)));
         return documents;
     }

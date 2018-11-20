@@ -1,4 +1,4 @@
-package ch.thomsch.filter;
+package ch.thomsch.metric;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,6 @@ public class FileFilter {
     private static final FileFilter NO_FILTER = new FileFilter();
 
     private final List<String> exclusionPatterns = new ArrayList<>();
-
-    FileFilter() {
-    }
 
     /**
      * Creates a filter that only let through production code. (no tests or examples)
@@ -36,7 +33,7 @@ public class FileFilter {
         return NO_FILTER;
     }
 
-    void addExclusionPattern(String pattern) {
+    public void addExclusionPattern(String pattern) {
         exclusionPatterns.add(pattern);
     }
 

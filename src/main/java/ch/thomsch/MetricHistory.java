@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.thomsch.export.Reporter;
-import ch.thomsch.filter.FileFilter;
+import ch.thomsch.metric.FileFilter;
 import ch.thomsch.loader.CommitReader;
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.MetricDump;
@@ -35,7 +35,7 @@ public class MetricHistory {
     private final Map<String, MetricDump> cache;
     private final FileFilter filter;
 
-    public MetricHistory(Collector collector, Reporter reporter, CommitReader reader) {
+    MetricHistory(Collector collector, Reporter reporter, CommitReader reader) {
         this.collector = collector;
         this.reporter = reporter;
         this.commitReader = reader;
@@ -50,7 +50,7 @@ public class MetricHistory {
      * @param repository The repository containing the revisions.
      * @param outputFile Path to the file where the results will be printed
      */
-    public void collect(String revisionFile, Repository repository, String outputFile) {
+    void collect(String revisionFile, Repository repository, String outputFile) {
         final long beginning = System.nanoTime();
 
         final List<String> revisions = commitReader.make(revisionFile);

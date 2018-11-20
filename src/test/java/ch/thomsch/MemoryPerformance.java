@@ -3,8 +3,8 @@ package ch.thomsch;
 import java.io.File;
 import java.io.IOException;
 
-import ch.thomsch.csv.Stores;
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.storage.Stores;
+import ch.thomsch.storage.ClassStore;
 
 public final class MemoryPerformance {
 

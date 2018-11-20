@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import ch.thomsch.metric.Metrics;
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.storage.ClassStore;
 
 /**
  * @author Thomsch

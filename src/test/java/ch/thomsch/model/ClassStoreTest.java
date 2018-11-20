@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import ch.thomsch.metric.Metrics;
+import ch.thomsch.storage.ClassStore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,7 +21,7 @@ public class ClassStoreTest {
     private Metrics dummy;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         instance = new ClassStore();
         dummy = new Metrics();
     }

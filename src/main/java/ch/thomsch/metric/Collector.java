@@ -1,7 +1,5 @@
 package ch.thomsch.metric;
 
-import ch.thomsch.filter.FileFilter;
-
 /**
  * @author Thomsch
  */

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import ch.thomsch.metric.Metrics;
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.storage.ClassStore;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -21,15 +21,15 @@ public class DifferenceTest {
 
     @Test
     public void computesShouldMakeDifference() {
-        Difference difference = new Difference();
+        final Difference difference = new Difference();
 
-        Metrics a = new Metrics(1.0);
-        Metrics b = new Metrics(1.0);
-        Metrics c = new Metrics(2.0);
+        final Metrics a = new Metrics(1.0);
+        final Metrics b = new Metrics(1.0);
+        final Metrics c = new Metrics(2.0);
 
-        Metrics adiffb = difference.computes(a, b);
-        Metrics bdiffc = difference.computes(b, c);
-        Metrics cdiffb = difference.computes(c, b);
+        final Metrics adiffb = difference.computes(a, b);
+        final Metrics bdiffc = difference.computes(b, c);
+        final Metrics cdiffb = difference.computes(c, b);
 
         assertArrayEquals(new Double[]{0.0}, adiffb.get().toArray());
         assertArrayEquals(new Double[]{1.0}, bdiffc.get().toArray());
@@ -38,10 +38,10 @@ public class DifferenceTest {
 
     @Test
     public void computesShouldRespectOrder() {
-        Difference difference = new Difference();
+        final Difference difference = new Difference();
 
-        Metrics a = new Metrics(1.0, 2.0, 3.0);
-        Metrics b = new Metrics(10.0, 20.0, 30.0);
+        final Metrics a = new Metrics(1.0, 2.0, 3.0);
+        final Metrics b = new Metrics(10.0, 20.0, 30.0);
 
         final Metrics actual = difference.computes(a, b);
 
@@ -51,13 +51,13 @@ public class DifferenceTest {
 
     @Test
     public void export() throws IOException {
-        Difference difference = new Difference();
-        HashMap<String, String> ancestry = setupAncestry();
+        final Difference difference = new Difference();
+        final HashMap<String, String> ancestry = setupAncestry();
 
-        ClassStore model = setupModel();
+        final ClassStore model = setupModel();
 
         final StringWriter out = new StringWriter();
-        CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT);
+        final CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT);
         difference.export(ancestry, model, writer);
 
         assertArrayEquals(expectedExport(), out.toString().split("\\r?\\n"));
@@ -73,7 +73,7 @@ public class DifferenceTest {
     }
 
     private ClassStore setupModel() {
-        ClassStore classStore = new ClassStore();
+        final ClassStore classStore = new ClassStore();
 
         classStore.addMetric("a", "X", new Metrics(0.0, 1.0, 10.0));
         classStore.addMetric("a", "Y", new Metrics(0.1, 0.5, 10.0));
@@ -90,7 +90,7 @@ public class DifferenceTest {
     }
 
     private HashMap<String, String> setupAncestry() {
-        HashMap<String, String> ancestry = new LinkedHashMap<>();
+        final HashMap<String, String> ancestry = new LinkedHashMap<>();
         ancestry.put("a", "b");
         ancestry.put("d", "e");
         ancestry.put("e", "f");

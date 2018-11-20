@@ -1,4 +1,4 @@
-package ch.thomsch.csv;
+package ch.thomsch.storage;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.thomsch.metric.Metrics;
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.storage.ClassStore;
 
 /**
  * Loads CSV files
@@ -38,12 +38,12 @@ public final class Stores {
      * @throws IOException           if there is a reading problem with the disk.
      */
     public static ClassStore loadClasses(String filePath) throws IOException {
-        CSVParser parser = new CSVParser(new FileReader(filePath), getFormat().withSkipHeaderRecord());
+        final CSVParser parser = new CSVParser(new FileReader(filePath), getFormat().withSkipHeaderRecord());
         return load(parser);
     }
 
     private static ClassStore load(CSVParser parser) {
-        ClassStore classStore = new ClassStore();
+        final ClassStore classStore = new ClassStore();
 
         for (CSVRecord record : parser) {
             classStore.addMetric(record.get(0), record.get(1), convertMetrics(record));
@@ -53,7 +53,7 @@ public final class Stores {
     }
 
     private static Metrics convertMetrics(CSVRecord record) {
-        Metrics metrics = new Metrics();
+        final Metrics metrics = new Metrics();
 
         for (int i = 2; i < record.size(); i++) {
             metrics.add(Double.parseDouble(record.get(i)));
@@ -79,9 +79,9 @@ public final class Stores {
         }
 
         final String[] labels = Arrays.copyOfRange(HEADER_SOURCEMETER, 2, HEADER_SOURCEMETER.length);
-        HashMap<String, Double> map = new HashMap<>();
+        final HashMap<String, Double> map = new HashMap<>();
         for (int i = 0; i < labels.length; i++) {
-            String label = labels[i].toLowerCase();
+            final String label = labels[i].toLowerCase();
             map.put(label, metrics.get(i));
         }
         return map;

@@ -19,8 +19,6 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.thomsch.filter.FileFilter;
-
 /**
  * Collects metrics from the command line.
  *
@@ -80,7 +78,7 @@ public class SourceMeter implements Collector {
 
     @Override
     public void afterCollect(String revision) {
-        String baseDir = Paths.stripTrailingSeparator(resultDir) + File.separatorChar + projectName + File
+        final String baseDir = Paths.stripTrailingSeparator(resultDir) + File.separatorChar + projectName + File
                 .separatorChar + "java" + File.separatorChar + revision;
 
         try {
@@ -93,8 +91,8 @@ public class SourceMeter implements Collector {
     }
 
     private void deleteFile(String baseDir, String file) throws IOException {
-        File currentFile = new File(baseDir + File.separatorChar + file);
-        boolean result = Files.deleteIfExists(currentFile.toPath());
+        final File currentFile = new File(baseDir + File.separatorChar + file);
+        final boolean result = Files.deleteIfExists(currentFile.toPath());
         if (!result) {
             logger.error("File " + currentFile.getAbsolutePath() + " could not be deleted.");
         }

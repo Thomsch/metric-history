@@ -1,29 +1,8 @@
 package ch.thomsch;
 
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
-import ch.thomsch.converter.SourceMeterConverter;
-import ch.thomsch.csv.Stores;
-import ch.thomsch.database.Database;
-import ch.thomsch.database.DatabaseBuilder;
-import ch.thomsch.export.Reporter;
-import ch.thomsch.loader.RefactoringMiner;
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.model.ClassStore;
-import ch.thomsch.versioncontrol.GitRepository;
 
 /**
  * Entry point for the application.

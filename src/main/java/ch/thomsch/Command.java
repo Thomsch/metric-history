@@ -13,14 +13,14 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import ch.thomsch.converter.SourceMeterConverter;
-import ch.thomsch.csv.Stores;
-import ch.thomsch.database.Database;
-import ch.thomsch.database.DatabaseBuilder;
+import ch.thomsch.storage.Stores;
+import ch.thomsch.storage.Database;
+import ch.thomsch.storage.DatabaseBuilder;
 import ch.thomsch.export.Reporter;
 import ch.thomsch.loader.RefactoringMiner;
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.storage.ClassStore;
 import ch.thomsch.versioncontrol.GitRepository;
 
 abstract class Command {
@@ -355,9 +355,9 @@ abstract class Command {
         @Override
         void printUsage() {
             System.out.println("Usages:");
-            System.out.println("     metric-history mongo raw <raw file> <database name> [remote URI]");
-            System.out.println("     metric-history mongo diff <diff file> <database name> [remote URI]");
-            System.out.println("     metric-history mongo ancestry <ancestry file> <database name> [remote URI]");
+            System.out.println("     metric-history mongo raw <raw file> <storage name> [remote URI]");
+            System.out.println("     metric-history mongo diff <diff file> <storage name> [remote URI]");
+            System.out.println("     metric-history mongo ancestry <ancestry file> <storage name> [remote URI]");
         }
     }
 }
