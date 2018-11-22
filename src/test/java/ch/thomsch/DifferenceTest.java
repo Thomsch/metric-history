@@ -9,8 +9,9 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import ch.thomsch.metric.Metrics;
-import ch.thomsch.storage.ClassStore;
+import ch.thomsch.fluctuation.Difference;
+import ch.thomsch.model.Metrics;
+import ch.thomsch.model.ClassStore;
 
 import static org.junit.Assert.assertArrayEquals;
 

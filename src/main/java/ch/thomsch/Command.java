@@ -12,15 +12,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 
-import ch.thomsch.converter.SourceMeterConverter;
-import ch.thomsch.storage.Stores;
+import ch.thomsch.metric.SourceMeterConverter;
+import ch.thomsch.metric.MetricHistory;
+import ch.thomsch.model.Stores;
 import ch.thomsch.storage.Database;
 import ch.thomsch.storage.DatabaseBuilder;
-import ch.thomsch.export.Reporter;
-import ch.thomsch.loader.RefactoringMiner;
+import ch.thomsch.storage.export.Reporter;
+import ch.thomsch.storage.loader.RefactoringMiner;
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.storage.ClassStore;
+import ch.thomsch.model.ClassStore;
 import ch.thomsch.versioncontrol.GitRepository;
 
 abstract class Command {
@@ -273,7 +274,7 @@ abstract class Command {
                 logger.error("I/O error while reading file {}", rawFile);
             }
 
-            final ch.thomsch.Difference difference = new ch.thomsch.Difference();
+            final ch.thomsch.fluctuation.Difference difference = new ch.thomsch.fluctuation.Difference();
             try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), Stores.getFormat())) {
                 difference.export(ancestry, model, writer);
             } catch (IOException e) {

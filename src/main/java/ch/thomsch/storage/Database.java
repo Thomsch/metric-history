@@ -2,6 +2,8 @@ package ch.thomsch.storage;
 
 import java.util.HashMap;
 
+import ch.thomsch.model.ClassStore;
+
 /**
  * @author Thomsch
  */

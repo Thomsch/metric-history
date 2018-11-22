@@ -6,6 +6,9 @@ import com.github.mauricioaniche.ck.CKReport;
 
 import org.apache.commons.io.FilenameUtils;
 
+import ch.thomsch.model.MetricDump;
+import ch.thomsch.model.Metrics;
+
 
 /**
  * Collects metrics using the CKMetrics library.

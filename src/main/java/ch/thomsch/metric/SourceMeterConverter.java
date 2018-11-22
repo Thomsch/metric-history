@@ -1,4 +1,4 @@
-package ch.thomsch.converter;
+package ch.thomsch.metric;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -19,6 +19,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import ch.thomsch.model.FormatException;
 
 /**
  * @author Thomsch

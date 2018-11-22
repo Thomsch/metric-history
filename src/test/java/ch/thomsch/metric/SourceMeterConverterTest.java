@@ -1,4 +1,4 @@
-package ch.thomsch.converter;
+package ch.thomsch.metric;
 
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FileUtils;
@@ -8,6 +8,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+
+import ch.thomsch.metric.SourceMeterConverter;
+import ch.thomsch.model.FormatException;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;

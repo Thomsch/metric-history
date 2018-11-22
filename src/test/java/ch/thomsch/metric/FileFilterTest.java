@@ -1,4 +1,4 @@
-package ch.thomsch.filter;
+package ch.thomsch.metric;
 
 import org.junit.Test;
 

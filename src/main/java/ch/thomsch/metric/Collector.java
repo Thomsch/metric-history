@@ -1,5 +1,7 @@
 package ch.thomsch.metric;
 
+import ch.thomsch.model.MetricDump;
+
 /**
  * @author Thomsch
  */
@@ -16,7 +18,7 @@ public interface Collector {
     MetricDump collect(String folder, String revision, FileFilter filter);
 
     /**
-     * Is invoked automatically by {@link ch.thomsch.MetricHistory} after {@link #collect(String, String, FileFilter)}.
+     * Is invoked automatically by {@link MetricHistory} after {@link #collect(String, String, FileFilter)}.
      *
      * @param revision the revision that has been collected.
      */

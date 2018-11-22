@@ -1,4 +1,4 @@
-package ch.thomsch.metric;
+package ch.thomsch.model;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,11 +10,11 @@ import java.util.Map;
  * @author Thomsch
  */
 public class MetricDump {
-    static final MetricDump EMPTY = new MetricDump();
+    public static final MetricDump EMPTY = new MetricDump();
 
     private final Map<String, Metrics> map;
 
-    MetricDump() {
+    public MetricDump() {
         map = new HashMap<>();
     }
 

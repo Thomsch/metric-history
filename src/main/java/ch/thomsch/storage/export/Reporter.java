@@ -1,4 +1,4 @@
-package ch.thomsch.export;
+package ch.thomsch.storage.export;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import ch.thomsch.metric.MetricDump;
+import ch.thomsch.model.MetricDump;
 
 /**
  * Write results in a CSV file.

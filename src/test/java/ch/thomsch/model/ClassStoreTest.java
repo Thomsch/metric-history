@@ -6,9 +6,6 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collection;
 
-import ch.thomsch.metric.Metrics;
-import ch.thomsch.storage.ClassStore;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

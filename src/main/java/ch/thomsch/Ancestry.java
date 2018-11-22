@@ -1,6 +1,6 @@
 package ch.thomsch;
 
-import ch.thomsch.loader.CommitReader;
+import ch.thomsch.storage.loader.CommitReader;
 import ch.thomsch.versioncontrol.Repository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;

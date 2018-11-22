@@ -1,4 +1,4 @@
-package ch.thomsch.converter;
+package ch.thomsch.model;
 
 /**
  * @author Thomsch

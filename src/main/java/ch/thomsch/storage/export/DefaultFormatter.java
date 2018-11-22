@@ -1,10 +1,10 @@
-package ch.thomsch.export;
+package ch.thomsch.storage.export;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.thomsch.metric.MetricDump;
-import ch.thomsch.metric.Metrics;
+import ch.thomsch.model.MetricDump;
+import ch.thomsch.model.Metrics;
 
 /**
  * Default CSV formatter

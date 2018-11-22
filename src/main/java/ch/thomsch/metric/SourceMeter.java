@@ -19,6 +19,8 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.thomsch.model.MetricDump;
+
 /**
  * Collects metrics from the command line.
  *

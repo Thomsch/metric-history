@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.metric;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
@@ -10,11 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.thomsch.export.Reporter;
-import ch.thomsch.metric.FileFilter;
-import ch.thomsch.loader.CommitReader;
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.MetricDump;
+import ch.thomsch.storage.export.Reporter;
+import ch.thomsch.storage.loader.CommitReader;
+import ch.thomsch.model.MetricDump;
 import ch.thomsch.versioncontrol.Repository;
 
 /**
@@ -35,7 +33,7 @@ public class MetricHistory {
     private final Map<String, MetricDump> cache;
     private final FileFilter filter;
 
-    MetricHistory(Collector collector, Reporter reporter, CommitReader reader) {
+    public MetricHistory(Collector collector, Reporter reporter, CommitReader reader) {
         this.collector = collector;
         this.reporter = reporter;
         this.commitReader = reader;
@@ -50,7 +48,7 @@ public class MetricHistory {
      * @param repository The repository containing the revisions.
      * @param outputFile Path to the file where the results will be printed
      */
-    void collect(String revisionFile, Repository repository, String outputFile) {
+    public void collect(String revisionFile, Repository repository, String outputFile) {
         final long beginning = System.nanoTime();
 
         final List<String> revisions = commitReader.make(revisionFile);

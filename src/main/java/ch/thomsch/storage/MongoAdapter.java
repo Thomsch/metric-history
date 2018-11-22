@@ -16,7 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.thomsch.metric.Metrics;
+import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.Metrics;
+import ch.thomsch.model.Stores;
 
 import static com.mongodb.client.model.Filters.eq;
 

@@ -1,6 +1,6 @@
-package ch.thomsch.export;
+package ch.thomsch.storage.export;
 
-import ch.thomsch.metric.Metrics;
+import ch.thomsch.model.Metrics;
 
 /**
  *  Utility class that return the correct metric given a name.

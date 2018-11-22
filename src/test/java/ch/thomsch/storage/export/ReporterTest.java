@@ -1,4 +1,4 @@
-package ch.thomsch.export;
+package ch.thomsch.storage.export;
 
 import org.junit.After;
 import org.junit.Before;

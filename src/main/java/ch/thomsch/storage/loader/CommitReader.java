@@ -1,4 +1,4 @@
-package ch.thomsch.loader;
+package ch.thomsch.storage.loader;
 
 import java.util.List;
 

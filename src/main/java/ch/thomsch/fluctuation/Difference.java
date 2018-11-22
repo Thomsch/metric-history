@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.fluctuation;
 
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import ch.thomsch.metric.Metrics;
-import ch.thomsch.storage.ClassStore;
+import ch.thomsch.model.Metrics;
+import ch.thomsch.model.ClassStore;
 
 /**
  * @author Thomsch

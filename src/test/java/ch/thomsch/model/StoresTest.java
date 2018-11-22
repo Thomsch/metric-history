@@ -1,4 +1,4 @@
-package ch.thomsch.csv;
+package ch.thomsch.model;
 
 import org.junit.Test;
 
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ch.thomsch.metric.Metrics;
-import ch.thomsch.storage.Stores;
+import ch.thomsch.model.Metrics;
+import ch.thomsch.model.Stores;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
