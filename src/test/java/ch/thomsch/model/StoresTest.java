@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ch.thomsch.model.Metrics;
-import ch.thomsch.model.Stores;
+import ch.thomsch.storage.Stores;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -1,4 +1,4 @@
-package ch.thomsch.model;
+package ch.thomsch.storage;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.Metrics;
 
 /**
  * Loads CSV files
