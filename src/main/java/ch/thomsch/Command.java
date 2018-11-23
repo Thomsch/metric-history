@@ -178,9 +178,10 @@ public abstract class Command {
                 final MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new RefactoringMiner());
 
                 String outputFilePath = executableOutput + File.separator + commitId + ".csv";
+                String collectorOutputDirectory = executableOutput + File.separator + projectName;
 
                 metricHistory.collectRevision(commitId, GitRepository.get(repository),
-                        outputFilePath);
+                        outputFilePath, collectorOutputDirectory);
             } catch (IOException e) {
                 logger.error("Resource access problem", e);
             } catch (Exception e) {

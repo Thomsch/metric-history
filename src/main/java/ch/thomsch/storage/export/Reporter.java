@@ -61,6 +61,7 @@ public class Reporter {
 
     public void report(String revision, String parent, MetricDump current) {
         final List<Object[]> lines = DefaultFormatter.format(revision, parent, current);
+        logger.info("Output size {}", lines.size());
         for (Object[] line : lines) {
             try {
                 report(line);

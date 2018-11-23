@@ -42,7 +42,8 @@ public class MetricHistory {
         filter = FileFilter.production();
     }
 
-    public void collectRevision(String commitId, Repository repository, String outputFile) {
+    public void collectRevision(String commitId, Repository repository, String outputFile,
+                                String collectorOutputDirectory) {
         final long beginning = System.nanoTime();
 
         logger.info("Processing single revision {}", commitId);
@@ -62,6 +63,8 @@ public class MetricHistory {
             final String parent = repository.getParent(commitId);
 
             final MetricDump current = collectCachedMetrics(repository, commitId);
+
+            SourceMeterConverter.convert(collectorOutputDirectory, outputFile);
 
             reporter.report(commitId, parent, current);
         } catch (IOException e) {
