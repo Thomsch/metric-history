@@ -42,11 +42,54 @@ public class MetricHistory {
         filter = FileFilter.production();
     }
 
+    public void collectRevision(String commitId, Repository repository, String outputFile) {
+        final long beginning = System.nanoTime();
+
+        logger.info("Processing single revision {}", commitId);
+
+        try {
+            reporter.initialize(outputFile);
+            reporter.printMetaInformation();
+        } catch (IOException e) {
+            logger.error("Cannot initialize element:", e);
+            return;
+        }
+
+        try {
+            logger.info("Processing {}", commitId);
+
+            final String parent = repository.getParent(commitId);
+
+            final MetricDump current = collectCachedMetrics(repository, commitId);
+
+            reporter.report(commitId, parent, null, current);
+        } catch (IOException e) {
+            logger.error("Cannot write results for revision {}:", commitId, e);
+        } catch (GitAPIException e) {
+            logger.error("Checkout failure: ", e);
+        }
+
+
+        try {
+            reporter.finish();
+            repository.close();
+        } catch (IOException e) {
+            logger.error("Cannot close output file:", e);
+        } catch (Exception e) {
+            logger.error("Failed to properly close the repository", e);
+        }
+
+        cache.clear();
+        final long elapsed = System.nanoTime() - beginning;
+        logger.info("Task completed in {}", Duration.ofNanos(elapsed));
+    }
+
     /**
      * Collects the metrics before and after for each of the revisions found in the file <code>revisionFile</code>.
+     *
      * @param revisionFile Path to the CSV file containing the revisions
-     * @param repository The repository containing the revisions.
-     * @param outputFile Path to the file where the results will be printed
+     * @param repository   The repository containing the revisions.
+     * @param outputFile   Path to the file where the results will be printed
      */
     public void collect(String revisionFile, Repository repository, String outputFile) {
         final long beginning = System.nanoTime();
