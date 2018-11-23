@@ -46,6 +46,7 @@ public class MetricHistory {
         final long beginning = System.nanoTime();
 
         logger.info("Processing single revision {}", commitId);
+        logger.info("Output file: {}", outputFile);
 
         try {
             reporter.initialize(outputFile);
@@ -62,7 +63,7 @@ public class MetricHistory {
 
             final MetricDump current = collectCachedMetrics(repository, commitId);
 
-            reporter.report(commitId, parent, null, current);
+            reporter.report(commitId, parent, current);
         } catch (IOException e) {
             logger.error("Cannot write results for revision {}:", commitId, e);
         } catch (GitAPIException e) {

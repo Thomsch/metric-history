@@ -59,6 +59,17 @@ public class Reporter {
         }
     }
 
+    public void report(String revision, String parent, MetricDump current) {
+        final List<Object[]> lines = DefaultFormatter.format(revision, parent, current);
+        for (Object[] line : lines) {
+            try {
+                report(line);
+            } catch (IOException e) {
+                logger.error("Couldn't write results for line {}", Arrays.toString(line));
+            }
+        }
+    }
+
     public void report(String revision, String parent, MetricDump before, MetricDump current) {
         final List<Object[]> lines = DefaultFormatter.format(revision, parent, current);
         lines.addAll(DefaultFormatter.format(parent, null, before));

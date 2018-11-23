@@ -145,7 +145,7 @@ public abstract class Command {
 
         @Override
         String getName() {
-            return "Snapshot";
+            return "snapshot";
         }
 
         @Override
@@ -154,7 +154,7 @@ public abstract class Command {
                 return false;
             }
 
-            commitId = normalizePath(parameters[0]);
+            commitId = parameters[0];
             executable = normalizePath(parameters[1]);
             project = normalizePath(parameters[2]);
 
@@ -177,7 +177,10 @@ public abstract class Command {
                 final Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
                 final MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new RefactoringMiner());
 
-                metricHistory.collectRevision(commitId, GitRepository.get(repository), executableOutput + File.separator + commitId + ".csv");
+                String outputFilePath = executableOutput + File.separator + commitId + ".csv";
+
+                metricHistory.collectRevision(commitId, GitRepository.get(repository),
+                        outputFilePath);
             } catch (IOException e) {
                 logger.error("Resource access problem", e);
             } catch (Exception e) {

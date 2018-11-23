@@ -18,6 +18,7 @@ public final class Application {
         addCommand(new Command.Ancestry());
         addCommand(new Command.Difference());
         addCommand(new Command.Mongo());
+        addCommand(new Command.Snapshot());
     }
 
     /**
