@@ -3,6 +3,8 @@ package ch.thomsch.storage;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +20,8 @@ import ch.thomsch.model.Metrics;
  * Loads CSV files
  */
 public final class Stores {
+    private static final Logger logger = LoggerFactory.getLogger(Stores.class);
+
     private static final int NUMBER_OF_SOURCEMETER_METRICS = 52;
 
     private static final String[] HEADER_SOURCEMETER = {"revision", "class", "LCOM5", "NL", "NLE", "WMC", "CBO", "CBOI",
@@ -38,6 +42,8 @@ public final class Stores {
      * @throws IOException           if there is a reading problem with the disk.
      */
     public static ClassStore loadClasses(String filePath) throws IOException {
+        logger.info("Loading raw (" + filePath + ")...");
+
         final CSVParser parser = new CSVParser(new FileReader(filePath), getFormat().withSkipHeaderRecord());
         return load(parser);
     }
