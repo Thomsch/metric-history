@@ -6,22 +6,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 
-import ch.thomsch.metric.SourceMeterConverter;
+import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.MetricHistory;
+import ch.thomsch.metric.SourceMeter;
+import ch.thomsch.metric.SourceMeterConverter;
+import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.Metrics;
 import ch.thomsch.storage.Database;
 import ch.thomsch.storage.DatabaseBuilder;
 import ch.thomsch.storage.Stores;
 import ch.thomsch.storage.export.Reporter;
 import ch.thomsch.storage.loader.RefactoringMiner;
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.model.ClassStore;
 import ch.thomsch.versioncontrol.GitRepository;
 
 abstract class Command {
@@ -44,7 +47,7 @@ abstract class Command {
     /**
      * Executes the command.
      */
-    abstract void execute();
+    abstract void execute() throws Exception;
 
     /**
      * Prints the usage of the command on <code>System.out</code>.
@@ -261,7 +264,7 @@ abstract class Command {
         }
 
         @Override
-        public void execute() {
+        public void execute() throws IOException {
             final HashMap<String, String> ancestry = ch.thomsch.Ancestry.load(ancestryFile);
             if (ancestry.isEmpty()) {
                 return;

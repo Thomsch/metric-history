@@ -1,5 +1,8 @@
 package ch.thomsch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +11,8 @@ import java.util.Map;
  * Entry point for the application.
  */
 public final class Application {
+    private final Logger logger = LoggerFactory.getLogger("Application");
+
     private final Map<String, Command> commands = new HashMap<>();
     private final Command.Help help;
 
@@ -18,6 +23,7 @@ public final class Application {
         addCommand(new Command.Ancestry());
         addCommand(new Command.Difference());
         addCommand(new Command.Mongo());
+        addCommand(new Command.Tradeoff());
     }
 
     /**
@@ -46,7 +52,11 @@ public final class Application {
         }
 
         if (command.parse(parameters)) {
-            command.execute();
+            try{
+                command.execute();
+            } catch (Exception e) {
+                logger.error("An error occurred: ", e);
+            }
         } else {
             System.out.println("Incorrect number of arguments (" + parameters.length + ')');
             System.out.println();
