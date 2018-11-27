@@ -17,6 +17,9 @@ import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 import ch.thomsch.storage.RefactoringDetail;
 import ch.thomsch.storage.Stores;
+import ch.thomsch.fluctuation.Difference;
+
+import ch.thomsch.Ancestry;
 
 /**
  *
@@ -49,18 +52,46 @@ public class Tradeoff extends Command {
 
     @Override
     public void execute() throws IOException {
-        final HashMap<String, String> ancestry = ch.thomsch.Ancestry.load(ancestryFile);
-        if (ancestry.isEmpty()) return;
+        final HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
+        final ClassStore model = Stores.loadClasses(rawFile);
+        final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactorings);
 
-        ClassStore model = null;
-        try {
-            model = Stores.loadClasses(rawFile);
-        } catch (IOException e) {
-            logger.error("I/O error while reading file {}", rawFile);
-        }
+        final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, detailedRefactorings);
 
+        results.forEach((revision, metrics) -> System.out.println(String.format("%s,%s", revision, metrics.toString())));
+    }
+
+    private HashMap<String, Metrics> calculateFluctuations(
+            HashMap<String, String> ancestry,
+            ClassStore model,
+            HashMap<String, RefactoringDetail> detailedRefactorings) {
+        final HashMap<String, Metrics> results = new HashMap<>();
+        final Difference diff = new Difference();
+
+        detailedRefactorings.forEach((revision, refactoringDetail) ->
+        {
+            final List<Metrics> relevantMetrics = new ArrayList<>();
+            for (String className : refactoringDetail.getClasses()) {
+                System.out.println(String.format("Parent: %s, Revision: %s", ancestry.get(revision), revision));
+                final Metrics revisionMetrics = model.getMetric(revision, className);
+                final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
+
+                if (revisionMetrics != null && parentMetrics != null) {
+                    final Metrics result = diff.computes(parentMetrics, revisionMetrics);
+                    relevantMetrics.add(result);
+                }
+            }
+
+            if (!relevantMetrics.isEmpty()) {
+                results.put(revision, sum(relevantMetrics));
+            }
+        });
+        return results;
+    }
+
+    private HashMap<String, RefactoringDetail> loadRefactorings(String refactoringsPath) throws IOException {
         final HashMap<String, RefactoringDetail> detailedRefactorings = new HashMap<>();
-        try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().withDelimiter(';').parse(new FileReader(refactorings))) {
+        try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().withDelimiter(';').parse(new FileReader(refactoringsPath))) {
             for (CSVRecord record : parser) {
                 final String revision = record.get(0);
                 final String refactoringType = record.get(1);
@@ -73,37 +104,8 @@ public class Tradeoff extends Command {
                 }
                 detail.addRefactoring(refactoringType, description);
             }
-        } catch (FileNotFoundException e) {
-            logger.error("The file " + ancestryFile + " doesn't exists", e);
-        } catch (IOException e) {
-            logger.error("Error while reading the file " + ancestryFile);
         }
-
-        final ClassStore finalModel = model;
-
-        final HashMap<String, Metrics> results = new HashMap<>();
-        final ch.thomsch.fluctuation.Difference diff = new ch.thomsch.fluctuation.Difference();
-
-        detailedRefactorings.forEach((revision, refactoringDetail) ->
-        {
-            final List<Metrics> relevantMetrics = new ArrayList<>();
-            for (String className : refactoringDetail.getClasses()) {
-                System.out.println(String.format("Parent: %s, Revision: %s", ancestry.get(revision), revision));
-                final Metrics revisionMetrics = finalModel.getMetric(revision, className);
-                final Metrics parentMetrics = finalModel.getMetric(ancestry.get(revision), className);
-
-                if (revisionMetrics != null && parentMetrics != null) {
-                    final Metrics result = diff.computes(parentMetrics, revisionMetrics);
-                    relevantMetrics.add(result);
-                }
-            }
-
-            if (!relevantMetrics.isEmpty()) {
-                results.put(revision, sum(relevantMetrics));
-            }
-        });
-
-        results.forEach((revision, metrics) -> System.out.println(String.format("%s,%s", revision, metrics.toString())));
+        return detailedRefactorings;
     }
 
     private Metrics sum(List<Metrics> refactoringChange) {
