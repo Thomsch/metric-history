@@ -7,6 +7,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.thomsch.cmd.Ancestry;
+import ch.thomsch.cmd.Collect;
+import ch.thomsch.cmd.Command;
+import ch.thomsch.cmd.Convert;
+import ch.thomsch.cmd.Difference;
+import ch.thomsch.cmd.Help;
+import ch.thomsch.cmd.Mongo;
+import ch.thomsch.cmd.Tradeoff;
+
 /**
  * Entry point for the application.
  */
@@ -14,16 +23,16 @@ public final class Application {
     private final Logger logger = LoggerFactory.getLogger("Application");
 
     private final Map<String, Command> commands = new HashMap<>();
-    private final Command.Help help;
+    private final Help help;
 
     Application() {
-        help = new Command.Help(commands.values());
-        addCommand(new Command.Collect());
-        addCommand(new Command.Convert());
-        addCommand(new Command.Ancestry());
-        addCommand(new Command.Difference());
-        addCommand(new Command.Mongo());
-        addCommand(new Command.Tradeoff());
+        help = new Help(commands.values());
+        addCommand(new Collect());
+        addCommand(new Convert());
+        addCommand(new Ancestry());
+        addCommand(new Difference());
+        addCommand(new Mongo());
+        addCommand(new Tradeoff());
     }
 
     /**
