@@ -17,6 +17,14 @@ public class Metrics {
     }
 
     /**
+     * Initialize <code>size</code> metrics to zero.
+     * @param size the number of metrics
+     */
+    public Metrics(int size) {
+        this.metrics = new ArrayList<>(size);
+    }
+
+    /**
      * Add a metric in the next position.
      *
      * @param metric the metric to add
@@ -49,5 +57,10 @@ public class Metrics {
 
     public List<Double> get() {
         return metrics;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(metrics.toArray());
     }
 }
