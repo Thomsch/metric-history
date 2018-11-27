@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.thomsch.storage.Stores;
+
 /**
  * Represents an ordered collection of unlabelled metrics.
  */
@@ -62,5 +64,19 @@ public class Metrics {
     @Override
     public String toString() {
         return Arrays.toString(metrics.toArray());
+    }
+
+    public boolean hasTradeOff(int ... indices) {
+        int positive = 0;
+        int negative = 0;
+
+        for (int index : indices) {
+            if(this.metrics.get(index) > 0) {
+                positive++;
+            } else if (this.metrics.get(index) < 0){
+                negative++;
+            }
+        }
+        return positive > 0 && negative > 0;
     }
 }

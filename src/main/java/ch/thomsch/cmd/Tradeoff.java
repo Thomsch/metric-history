@@ -6,26 +6,24 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.BiConsumer;
 
+import ch.thomsch.Ancestry;
+import ch.thomsch.fluctuation.Difference;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 import ch.thomsch.storage.RefactoringDetail;
 import ch.thomsch.storage.Stores;
-import ch.thomsch.fluctuation.Difference;
-
-import ch.thomsch.Ancestry;
 
 /**
  *
  */
 public class Tradeoff extends Command {
-    private static final Logger logger = LoggerFactory.getLogger(Tradeoff.class);
 
     private String ancestryFile;
     private String rawFile;
@@ -58,7 +56,8 @@ public class Tradeoff extends Command {
 
         final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, detailedRefactorings);
 
-        results.forEach((revision, metrics) -> System.out.println(String.format("%s,%s", revision, metrics.toString())));
+        final Output output = new Output();
+        results.forEach(output);
     }
 
     private HashMap<String, Metrics> calculateFluctuations(
@@ -72,7 +71,6 @@ public class Tradeoff extends Command {
         {
             final List<Metrics> relevantMetrics = new ArrayList<>();
             for (String className : refactoringDetail.getClasses()) {
-                System.out.println(String.format("Parent: %s, Revision: %s", ancestry.get(revision), revision));
                 final Metrics revisionMetrics = model.getMetric(revision, className);
                 final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
 
@@ -130,5 +128,13 @@ public class Tradeoff extends Command {
         System.out.println("<refactoring list>  is the path of the file containing each refactoring.");
         System.out.println("<ancestry file>     is the path of the file produced by 'ancestry' command.");
         System.out.println("<raw file>          is the path of the file produced by 'convert' command.");
+    }
+
+    private static class Output implements BiConsumer<String, Metrics> {
+        int[] indices = Stores.getIndices("LCOM5", "DIT", "CBO", "WMC");
+        @Override
+        public void accept(String revision, Metrics metrics) {
+            System.out.println(String.format("%s,%s", revision, metrics.hasTradeOff(indices)));
+        }
     }
 }

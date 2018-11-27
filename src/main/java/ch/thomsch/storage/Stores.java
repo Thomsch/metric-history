@@ -84,12 +84,25 @@ public final class Stores {
             throw new IllegalStateException("These metrics are not compatible with the SourceMeter's format");
         }
 
-        final String[] labels = Arrays.copyOfRange(HEADER_SOURCEMETER, 2, HEADER_SOURCEMETER.length);
+        final String[] labels = getLabels();
         final HashMap<String, Double> map = new HashMap<>();
         for (int i = 0; i < labels.length; i++) {
             final String label = labels[i].toLowerCase();
             map.put(label, metrics.get(i));
         }
         return map;
+    }
+
+    private static String[] getLabels() {
+        return Arrays.copyOfRange(HEADER_SOURCEMETER, 2, HEADER_SOURCEMETER.length);
+    }
+
+    public static int[] getIndices(String ... metricsLabels) {
+        final int[] indices = new int[metricsLabels.length];
+
+        for (int i = 0; i < metricsLabels.length; i++) {
+            indices[i] = Arrays.asList(getLabels()).indexOf(metricsLabels[i]);
+        }
+        return indices;
     }
 }
