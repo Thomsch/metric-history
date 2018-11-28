@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import ch.thomsch.model.Metrics;
 import ch.thomsch.model.ClassStore;
@@ -19,8 +18,12 @@ import ch.thomsch.model.ClassStore;
 /**
  * @author Thomsch
  */
-public class Difference {
-    private static final Logger logger = LoggerFactory.getLogger(Difference.class);
+public final class Differences {
+    private static final Logger logger = LoggerFactory.getLogger(Differences.class);
+
+    private Differences() {
+
+    }
 
     /**
      * Computes and export the differences in metric for classes between a revision and its parent for all revisions
@@ -31,7 +34,7 @@ public class Difference {
      * @param model    contains the metrics in relation with their revisions and classes
      * @param writer   where the results are written
      */
-    public void export(HashMap<String, String> ancestry, ClassStore model, CSVPrinter writer) {
+    public static void export(HashMap<String, String> ancestry, ClassStore model, CSVPrinter writer) {
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
         for (Map.Entry<String, String> revisionParent : entries) {
 
@@ -56,7 +59,7 @@ public class Difference {
         }
     }
 
-    private void outputMetric(CSVPrinter writer, String revision, String className, Metrics result) {
+    private static void outputMetric(CSVPrinter writer, String revision, String className, Metrics result) {
         try {
             writer.printRecord(format(revision, className, result));
         } catch (IOException e) {
@@ -64,7 +67,7 @@ public class Difference {
         }
     }
 
-    private Object[] format(String revision, String className, Metrics metrics) {
+    private static Object[] format(String revision, String className, Metrics metrics) {
         final ArrayList<Object> result = new ArrayList<>();
         result.add(revision);
         result.add(className);
@@ -84,7 +87,7 @@ public class Difference {
      * @throws IllegalArgumentException if the metrics are not comparable
      * @throws NullPointerException     if a or b are null
      */
-    public Metrics computes(Metrics a, Metrics b) {
+    public static Metrics computes(Metrics a, Metrics b) {
         Metrics result = null;
 
         if (a != null && b != null) {

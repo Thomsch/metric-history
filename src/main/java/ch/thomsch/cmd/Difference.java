@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
+import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.Stores;
 
@@ -53,9 +54,8 @@ public class Difference extends Command {
             logger.error("I/O error while reading file {}", rawFile);
         }
 
-        final ch.thomsch.fluctuation.Difference difference = new ch.thomsch.fluctuation.Difference();
         try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), Stores.getFormat())) {
-            difference.export(ancestry, model, writer);
+            Differences.export(ancestry, model, writer);
         } catch (IOException e) {
             logger.error("I/O error with file {}", outputFile, e);
         }

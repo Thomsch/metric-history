@@ -9,7 +9,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import ch.thomsch.fluctuation.Difference;
+import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.Metrics;
 import ch.thomsch.model.ClassStore;
 
@@ -19,19 +19,17 @@ import static org.junit.Assert.assertNull;
 /**
  * @author Thomsch
  */
-public class DifferenceTest {
+public class DifferencesTest {
 
     @Test
     public void computesShouldMakeDifference() {
-        final Difference difference = new Difference();
-
         final Metrics a = new Metrics(1.0);
         final Metrics b = new Metrics(1.0);
         final Metrics c = new Metrics(2.0);
 
-        final Metrics adiffb = difference.computes(a, b);
-        final Metrics bdiffc = difference.computes(b, c);
-        final Metrics cdiffb = difference.computes(c, b);
+        final Metrics adiffb = Differences.computes(a, b);
+        final Metrics bdiffc = Differences.computes(b, c);
+        final Metrics cdiffb = Differences.computes(c, b);
 
         assertArrayEquals(new Double[]{0.0}, adiffb.get().toArray());
         assertArrayEquals(new Double[]{1.0}, bdiffc.get().toArray());
@@ -40,12 +38,10 @@ public class DifferenceTest {
 
     @Test
     public void computesShouldRespectOrder() {
-        final Difference difference = new Difference();
-
         final Metrics a = new Metrics(1.0, 2.0, 3.0);
         final Metrics b = new Metrics(10.0, 20.0, 30.0);
 
-        final Metrics actual = difference.computes(a, b);
+        final Metrics actual = Differences.computes(a, b);
 
         final Double[] expected = {9.0, 18.0, 27.0};
         assertArrayEquals(expected, actual.get().toArray());
@@ -53,14 +49,13 @@ public class DifferenceTest {
 
     @Test
     public void export() throws IOException {
-        final Difference difference = new Difference();
         final HashMap<String, String> ancestry = setupAncestry();
 
         final ClassStore model = setupModel();
 
         final StringWriter out = new StringWriter();
         final CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT);
-        difference.export(ancestry, model, writer);
+        Differences.export(ancestry, model, writer);
 
         assertArrayEquals(expectedExport(), out.toString().split("\\r?\\n"));
     }
@@ -101,12 +96,11 @@ public class DifferenceTest {
 
     @Test
     public void aMissingOperandReturnsNull() {
-        final Difference difference = new Difference();
 
         final Metrics m = new Metrics(1.0, 2.0, 3.0);
 
-        assertNull(difference.computes(m, null));
-        assertNull(difference.computes(null, m));
-        assertNull(difference.computes(null, null));
+        assertNull(Differences.computes(m, null));
+        assertNull(Differences.computes(null, m));
+        assertNull(Differences.computes(null, null));
     }
 }

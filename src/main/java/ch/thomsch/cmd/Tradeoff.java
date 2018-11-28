@@ -3,8 +3,6 @@ package ch.thomsch.cmd;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,7 +12,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import ch.thomsch.Ancestry;
-import ch.thomsch.fluctuation.Difference;
+import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 import ch.thomsch.storage.RefactoringDetail;
@@ -65,7 +63,6 @@ public class Tradeoff extends Command {
             ClassStore model,
             HashMap<String, RefactoringDetail> detailedRefactorings) {
         final HashMap<String, Metrics> results = new HashMap<>();
-        final Difference diff = new Difference();
 
         detailedRefactorings.forEach((revision, refactoringDetail) ->
         {
@@ -74,7 +71,7 @@ public class Tradeoff extends Command {
                 final Metrics revisionMetrics = model.getMetric(revision, className);
                 final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
 
-                final Metrics result = diff.computes(parentMetrics, revisionMetrics);
+                final Metrics result = Differences.computes(parentMetrics, revisionMetrics);
                 if(result != null)
                     relevantMetrics.add(result);
             }
