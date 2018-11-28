@@ -32,11 +32,11 @@ public class Difference {
      * @param writer   where the results are written
      */
     public void export(HashMap<String, String> ancestry, ClassStore model, CSVPrinter writer) {
-        LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
+        final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
         for (Map.Entry<String, String> revisionParent : entries) {
 
-            String revision = revisionParent.getKey();
-            String parent = revisionParent.getValue();
+            final String revision = revisionParent.getKey();
+            final String parent = revisionParent.getValue();
 
             logger.info("Exporting revision {} parent is ({})", revision, parent);
             final Collection<String> classes = model.getClasses(revision);
@@ -45,23 +45,27 @@ public class Difference {
                 continue;
             }
             for (String className : classes) {
-                Metrics revisionMetrics = model.getMetric(revision, className);
-                Metrics parentMetrics = model.getMetric(parent, className);
+                final Metrics revisionMetrics = model.getMetric(revision, className);
+                final Metrics parentMetrics = model.getMetric(parent, className);
 
-                if (revisionMetrics != null && parentMetrics != null) {
-                    Metrics result = computes(parentMetrics, revisionMetrics);
-                    try {
-                        writer.printRecord(format(revision, className, result));
-                    } catch (IOException e) {
-                        logger.error("Cannot write result for class " + className + " for revision " + revision);
-                    }
+                final Metrics result = computes(parentMetrics, revisionMetrics);
+                if (result != null) {
+                    outputMetric(writer, revision, className, result);
                 }
             }
         }
     }
 
+    private void outputMetric(CSVPrinter writer, String revision, String className, Metrics result) {
+        try {
+            writer.printRecord(format(revision, className, result));
+        } catch (IOException e) {
+            logger.error("Cannot write result for class " + className + " for revision " + revision);
+        }
+    }
+
     private Object[] format(String revision, String className, Metrics metrics) {
-        ArrayList<Object> result = new ArrayList<>();
+        final ArrayList<Object> result = new ArrayList<>();
         result.add(revision);
         result.add(className);
         result.addAll(metrics.get());
@@ -71,29 +75,32 @@ public class Difference {
 
     /**
      * Computes the difference between a and b (b - a) for each of their metrics.
+     * <code>a</code> can be seen as previous and <code>b</code> as current.
      * It uses the order of the metrics given by {@link Metrics#get()}.
      *
      * @param a the left operand
      * @param b the right operand
-     * @return <code>b</code> - <code>a</code>
+     * @return <code>b</code> - <code>a</code> or null if a or b is missing.
      * @throws IllegalArgumentException if the metrics are not comparable
      * @throws NullPointerException     if a or b are null
      */
     public Metrics computes(Metrics a, Metrics b) {
-        Objects.requireNonNull(a);
-        Objects.requireNonNull(b);
+        Metrics result = null;
 
-        List<Double> as = a.get();
-        List<Double> bs = b.get();
+        if (a != null && b != null) {
+            final List<Double> as = a.get();
+            final List<Double> bs = b.get();
 
-        if (as.size() != bs.size()) {
-            throw new IllegalArgumentException("These metrics are not from the same source!");
+            if (as.size() != bs.size()) {
+                throw new IllegalArgumentException("These metrics are not from the same source!");
+            }
+
+            result = new Metrics();
+            for (int i = 0; i < as.size(); i++) {
+                result.add(bs.get(i) - as.get(i));
+            }
         }
 
-        Metrics result = new Metrics();
-        for (int i = 0; i < as.size(); i++) {
-            result.add(bs.get(i) - as.get(i));
-        }
         return result;
     }
 }

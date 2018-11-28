@@ -14,6 +14,7 @@ import ch.thomsch.model.Metrics;
 import ch.thomsch.model.ClassStore;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Thomsch
@@ -96,5 +97,16 @@ public class DifferenceTest {
         ancestry.put("d", "e");
         ancestry.put("e", "f");
         return ancestry;
+    }
+
+    @Test
+    public void aMissingOperandReturnsNull() {
+        final Difference difference = new Difference();
+
+        final Metrics m = new Metrics(1.0, 2.0, 3.0);
+
+        assertNull(difference.computes(m, null));
+        assertNull(difference.computes(null, m));
+        assertNull(difference.computes(null, null));
     }
 }

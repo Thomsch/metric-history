@@ -74,10 +74,9 @@ public class Tradeoff extends Command {
                 final Metrics revisionMetrics = model.getMetric(revision, className);
                 final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
 
-                if (revisionMetrics != null && parentMetrics != null) {
-                    final Metrics result = diff.computes(parentMetrics, revisionMetrics);
+                final Metrics result = diff.computes(parentMetrics, revisionMetrics);
+                if(result != null)
                     relevantMetrics.add(result);
-                }
             }
 
             if (!relevantMetrics.isEmpty()) {
