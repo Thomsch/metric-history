@@ -24,6 +24,9 @@ public class Metrics {
      */
     public Metrics(int size) {
         this.metrics = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            metrics.add(ZERO);
+        }
     }
 
     /**
@@ -78,5 +81,13 @@ public class Metrics {
             }
         }
         return positive > 0 && negative > 0;
+    }
+
+    public Metrics copy() {
+        final Metrics copy = new Metrics();
+        for (Double metric : metrics) {
+            copy.add(metric);
+        }
+        return copy;
     }
 }

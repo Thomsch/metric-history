@@ -10,10 +10,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import ch.thomsch.fluctuation.Differences;
-import ch.thomsch.model.Metrics;
 import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
@@ -50,13 +51,13 @@ public class DifferencesTest {
     @Test
     public void export() throws IOException {
         final HashMap<String, String> ancestry = setupAncestry();
-
         final ClassStore model = setupModel();
-
         final StringWriter out = new StringWriter();
         final CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT);
+
         Differences.export(ancestry, model, writer);
 
+        System.out.println(out);
         assertArrayEquals(expectedExport(), out.toString().split("\\r?\\n"));
     }
 
@@ -64,6 +65,7 @@ public class DifferencesTest {
         return new String[]{
                 "a,X,-0.1,0.5,0.0",
                 "a,Y,0.1,0.0,5.0",
+                "a,W,2.0,3.0,4.0",
                 "d,X,1.0,-5.0,21.0",
                 "e,X,0.0,0.0,0.0"
         };
@@ -74,7 +76,7 @@ public class DifferencesTest {
 
         classStore.addMetric("a", "X", new Metrics(0.0, 1.0, 10.0));
         classStore.addMetric("a", "Y", new Metrics(0.1, 0.5, 10.0));
-        classStore.addMetric("a", "W", new Metrics(Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL));
+        classStore.addMetric("a", "W", new Metrics(2.0, 3.0, 4.0));
         classStore.addMetric("b", "X", new Metrics(0.1, 0.5, 10.0));
         classStore.addMetric("b", "Y", new Metrics(0.0, 0.5, 5.0));
         classStore.addMetric("b", "Z", new Metrics(0.0, 0.5, 5.0));
@@ -95,12 +97,27 @@ public class DifferencesTest {
     }
 
     @Test
-    public void aMissingOperandReturnsNull() {
+    public void bothMissingOperandsReturnNull() {
+        assertNull(Differences.computes(null, null));
+    }
 
+    @Test
+    public void computesAllowsMissingFirstOperand() {
         final Metrics m = new Metrics(1.0, 2.0, 3.0);
 
-        assertNull(Differences.computes(m, null));
-        assertNull(Differences.computes(null, m));
-        assertNull(Differences.computes(null, null));
+        final Metrics actual = Differences.computes(null, m);
+
+        final Double[] expected = {1.0, 2.0, 3.0};
+        assertArrayEquals(expected, actual.get().toArray());
+    }
+
+    @Test
+    public void computesAllowsMissingSecondOperand() {
+        final Metrics m = new Metrics(1.0, 2.0, 3.0);
+
+        final Metrics actual = Differences.computes(m, null);
+
+        final Double[] expected = {-1.0, -2.0, -3.0};
+        assertArrayEquals(expected, actual.get().toArray());
     }
 }
