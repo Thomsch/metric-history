@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import ch.thomsch.Ancestry;
 import ch.thomsch.fluctuation.Differences;
@@ -36,13 +35,23 @@ public class Tradeoff extends Command {
 
     @Override
     public boolean parse(String[] parameters) {
-        if (parameters.length != 3) {
+        if (parameters.length < 3 || parameters.length > 4) {
             return false;
         }
 
         refactorings = normalizePath(parameters[0]);
         ancestryFile = normalizePath(parameters[1]);
         rawFile = normalizePath(parameters[2]);
+
+        if(parameters.length > 3) {
+            final String argument = parameters[3];
+            if (argument.contains("-o=")) {
+                final String[] split = argument.split("=");
+                outputFile = split[1];
+            } else {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -54,8 +63,8 @@ public class Tradeoff extends Command {
 
         final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, detailedRefactorings);
 
-        final Output output = new Output();
-        results.forEach(output);
+        final Output output = new Output(outputFile);
+        output.display(results);
     }
 
     private HashMap<String, Metrics> calculateFluctuations(
@@ -119,18 +128,30 @@ public class Tradeoff extends Command {
 
     @Override
     public void printUsage() {
-        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <raw file>");
+        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <raw file> [-o=<output file>]");
         System.out.println();
         System.out.println("<refactoring list>  is the path of the file containing each refactoring.");
         System.out.println("<ancestry file>     is the path of the file produced by 'ancestry' command.");
         System.out.println("<raw file>          is the path of the file produced by 'convert' command.");
+        System.out.println("<output file>       is the path of the file where the results will be stored.");
     }
 
-    private static class Output implements BiConsumer<String, Metrics> {
+    private static class Output {
+        private final String outputFile;
         int[] indices = Stores.getIndices("LCOM5", "DIT", "CBO", "WMC");
-        @Override
-        public void accept(String revision, Metrics metrics) {
-            System.out.println(String.format("%s,%s", revision, metrics.hasTradeOff(indices)));
+
+        public Output(String outputFile) {
+            this.outputFile = outputFile;
+        }
+
+        public void display(HashMap<String, Metrics> results) {
+            if (outputFile == null) {
+                printInConsole(results);
+            }
+        }
+
+        private void printInConsole(HashMap<String, Metrics> results) {
+            results.forEach((revision, metrics) -> System.out.println(String.format("%s,%s", revision, metrics.hasTradeOff(indices))));
         }
     }
 }
