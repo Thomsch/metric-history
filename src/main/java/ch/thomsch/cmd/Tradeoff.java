@@ -14,6 +14,8 @@ import ch.thomsch.Ancestry;
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
+import ch.thomsch.storage.TradeoffOutput;
+import ch.thomsch.storage.OutputBuilder;
 import ch.thomsch.storage.RefactoringDetail;
 import ch.thomsch.storage.Stores;
 
@@ -63,8 +65,8 @@ public class Tradeoff extends Command {
 
         final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, detailedRefactorings);
 
-        final Output output = new Output(outputFile);
-        output.display(results);
+        final TradeoffOutput output = OutputBuilder.create(outputFile);
+        output.export(results, "LCOM5", "DIT", "CBO", "WMC");
     }
 
     private HashMap<String, Metrics> calculateFluctuations(
@@ -136,22 +138,4 @@ public class Tradeoff extends Command {
         System.out.println("<output file>       is the path of the file where the results will be stored.");
     }
 
-    private static class Output {
-        private final String outputFile;
-        int[] indices = Stores.getIndices("LCOM5", "DIT", "CBO", "WMC");
-
-        public Output(String outputFile) {
-            this.outputFile = outputFile;
-        }
-
-        public void display(HashMap<String, Metrics> results) {
-            if (outputFile == null) {
-                printInConsole(results);
-            }
-        }
-
-        private void printInConsole(HashMap<String, Metrics> results) {
-            results.forEach((revision, metrics) -> System.out.println(String.format("%s,%s", revision, metrics.hasTradeOff(indices))));
-        }
-    }
 }
