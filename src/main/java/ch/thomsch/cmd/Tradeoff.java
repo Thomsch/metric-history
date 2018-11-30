@@ -14,10 +14,10 @@ import ch.thomsch.Ancestry;
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
-import ch.thomsch.storage.TradeoffOutput;
 import ch.thomsch.storage.OutputBuilder;
 import ch.thomsch.storage.RefactoringDetail;
 import ch.thomsch.storage.Stores;
+import ch.thomsch.storage.TradeoffOutput;
 
 /**
  *
@@ -37,7 +37,7 @@ public class Tradeoff extends Command {
 
     @Override
     public boolean parse(String[] parameters) {
-        if (parameters.length < 3 || parameters.length > 4) {
+        if (parameters.length < 3 || parameters.length > 5) {
             return false;
         }
 
@@ -54,6 +54,18 @@ public class Tradeoff extends Command {
                 return false;
             }
         }
+
+        // It's currently not possible to have -m before -o or -m without -o.
+        if(parameters.length > 4) {
+            final String argument = parameters[4];
+            if (argument.contains("-m=")) {
+                final String[] split = argument.split("=");
+                mode = split[1];
+            } else {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -63,22 +75,36 @@ public class Tradeoff extends Command {
         final ClassStore model = Stores.loadClasses(rawFile);
         final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactorings);
 
-        final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, detailedRefactorings);
+        final HashMap<String, List<String>> changeSet = filterChanges(detailedRefactorings);
+
+        final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, changeSet);
 
         final TradeoffOutput output = OutputBuilder.create(outputFile);
         output.export(results, "LCOM5", "DIT", "CBO", "WMC");
     }
 
+    private HashMap<String, List<String>> filterChanges(
+            HashMap<String, RefactoringDetail> detailedRefactorings) {
+        final HashMap<String, List<String>> changeSet = new HashMap<>();
+        if(this.mode == null || this.mode.isEmpty()) {
+            detailedRefactorings.forEach((revision, refactoringDetail) -> {
+                changeSet.put(revision, new ArrayList<>(refactoringDetail.getClasses()));
+            });
+        } else {
+            throw new RuntimeException("Not yet implemented");
+        }
+        return changeSet;
+    }
+
     private HashMap<String, Metrics> calculateFluctuations(
             HashMap<String, String> ancestry,
             ClassStore model,
-            HashMap<String, RefactoringDetail> detailedRefactorings) {
+            HashMap<String, List<String>> revisions) {
         final HashMap<String, Metrics> results = new HashMap<>();
 
-        detailedRefactorings.forEach((revision, refactoringDetail) ->
-        {
+        revisions.forEach((revision, classes) -> {
             final List<Metrics> relevantMetrics = new ArrayList<>();
-            for (String className : refactoringDetail.getClasses()) {
+            for (String className : classes) {
                 final Metrics revisionMetrics = model.getMetric(revision, className);
                 final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
 
@@ -130,12 +156,14 @@ public class Tradeoff extends Command {
 
     @Override
     public void printUsage() {
-        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <raw file> [-o=<output file>]");
+        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <raw file> [-o=<output file> [-m=<mode>]]");
         System.out.println();
         System.out.println("<refactoring list>  is the path of the file containing each refactoring.");
         System.out.println("<ancestry file>     is the path of the file produced by 'ancestry' command.");
         System.out.println("<raw file>          is the path of the file produced by 'convert' command.");
         System.out.println("<output file>       is the path of the file where the results will be stored.");
+        System.out.println("<mode>              'all' uses all the changes in a revision to define a trade-off." +
+                "When the parameter is omitted, we only count classes linked to a refactoring.");
     }
 
 }
