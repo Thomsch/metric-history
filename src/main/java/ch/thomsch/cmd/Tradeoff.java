@@ -7,6 +7,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class Tradeoff extends Command {
         final ClassStore model = Stores.loadClasses(rawFile);
         final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactorings);
 
-        final HashMap<String, List<String>> changeSet = filterChanges(detailedRefactorings);
+        final HashMap<String, List<String>> changeSet = filterChanges(detailedRefactorings, model);
 
         final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, changeSet);
 
@@ -84,14 +85,23 @@ public class Tradeoff extends Command {
     }
 
     private HashMap<String, List<String>> filterChanges(
-            HashMap<String, RefactoringDetail> detailedRefactorings) {
+            HashMap<String, RefactoringDetail> detailedRefactorings, ClassStore model) {
         final HashMap<String, List<String>> changeSet = new HashMap<>();
         if(this.mode == null || this.mode.isEmpty()) {
             detailedRefactorings.forEach((revision, refactoringDetail) -> {
                 changeSet.put(revision, new ArrayList<>(refactoringDetail.getClasses()));
             });
+        } else if (this.mode.equalsIgnoreCase("all")){
+            detailedRefactorings.forEach((revision, ignored) -> {
+                final Collection<String> classes = model.getClasses(revision);
+                if (classes == null) {
+                    System.out.println("no data for revision " + revision);
+                } else {
+                    changeSet.put(revision, new ArrayList<>(classes));
+                }
+            });
         } else {
-            throw new RuntimeException("Not yet implemented");
+            throw new RuntimeException("Unknown mode '" + this.mode + '\'');
         }
         return changeSet;
     }
@@ -105,12 +115,16 @@ public class Tradeoff extends Command {
         revisions.forEach((revision, classes) -> {
             final List<Metrics> relevantMetrics = new ArrayList<>();
             for (String className : classes) {
-                final Metrics revisionMetrics = model.getMetric(revision, className);
-                final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
 
-                final Metrics result = Differences.computes(parentMetrics, revisionMetrics);
-                if(result != null)
-                    relevantMetrics.add(result);
+                if(!className.endsWith("Test") && !className.endsWith("Tests")) {
+                    final Metrics revisionMetrics = model.getMetric(revision, className);
+                    final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
+
+                    final Metrics result = Differences.computes(parentMetrics, revisionMetrics);
+
+                    if (result != null)
+                        relevantMetrics.add(result);
+                }
             }
 
             if (!relevantMetrics.isEmpty()) {
