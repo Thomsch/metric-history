@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import ch.thomsch.model.Metrics;
 
@@ -28,8 +29,10 @@ public class CsvOutput implements TradeoffOutput {
     public void export(HashMap<String, Metrics> results, String ... whitelist) {
         final int[] indices = Stores.getIndices(whitelist);
 
+        TreeMap<String, Metrics> sortedResults = new TreeMap<>(results);
+
         try (CSVPrinter writer = new CSVPrinter(new BufferedWriter(new FileWriter(file)), CSVFormat.RFC4180.withHeader("revision", "trade-off"))) {
-            results.forEach((revision, metrics) -> {
+            sortedResults.forEach((revision, metrics) -> {
                 try {
                     writer.printRecord(revision, metrics.hasTradeOff(indices));
                 } catch (IOException e) {
