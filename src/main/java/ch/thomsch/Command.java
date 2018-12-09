@@ -149,7 +149,7 @@ public abstract class Command {
         }
 
         @Override
-        boolean parse(String[] parameters) {
+        public boolean parse(String[] parameters) {
             if (parameters.length < 6) {
                 return false;
             }
@@ -172,7 +172,7 @@ public abstract class Command {
         }
 
         @Override
-        void execute() {
+        public void execute() {
             try {
                 final Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
                 final MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new RefactoringMiner());
