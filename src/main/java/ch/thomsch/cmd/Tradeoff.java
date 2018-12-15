@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,7 +32,6 @@ public class Tradeoff extends Command {
     private String rawFile;
     private String refactorings;
     private String outputFile;
-    private String mode;
 
     @Override
     public String getName() {
@@ -42,7 +40,7 @@ public class Tradeoff extends Command {
 
     @Override
     public boolean parse(String[] parameters) {
-        if (parameters.length < 3 || parameters.length > 5) {
+        if (parameters.length < 3 || parameters.length > 4) {
             return false;
         }
 
@@ -56,10 +54,6 @@ public class Tradeoff extends Command {
             switch (split[0]) {
                 case "-o":
                     outputFile = split[1];
-                    break;
-
-                case "-m":
-                    mode = split[1];
                     break;
 
                 default:
@@ -76,7 +70,7 @@ public class Tradeoff extends Command {
         final ClassStore model = Stores.loadClasses(rawFile);
         final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactorings);
 
-        final HashMap<String, List<String>> changeSet = filterChanges(detailedRefactorings, model);
+        final HashMap<String, List<String>> changeSet = filterChanges(detailedRefactorings);
 
         final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, changeSet);
 
@@ -85,24 +79,13 @@ public class Tradeoff extends Command {
     }
 
     private HashMap<String, List<String>> filterChanges(
-            HashMap<String, RefactoringDetail> detailedRefactorings, ClassStore model) {
+            HashMap<String, RefactoringDetail> detailedRefactorings) {
         final HashMap<String, List<String>> changeSet = new HashMap<>();
-        if(this.mode == null || this.mode.isEmpty()) {
-            detailedRefactorings.forEach((revision, refactoringDetail) -> {
-                changeSet.put(revision, new ArrayList<>(refactoringDetail.getClasses()));
-            });
-        } else if (this.mode.equalsIgnoreCase("all")){
-            detailedRefactorings.forEach((revision, ignored) -> {
-                final Collection<String> classes = model.getClasses(revision);
-                if (classes == null) {
-                    System.out.println("no data for revision " + revision);
-                } else {
-                    changeSet.put(revision, new ArrayList<>(classes));
-                }
-            });
-        } else {
-            throw new RuntimeException("Unknown mode '" + this.mode + '\'');
-        }
+
+        detailedRefactorings.forEach((revision, refactoringDetail) -> {
+            changeSet.put(revision, new ArrayList<>(refactoringDetail.getClasses()));
+        });
+
         return changeSet;
     }
 
@@ -170,14 +153,11 @@ public class Tradeoff extends Command {
 
     @Override
     public void printUsage() {
-        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <raw file> [-o=<output file>] [-m=<mode>]");
+        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <raw file> [-o=<output file>]");
         System.out.println();
         System.out.println("<refactoring list>  is the path of the file containing each refactoring.");
         System.out.println("<ancestry file>     is the path of the file produced by 'ancestry' command.");
         System.out.println("<raw file>          is the path of the file produced by 'convert' command.");
         System.out.println("<output file>       is the path of the file where the results will be stored.");
-        System.out.println("<mode>              'all' uses all the changes in a revision to define a trade-off." +
-                "When the parameter is omitted, we only count classes linked to a refactoring.");
     }
-
 }
