@@ -71,7 +71,6 @@ public class Tradeoff extends Command {
         final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactorings);
 
         final HashMap<String, List<String>> changeSet = filterChanges(detailedRefactorings);
-
         final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, changeSet);
 
         final TradeoffOutput output = OutputBuilder.create(outputFile);
@@ -98,16 +97,13 @@ public class Tradeoff extends Command {
         revisions.forEach((revision, classes) -> {
             final List<Metrics> relevantMetrics = new ArrayList<>();
             for (String className : classes) {
+                final Metrics revisionMetrics = model.getMetric(revision, className);
+                final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
 
-                if(!className.endsWith("Test") && !className.endsWith("Tests")) {
-                    final Metrics revisionMetrics = model.getMetric(revision, className);
-                    final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
+                final Metrics result = Differences.computes(parentMetrics, revisionMetrics);
 
-                    final Metrics result = Differences.computes(parentMetrics, revisionMetrics);
-
-                    if (result != null)
-                        relevantMetrics.add(result);
-                }
+                if (result != null)
+                    relevantMetrics.add(result);
             }
 
             if (!relevantMetrics.isEmpty()) {
