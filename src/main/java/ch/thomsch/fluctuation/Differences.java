@@ -83,33 +83,25 @@ public final class Differences {
      *
      * @param a the left operand
      * @param b the right operand
-     * @return <code>b</code> - <code>a</code> or null if a and b are missing.
+     * @return <code>b</code> - <code>a</code> or null if a or b is missing.
      * @throws IllegalArgumentException if the metrics are not comparable
      * @throws NullPointerException     if a or b are null
      */
     public static Metrics computes(Metrics a, Metrics b) {
-        if(a == null && b == null) return null;
+        Metrics result = null;
 
-        if(a == null) {
-            return b.copy();
-        }
+        if (a != null && b != null) {
+            final List<Double> as = a.get();
+            final List<Double> bs = b.get();
 
-        final List<Double> bs;
-        if(b == null) {
-            bs = new Metrics(a.size()).get();
-        } else {
-            bs = b.get();
-        }
+            if (as.size() != bs.size()) {
+                throw new IllegalArgumentException("These metrics are not from the same source!");
+            }
 
-        final List<Double> as = a.get();
-
-        if (as.size() != bs.size()) {
-            throw new IllegalArgumentException("These metrics are not from the same source!");
-        }
-
-        final Metrics result = new Metrics();
-        for (int i = 0; i < as.size(); i++) {
-            result.add(bs.get(i) - as.get(i));
+            result = new Metrics();
+            for (int i = 0; i < as.size(); i++) {
+                result.add(bs.get(i) - as.get(i));
+            }
         }
 
         return result;

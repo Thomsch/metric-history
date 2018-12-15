@@ -57,7 +57,6 @@ public class DifferencesTest {
 
         Differences.export(ancestry, model, writer);
 
-        System.out.println(out);
         assertArrayEquals(expectedExport(), out.toString().split("\\r?\\n"));
     }
 
@@ -65,7 +64,6 @@ public class DifferencesTest {
         return new String[]{
                 "a,X,-0.1,0.5,0.0",
                 "a,Y,0.1,0.0,5.0",
-                "a,W,2.0,3.0,4.0",
                 "d,X,1.0,-5.0,21.0",
                 "e,X,0.0,0.0,0.0"
         };
@@ -102,22 +100,18 @@ public class DifferencesTest {
     }
 
     @Test
-    public void computesAllowsMissingFirstOperand() {
+    public void computesDoNotAllowsMissingFirstOperand() {
         final Metrics m = new Metrics(1.0, 2.0, 3.0);
 
         final Metrics actual = Differences.computes(null, m);
-
-        final Double[] expected = {1.0, 2.0, 3.0};
-        assertArrayEquals(expected, actual.get().toArray());
+        assertNull(actual);
     }
 
     @Test
-    public void computesAllowsMissingSecondOperand() {
+    public void computesDoNotAllowsMissingSecondOperand() {
         final Metrics m = new Metrics(1.0, 2.0, 3.0);
 
         final Metrics actual = Differences.computes(m, null);
-
-        final Double[] expected = {-1.0, -2.0, -3.0};
-        assertArrayEquals(expected, actual.get().toArray());
+        assertNull(actual);
     }
 }
