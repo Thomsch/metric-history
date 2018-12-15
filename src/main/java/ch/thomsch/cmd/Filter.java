@@ -94,14 +94,20 @@ public class Filter extends Command {
         final ClassStore filteredChanges = new ClassStore();
 
         revisions.forEach((revision, classes) -> {
+            final ArrayList<String> missingClasses = new ArrayList<>();
+
             for (String className : classes) {
                 final Metrics revisionMetrics = changes.getMetric(revision, className);
 
                 if(revisionMetrics == null) {
-                    logger.warn("No metric found for class {} in revision {} in changes", className, revision);
+                    missingClasses.add(className);
                 }
 
                 filteredChanges.addMetric(revision, className, revisionMetrics);
+            }
+
+            if(missingClasses.size() > 0) {
+                logger.warn("{} - Ignored {} classes ([{}])", revision, missingClasses.size(), String.join(",", missingClasses));
             }
         });
         return filteredChanges;
