@@ -14,7 +14,7 @@ import ch.thomsch.cmd.Convert;
 import ch.thomsch.cmd.Difference;
 import ch.thomsch.cmd.Help;
 import ch.thomsch.cmd.Mongo;
-import ch.thomsch.cmd.Tradeoff;
+import ch.thomsch.cmd.Filter;
 
 /**
  * Entry point for the application.
@@ -32,7 +32,7 @@ public final class Application {
         addCommand(new Ancestry());
         addCommand(new Difference());
         addCommand(new Mongo());
-        addCommand(new Tradeoff());
+        addCommand(new Filter());
     }
 
     /**

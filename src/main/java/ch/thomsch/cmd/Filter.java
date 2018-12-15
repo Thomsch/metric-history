@@ -2,21 +2,17 @@ package ch.thomsch.cmd;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import ch.thomsch.Ancestry;
-import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 import ch.thomsch.storage.OutputBuilder;
@@ -27,30 +23,28 @@ import ch.thomsch.storage.TradeoffOutput;
 /**
  *
  */
-public class Tradeoff extends Command {
-    private static final Logger logger = LoggerFactory.getLogger(Tradeoff.class);
+public class Filter extends Command {
+    private static final Logger logger = LoggerFactory.getLogger(Filter.class);
 
-    private String ancestryFile;
-    private String rawFile;
-    private String refactorings;
+    private String changesFile;
+    private String refactoringsFile;
     private String outputFile;
 
     @Override
     public String getName() {
-        return "tradeoffs";
+        return "filter";
     }
 
     @Override
     public boolean parse(String[] parameters) {
-        if (parameters.length < 3 || parameters.length > 4) {
+        if (parameters.length < 2 || parameters.length > 3) {
             return false;
         }
 
-        refactorings = normalizePath(parameters[0]);
-        ancestryFile = normalizePath(parameters[1]);
-        rawFile = normalizePath(parameters[2]);
+        refactoringsFile = normalizePath(parameters[0]);
+        changesFile = normalizePath(parameters[1]);
 
-        for (String parameter : Arrays.copyOfRange(parameters, 3, parameters.length)) {
+        for (String parameter : Arrays.copyOfRange(parameters, 2, parameters.length)) {
             final String[] split = parameter.split("=");
 
             switch (split[0]) {
@@ -68,9 +62,8 @@ public class Tradeoff extends Command {
 
     @Override
     public void execute() throws IOException {
-        final HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
-        final ClassStore model = Stores.loadClasses(rawFile);
-        final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactorings);
+        final ClassStore model = Stores.loadClasses(changesFile);
+        final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactoringsFile);
 
         final HashMap<String, List<String>> changeSet = aggregateClassesForEachRevision(detailedRefactorings);
         final ClassStore results = filter(model, changeSet);
@@ -136,11 +129,10 @@ public class Tradeoff extends Command {
 
     @Override
     public void printUsage() {
-        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <raw file> [-o=<output file>]");
+        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <change file> [-o=<output file>]");
         System.out.println();
         System.out.println("<refactoring list>  is the path of the file containing each refactoring.");
-        System.out.println("<ancestry file>     is the path of the file produced by 'ancestry' command.");
-        System.out.println("<raw file>          is the path of the file produced by 'convert' command.");
+        System.out.println("<changes file>      is the path of the file produced by 'diff' command.");
         System.out.println("<output file>       is the path of the file where the results will be stored.");
     }
 }
