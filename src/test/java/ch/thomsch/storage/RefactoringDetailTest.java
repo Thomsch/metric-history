@@ -131,4 +131,29 @@ public class RefactoringDetailTest {
         assertTrue(detail.getClasses().contains("okhttp3.internal.tls.CertificateChainCleaner.BasicCertificateChainCleaner"));
         assertEquals(2, detail.getClasses().size());
     }
+
+    @Test
+    public void parseExtractSuperclass() {
+        final RefactoringDetail detail = new RefactoringDetail();
+
+        detail.addRefactoring("Extract Superclass", "Extract Superclass retrofit2.HttpException from classes [retrofit2.adapter.guava.HttpException, retrofit2.adapter.java8.HttpException, retrofit2.adapter.rxjava.HttpException, retrofit2.adapter.rxjava2.HttpException]");
+
+        assertTrue(detail.getClasses().contains("retrofit2.HttpException"));
+        assertTrue(detail.getClasses().contains("retrofit2.adapter.guava.HttpException"));
+        assertTrue(detail.getClasses().contains("retrofit2.adapter.java8.HttpException"));
+        assertTrue(detail.getClasses().contains("retrofit2.adapter.rxjava.HttpException"));
+        assertTrue(detail.getClasses().contains("retrofit2.adapter.rxjava2.HttpException"));
+        assertEquals(5, detail.getClasses().size());
+    }
+
+    @Test
+    public void parsePullUpMethodNoSpace() {
+        final RefactoringDetail detail = new RefactoringDetail();
+
+        detail.addRefactoring("Pull Up Method", "Pull Up Methodpublic code() : int from class retrofit2.adapter.java8.HttpException to public code() : int from class retrofit2.HttpException");
+
+        assertTrue(detail.getClasses().contains("retrofit2.HttpException"));
+        assertTrue(detail.getClasses().contains("retrofit2.adapter.java8.HttpException"));
+        assertEquals(2, detail.getClasses().size());
+    }
 }

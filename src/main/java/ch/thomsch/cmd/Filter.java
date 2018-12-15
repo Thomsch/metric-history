@@ -98,8 +98,7 @@ public class Filter extends Command {
                 final Metrics revisionMetrics = changes.getMetric(revision, className);
 
                 if(revisionMetrics == null) {
-                    logger.warn("No metric found for revision {} in changes", revision);
-                    break;
+                    logger.warn("No metric found for class {} in revision {} in changes", className, revision);
                 }
 
                 filteredChanges.addMetric(revision, className, revisionMetrics);
