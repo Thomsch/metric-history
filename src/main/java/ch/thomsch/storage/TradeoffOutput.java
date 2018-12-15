@@ -2,6 +2,7 @@ package ch.thomsch.storage;
 
 import java.util.HashMap;
 
+import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 
 /**
@@ -11,8 +12,7 @@ public interface TradeoffOutput {
 
     /**
      * Exports the metrics of a list of revisions.
-     * @param results the pair of revision/metric to export
-     * @param whitelist the metrics to include in the export
+     * @param data the pair of revision/metric to export
      */
-    void export(HashMap<String, Metrics> results, String ... whitelist);
+    void export(ClassStore data);
 }

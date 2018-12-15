@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import ch.thomsch.fluctuation.Differences;
+import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 
 /**
@@ -26,21 +28,21 @@ public class CsvOutput implements TradeoffOutput {
     }
 
     @Override
-    public void export(HashMap<String, Metrics> results, String ... whitelist) {
-        final int[] indices = Stores.getIndices(whitelist);
+    public void export(ClassStore data) {
+        try (CSVPrinter writer = new CSVPrinter(new FileWriter(file), Stores.getFormat())) {
+            for (String revision : data.getVersions()) {
+                for (String className : data.getClasses(revision)) {
+                    final Metrics metric = data.getMetric(revision, className);
 
-        TreeMap<String, Metrics> sortedResults = new TreeMap<>(results);
-
-        try (CSVPrinter writer = new CSVPrinter(new BufferedWriter(new FileWriter(file)), CSVFormat.RFC4180.withHeader("revision", "trade-off"))) {
-            sortedResults.forEach((revision, metrics) -> {
-                try {
-                    writer.printRecord(revision, metrics.hasTradeOff(indices));
-                } catch (IOException e) {
-                    logger.error("Failed to write result for revision {}", revision);
+                    if(metric == null) {
+                        logger.warn("There is no metric for class {} at revision {}", className, revision);
+                        break;
+                    }
+                    Differences.outputMetric(writer, revision, className, metric);
                 }
-            });
+            }
         } catch (IOException e) {
-            logger.error("Cannot write on " + file, e);
+            logger.error("I/O error with file {}", file, e);
         }
     }
 }

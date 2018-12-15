@@ -59,7 +59,7 @@ public final class Differences {
         }
     }
 
-    private static void outputMetric(CSVPrinter writer, String revision, String className, Metrics result) {
+    public static void outputMetric(CSVPrinter writer, String revision, String className, Metrics result) {
         try {
             writer.printRecord(format(revision, className, result));
         } catch (IOException e) {

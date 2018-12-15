@@ -1,7 +1,9 @@
 package ch.thomsch.storage;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
+import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 
 /**
@@ -10,10 +12,11 @@ import ch.thomsch.model.Metrics;
 public class ConsoleOutput implements TradeoffOutput {
 
     @Override
-    public void export(HashMap<String, Metrics> results, String ... whitelist) {
-        final int[] indices = Stores.getIndices(whitelist);
+    public void export(ClassStore data) {
 
-        System.out.println("Trade-offs:");
-        results.forEach((revision, metrics) -> System.out.println(String.format("%s: %s", revision, metrics.hasTradeOff(indices))));
+        System.out.println("ClassStore:");
+        for (String version : data.getVersions()) {
+            System.out.println(version + " -> " + Arrays.toString(data.getClasses(version).toArray()));
+        }
     }
 }

@@ -2,11 +2,13 @@ package ch.thomsch.cmd;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,14 +72,14 @@ public class Tradeoff extends Command {
         final ClassStore model = Stores.loadClasses(rawFile);
         final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactorings);
 
-        final HashMap<String, List<String>> changeSet = filterChanges(detailedRefactorings);
-        final HashMap<String, Metrics> results = calculateFluctuations(ancestry, model, changeSet);
+        final HashMap<String, List<String>> changeSet = aggregateClassesForEachRevision(detailedRefactorings);
+        final ClassStore results = filter(model, changeSet);
 
         final TradeoffOutput output = OutputBuilder.create(outputFile);
-        output.export(results, "LCOM5", "DIT", "CBO", "WMC");
+        output.export(results);
     }
 
-    private HashMap<String, List<String>> filterChanges(
+    private HashMap<String, List<String>> aggregateClassesForEachRevision(
             HashMap<String, RefactoringDetail> detailedRefactorings) {
         final HashMap<String, List<String>> changeSet = new HashMap<>();
 
@@ -88,29 +90,29 @@ public class Tradeoff extends Command {
         return changeSet;
     }
 
-    private HashMap<String, Metrics> calculateFluctuations(
-            HashMap<String, String> ancestry,
-            ClassStore model,
-            HashMap<String, List<String>> revisions) {
-        final HashMap<String, Metrics> results = new HashMap<>();
+    /**
+     * Filters the class store to keep only the versions of the classes selected.
+     * @param changes the class store to filter
+     * @param revisions the list of classes per revision to keep
+     * @return the new instance of class store that has been filtered
+     */
+    private ClassStore filter(ClassStore changes, HashMap<String, List<String>> revisions) {
+
+        final ClassStore filteredChanges = new ClassStore();
 
         revisions.forEach((revision, classes) -> {
-            final List<Metrics> relevantMetrics = new ArrayList<>();
             for (String className : classes) {
-                final Metrics revisionMetrics = model.getMetric(revision, className);
-                final Metrics parentMetrics = model.getMetric(ancestry.get(revision), className);
+                final Metrics revisionMetrics = changes.getMetric(revision, className);
 
-                final Metrics result = Differences.computes(parentMetrics, revisionMetrics);
+                if(revisionMetrics == null) {
+                    logger.warn("No metric found for revision {} in changes", revision);
+                    break;
+                }
 
-                if (result != null)
-                    relevantMetrics.add(result);
-            }
-
-            if (!relevantMetrics.isEmpty()) {
-                results.put(revision, sum(relevantMetrics));
+                filteredChanges.addMetric(revision, className, revisionMetrics);
             }
         });
-        return results;
+        return filteredChanges;
     }
 
     private HashMap<String, RefactoringDetail> loadRefactorings(String refactoringsPath) throws IOException {
@@ -130,21 +132,6 @@ public class Tradeoff extends Command {
             }
         }
         return detailedRefactorings;
-    }
-
-    private Metrics sum(List<Metrics> refactoringChange) {
-        final int numMetrics = refactoringChange.get(0).size();
-        final Double[] sum = new Double[numMetrics];
-        for (int i = 0; i < sum.length; i++) {
-            sum[i] = (double) 0;
-        }
-
-        for (Metrics metrics : refactoringChange) {
-            for (int i = 0; i < metrics.size(); i++) {
-                sum[i] += metrics.get(i);
-            }
-        }
-        return new Metrics(sum);
     }
 
     @Override
