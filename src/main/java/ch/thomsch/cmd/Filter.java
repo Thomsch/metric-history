@@ -126,7 +126,11 @@ public class Filter extends Command {
                     detail = new RefactoringDetail();
                     detailedRefactorings.put(revision, detail);
                 }
-                detail.addRefactoring(refactoringType, description);
+
+                if(!refactoringType.equalsIgnoreCase("Move Source Folder")
+                        && !refactoringType.equalsIgnoreCase("Rename Package")) {
+                    detail.addRefactoring(refactoringType, description);
+                }
             }
         }
         return detailedRefactorings;
