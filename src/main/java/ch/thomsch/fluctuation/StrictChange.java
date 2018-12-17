@@ -15,16 +15,16 @@ public class StrictChange implements Computer {
         Metrics result = null;
 
         if (old != null && current != null) {
-            final List<Double> as = old.get();
-            final List<Double> bs = current.get();
+            final List<Double> olds = old.get();
+            final List<Double> currents = current.get();
 
-            if (as.size() != bs.size()) {
+            if (olds.size() != currents.size()) {
                 throw new IllegalArgumentException("These metrics are not from the same source!");
             }
 
             result = new Metrics();
-            for (int i = 0; i < as.size(); i++) {
-                result.add(bs.get(i) - as.get(i));
+            for (int i = 0; i < olds.size(); i++) {
+                result.add(currents.get(i) - olds.get(i));
             }
         }
 

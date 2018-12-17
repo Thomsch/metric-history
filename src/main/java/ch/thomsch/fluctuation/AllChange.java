@@ -13,14 +13,14 @@ public class AllChange implements Computer {
             return current.copy();
         }
 
-        final List<Double> olds;
+        final List<Double> currents;
         if(current == null) {
-            olds = new Metrics(old.size()).get();
+            currents = new Metrics(old.size()).get();
         } else {
-            olds = current.get();
+            currents = current.get();
         }
 
-        final List<Double> currents = old.get();
+        final List<Double> olds = old.get();
 
         if (currents.size() != olds.size()) {
             throw new IllegalArgumentException("These metrics are not from the same source!");
@@ -28,7 +28,7 @@ public class AllChange implements Computer {
 
         final Metrics result = new Metrics();
         for (int i = 0; i < currents.size(); i++) {
-            result.add(olds.get(i) - currents.get(i));
+            result.add(currents.get(i) - olds.get(i));
         }
 
         return result;
