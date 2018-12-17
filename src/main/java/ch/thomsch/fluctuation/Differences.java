@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import ch.thomsch.model.Metrics;
 import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.Metrics;
 
 /**
  * @author Thomsch
@@ -22,7 +21,6 @@ public final class Differences {
     private static final Logger logger = LoggerFactory.getLogger(Differences.class);
 
     private Differences() {
-
     }
 
     /**
@@ -35,6 +33,7 @@ public final class Differences {
      * @param writer   where the results are written
      */
     public static void export(HashMap<String, String> ancestry, ClassStore model, CSVPrinter writer) {
+        final Computer computer = new StrictChange();
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
         for (Map.Entry<String, String> revisionParent : entries) {
 
@@ -51,7 +50,7 @@ public final class Differences {
                 final Metrics revisionMetrics = model.getMetric(revision, className);
                 final Metrics parentMetrics = model.getMetric(parent, className);
 
-                final Metrics result = computes(parentMetrics, revisionMetrics);
+                final Metrics result = computer.compute(parentMetrics, revisionMetrics);
                 if (result != null) {
                     outputMetric(writer, revision, className, result);
                 }
@@ -74,36 +73,5 @@ public final class Differences {
         result.addAll(metrics.get());
 
         return result.toArray();
-    }
-
-    /**
-     * Computes the difference between a and b (b - a) for each of their metrics.
-     * <code>a</code> can be seen as previous and <code>b</code> as current.
-     * It uses the order of the metrics given by {@link Metrics#get()}.
-     *
-     * @param a the left operand
-     * @param b the right operand
-     * @return <code>b</code> - <code>a</code> or null if a or b is missing.
-     * @throws IllegalArgumentException if the metrics are not comparable
-     * @throws NullPointerException     if a or b are null
-     */
-    public static Metrics computes(Metrics a, Metrics b) {
-        Metrics result = null;
-
-        if (a != null && b != null) {
-            final List<Double> as = a.get();
-            final List<Double> bs = b.get();
-
-            if (as.size() != bs.size()) {
-                throw new IllegalArgumentException("These metrics are not from the same source!");
-            }
-
-            result = new Metrics();
-            for (int i = 0; i < as.size(); i++) {
-                result.add(bs.get(i) - as.get(i));
-            }
-        }
-
-        return result;
     }
 }

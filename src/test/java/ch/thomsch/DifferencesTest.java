@@ -14,39 +14,11 @@ import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 /**
  * @author Thomsch
  */
 public class DifferencesTest {
-
-    @Test
-    public void computesShouldMakeDifference() {
-        final Metrics a = new Metrics(1.0);
-        final Metrics b = new Metrics(1.0);
-        final Metrics c = new Metrics(2.0);
-
-        final Metrics adiffb = Differences.computes(a, b);
-        final Metrics bdiffc = Differences.computes(b, c);
-        final Metrics cdiffb = Differences.computes(c, b);
-
-        assertArrayEquals(new Double[]{0.0}, adiffb.get().toArray());
-        assertArrayEquals(new Double[]{1.0}, bdiffc.get().toArray());
-        assertArrayEquals(new Double[]{-1.0}, cdiffb.get().toArray());
-    }
-
-    @Test
-    public void computesShouldRespectOrder() {
-        final Metrics a = new Metrics(1.0, 2.0, 3.0);
-        final Metrics b = new Metrics(10.0, 20.0, 30.0);
-
-        final Metrics actual = Differences.computes(a, b);
-
-        final Double[] expected = {9.0, 18.0, 27.0};
-        assertArrayEquals(expected, actual.get().toArray());
-    }
 
     @Test
     public void export() throws IOException {
@@ -92,26 +64,5 @@ public class DifferencesTest {
         ancestry.put("d", "e");
         ancestry.put("e", "f");
         return ancestry;
-    }
-
-    @Test
-    public void bothMissingOperandsReturnNull() {
-        assertNull(Differences.computes(null, null));
-    }
-
-    @Test
-    public void computesDoNotAllowsMissingFirstOperand() {
-        final Metrics m = new Metrics(1.0, 2.0, 3.0);
-
-        final Metrics actual = Differences.computes(null, m);
-        assertNull(actual);
-    }
-
-    @Test
-    public void computesDoNotAllowsMissingSecondOperand() {
-        final Metrics m = new Metrics(1.0, 2.0, 3.0);
-
-        final Metrics actual = Differences.computes(m, null);
-        assertNull(actual);
     }
 }
