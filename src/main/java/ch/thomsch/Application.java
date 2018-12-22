@@ -1,23 +1,38 @@
 package ch.thomsch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import ch.thomsch.cmd.Ancestry;
+import ch.thomsch.cmd.Collect;
+import ch.thomsch.cmd.Command;
+import ch.thomsch.cmd.Convert;
+import ch.thomsch.cmd.Difference;
+import ch.thomsch.cmd.Help;
+import ch.thomsch.cmd.Mongo;
+import ch.thomsch.cmd.Filter;
 
 /**
  * Entry point for the application.
  */
 public final class Application {
+    private final Logger logger = LoggerFactory.getLogger("Application");
+
     private final Map<String, Command> commands = new HashMap<>();
-    private final Command.Help help;
+    private final Help help;
 
     Application() {
-        help = new Command.Help(commands.values());
-        addCommand(new Command.Collect());
-        addCommand(new Command.Convert());
-        addCommand(new Command.Ancestry());
-        addCommand(new Command.Difference());
-        addCommand(new Command.Mongo());
+        help = new Help(commands.values());
+        addCommand(new Collect());
+        addCommand(new Convert());
+        addCommand(new Ancestry());
+        addCommand(new Difference());
+        addCommand(new Mongo());
+        addCommand(new Filter());
     }
 
     /**
@@ -46,7 +61,11 @@ public final class Application {
         }
 
         if (command.parse(parameters)) {
-            command.execute();
+            try{
+                command.execute();
+            } catch (Exception e) {
+                logger.error("An error occurred: ", e);
+            }
         } else {
             System.out.println("Incorrect number of arguments (" + parameters.length + ')');
             System.out.println();

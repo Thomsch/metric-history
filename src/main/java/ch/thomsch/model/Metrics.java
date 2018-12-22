@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.thomsch.storage.Stores;
+
 /**
  * Represents an ordered collection of unlabelled metrics.
  */
@@ -14,6 +16,17 @@ public class Metrics {
 
     public Metrics(Double... metrics) {
         this.metrics = new ArrayList<>(Arrays.asList(metrics));
+    }
+
+    /**
+     * Initialize <code>size</code> metrics to zero.
+     * @param size the number of metrics
+     */
+    public Metrics(int size) {
+        this.metrics = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            metrics.add(ZERO);
+        }
     }
 
     /**
@@ -49,5 +62,32 @@ public class Metrics {
 
     public List<Double> get() {
         return metrics;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(metrics.toArray());
+    }
+
+    public boolean hasTradeOff(int ... indices) {
+        int positive = 0;
+        int negative = 0;
+
+        for (int index : indices) {
+            if(this.metrics.get(index) > 0) {
+                positive++;
+            } else if (this.metrics.get(index) < 0){
+                negative++;
+            }
+        }
+        return positive > 0 && negative > 0;
+    }
+
+    public Metrics copy() {
+        final Metrics copy = new Metrics();
+        for (Double metric : metrics) {
+            copy.add(metric);
+        }
+        return copy;
     }
 }

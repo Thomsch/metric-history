@@ -28,7 +28,7 @@ public class ClassStoreTest {
         instance.addMetric("alpha", "A", dummy);
         instance.addMetric("alpha", "B", dummy);
 
-        assertEquals(1, instance.getVersions().size());
+        assertEquals(1, instance.revisions());
         assertEquals(2, instance.getClasses("alpha").size());
         assertSameContent(Arrays.asList("A", "B"), instance.getClasses("alpha"));
     }
@@ -46,7 +46,7 @@ public class ClassStoreTest {
         instance.addMetric("beta", "A", dummy);
         instance.addMetric("gamma", "A", dummy);
 
-        assertEquals(3, instance.getVersions().size());
+        assertEquals(3, instance.revisions());
     }
 
     @Test
@@ -57,15 +57,49 @@ public class ClassStoreTest {
         instance.addMetric("delta", "B", dummy);
         instance.addMetric("gamma", "A", dummy);
 
-        assertEquals(4, instance.getVersions().size());
+        assertEquals(4, instance.revisions());
 
         instance.addMetric("epsilon", "C", dummy);
 
-        assertEquals(5, instance.getVersions().size());
+        assertEquals(5, instance.revisions());
     }
 
     @Test
     public void newInstancesShouldHaveZeroData() {
-        assertEquals(0, instance.getVersions().size());
+        assertEquals(0, instance.revisions());
+    }
+
+    @Test
+    public void nullMetricShouldBeIgnored() {
+        instance.addMetric("alpha", "A", null);
+
+        assertEquals(0, instance.revisions());
+    }
+
+    @Test
+    public void nullMetricShouldBeIgnoredWhenAddedToExistingRevision() {
+        instance.addMetric("alpha", "A", dummy);
+        instance.addMetric("alpha", "B", null);
+
+        assertEquals(1, instance.revisions());
+        assertEquals(1, instance.getClasses("alpha").size());
+    }
+
+    @Test
+    public void nullClassShouldBeIgnored() {
+        instance.addMetric("alpha", null, dummy);
+        instance.addMetric("alpha", null, null);
+
+        assertEquals(0, instance.revisions());
+    }
+
+    @Test
+    public void nullClassShouldBeIgnoredWhenAddedToExistingRevision() {
+        instance.addMetric("alpha", "A", dummy);
+        instance.addMetric("alpha", null, dummy);
+        instance.addMetric("alpha", null, null);
+
+        assertEquals(1, instance.revisions());
+        assertEquals(1, instance.getClasses("alpha").size());
     }
 }

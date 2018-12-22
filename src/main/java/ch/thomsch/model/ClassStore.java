@@ -1,8 +1,5 @@
 package ch.thomsch.model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,8 +12,6 @@ import java.util.Map;
  * @author Thomsch
  */
 public class ClassStore {
-    private static final Logger logger = LoggerFactory.getLogger(ClassStore.class);
-
     private final Map<String, Map<String, Metrics>> data;
 
     public ClassStore() {
@@ -31,6 +26,7 @@ public class ClassStore {
      * @param metrics   the metrics associated for the class at the given version.
      */
     public void addMetric(String revision, String className, Metrics metrics) {
+        if(metrics == null || className == null) return;
         final Map<String, Metrics> dump = data.computeIfAbsent(revision, key -> new LinkedHashMap<>());
 
         dump.put(className.intern(), metrics);
@@ -41,12 +37,11 @@ public class ClassStore {
      *
      * @param revision  the revision
      * @param className the class
-     * @return the metric or null.
+     * @return the metric or null if it doesn't exists.
      */
     public Metrics getMetric(String revision, String className) {
         final Map<String, Metrics> metricDump = data.get(revision);
         if (metricDump == null) {
-            logger.warn("No such revision {}", revision);
             return null;
         }
         return metricDump.get(className);

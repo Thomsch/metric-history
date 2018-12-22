@@ -79,7 +79,7 @@ public class Ancestry implements CommitReader {
         return new CSVPrinter(new BufferedWriter(new FileWriter(outputFile)), getFormat());
     }
 
-    public static HashMap<String, String> load(String ancestryFile) {
+    public static HashMap<String, String> load(String ancestryFile) throws IOException {
         HashMap<String, String> ancestry = new LinkedHashMap<>();
 
         logger.info("Loading ancestry (" + ancestryFile + ")...");
@@ -88,10 +88,6 @@ public class Ancestry implements CommitReader {
             for (CSVRecord record : parser) {
                 ancestry.put(record.get(0), record.get(1));
             }
-        }catch (FileNotFoundException e) {
-            logger.error("The file " + ancestryFile + " doesn't exists", e);
-        } catch (IOException e) {
-            logger.error("Error while reading the file " + ancestryFile);
         }
 
         return ancestry;
