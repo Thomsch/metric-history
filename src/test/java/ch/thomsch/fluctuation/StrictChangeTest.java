@@ -7,7 +7,9 @@ import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertNull;
 
-public class StrictChangeTest extends ChangeTest {
+public class StrictChangeTest {
+
+    private StrictChange changes;
 
     @Before
     public void setUp() {
@@ -28,6 +30,21 @@ public class StrictChangeTest extends ChangeTest {
 
         final Metrics actual = changes.compute(m, null);
         assertNull(actual);
+    }
+
+    @Test
+    public  void computesShouldMakeDifference() {
+        CommonChangeTests.computesShouldMakeDifference(changes);
+    }
+
+    @Test
+    public  void computesShouldRespectOrder() {
+        CommonChangeTests.computesShouldRespectOrder(changes);
+    }
+
+    @Test
+    public  void bothMissingOperandsReturnNull() {
+        CommonChangeTests.bothMissingOperandsReturnNull(changes);
     }
 
 }

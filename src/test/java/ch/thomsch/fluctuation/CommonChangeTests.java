@@ -1,19 +1,19 @@
 package ch.thomsch.fluctuation;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
 import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNull;
 
-@Ignore
-public class ChangeTest {
-    protected Computer changes;
+/**
+ * Tests common behaviours between implementations of {@link Computer}.
+ */
+final class CommonChangeTests {
 
-    @Test
-    public void computesShouldMakeDifference() {
+    private CommonChangeTests() {
+    }
+
+    static void computesShouldMakeDifference(Computer changes) {
         final Metrics a = new Metrics(1.0);
         final Metrics b = new Metrics(1.0);
         final Metrics c = new Metrics(2.0);
@@ -27,8 +27,7 @@ public class ChangeTest {
         assertArrayEquals(new Double[]{-1.0}, cdiffb.get().toArray());
     }
 
-    @Test
-    public void computesShouldRespectOrder() {
+    static void computesShouldRespectOrder(Computer changes) {
         final Metrics a = new Metrics(1.0, 2.0, 3.0);
         final Metrics b = new Metrics(10.0, 20.0, 30.0);
 
@@ -38,8 +37,7 @@ public class ChangeTest {
         assertArrayEquals(expected, actual.get().toArray());
     }
 
-    @Test
-    public void bothMissingOperandsReturnNull() {
+    static void bothMissingOperandsReturnNull(Computer changes) {
         assertNull(changes.compute(null, null));
     }
 }

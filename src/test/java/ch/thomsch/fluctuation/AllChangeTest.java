@@ -7,7 +7,9 @@ import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertArrayEquals;
 
-public class AllChangeTest extends ChangeTest {
+public class AllChangeTest {
+
+    private AllChange changes;
 
     @Before
     public void setUp() {
@@ -32,5 +34,20 @@ public class AllChangeTest extends ChangeTest {
 
         final Double[] expected = {-1.0, -2.0, -3.0};
         assertArrayEquals(expected, actual.get().toArray());
+    }
+
+    @Test
+    public  void computesShouldMakeDifference() {
+        CommonChangeTests.computesShouldMakeDifference(changes);
+    }
+
+    @Test
+    public  void computesShouldRespectOrder() {
+        CommonChangeTests.computesShouldRespectOrder(changes);
+    }
+
+    @Test
+    public  void bothMissingOperandsReturnNull() {
+        CommonChangeTests.bothMissingOperandsReturnNull(changes);
     }
 }
