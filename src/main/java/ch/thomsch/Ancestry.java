@@ -82,6 +82,8 @@ public class Ancestry implements CommitReader {
     public static HashMap<String, String> load(String ancestryFile) {
         HashMap<String, String> ancestry = new LinkedHashMap<>();
 
+        logger.info("Loading ancestry (" + ancestryFile + ")...");
+
         try (CSVParser parser = getParser(ancestryFile)) {
             for (CSVRecord record : parser) {
                 ancestry.put(record.get(0), record.get(1));

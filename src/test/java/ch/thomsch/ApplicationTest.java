@@ -42,13 +42,9 @@ public class ApplicationTest {
 
     @Test
     public void processCollectCommand_ShouldThrowException_WhenNotEnoughParameters() {
-        try {
-            application.doMain(new String[]{"collect", "A", "B"});
-        } catch (IllegalArgumentException e) {
-            assertTrue(out.toString().isEmpty());
-            return;
-        }
-        fail();
+        application.doMain(new String[]{"collect", "A", "B"});
+
+        assertTrue(out.toString().contains("Incorrect number of arguments"));
     }
 
     @Test
@@ -60,13 +56,9 @@ public class ApplicationTest {
 
     @Test
     public void processAncestryCommand_ShouldThrowException_WhenNotEnoughParameters() {
-        try {
-            application.doMain(new String[]{"ancestry", "A", "B"});
-        } catch (IllegalArgumentException e) {
-            assertTrue(out.toString().isEmpty());
-            return;
-        }
-        fail();
+        application.doMain(new String[]{"ancestry", "A", "B"});
+
+        assertTrue(out.toString().contains("Incorrect number of arguments"));
     }
 
     @Test
@@ -78,13 +70,9 @@ public class ApplicationTest {
 
     @Test
     public void processConvertCommand_ShouldThrowException_WhenNotEnoughParameters() {
-        try {
-            application.doMain(new String[]{"convert", "A"});
-        } catch (IllegalArgumentException e) {
-            assertTrue(out.toString().isEmpty());
-            return;
-        }
-        fail();
+        application.doMain(new String[]{"convert", "A"});
+
+        assertTrue(out.toString().contains("Incorrect number of arguments"));
     }
 
     @Test
@@ -95,14 +83,10 @@ public class ApplicationTest {
     }
 
     @Test
-    public void processDiffCommand_ShouldThrowException_WhenNotEnoughParameters() {
-        try {
-            application.doMain(new String[]{"diff", "A", "B"});
-        } catch (IllegalArgumentException e) {
-            assertTrue(out.toString().isEmpty());
-            return;
-        }
-        fail();
+    public void processDiffCommand_ShouldPrintError_WhenNotEnoughParameters() {
+        application.doMain(new String[]{"diff", "A", "B"});
+
+        assertTrue(out.toString().contains("Incorrect number of arguments"));
     }
 
     @Test
@@ -121,13 +105,9 @@ public class ApplicationTest {
 
     @Test
     public void processMongoCommand_ShouldThrowException_WhenNotEnoughRawParameters() {
-        try {
-            application.doMain(new String[]{"mongo", "raw", "A"});
-        } catch (IllegalArgumentException e) {
-            assertTrue(out.toString().isEmpty());
-            return;
-        }
-        fail();
+        application.doMain(new String[]{"mongo", "raw", "A"});
+
+        assertTrue(out.toString().contains("Incorrect number of arguments"));
     }
 
     @Test
@@ -139,13 +119,9 @@ public class ApplicationTest {
 
     @Test
     public void processMongoCommand_ShouldThrowException_WhenNotEnoughDiffParameters() {
-        try {
-            application.doMain(new String[]{"mongo", "diff", "A"});
-        } catch (IllegalArgumentException e) {
-            assertTrue(out.toString().isEmpty());
-            return;
-        }
-        fail();
+        application.doMain(new String[]{"mongo", "diff", "A"});
+
+        assertTrue(out.toString().contains("Incorrect number of arguments"));
     }
 
     @Test
@@ -157,13 +133,9 @@ public class ApplicationTest {
 
     @Test
     public void processMongoCommand_ShouldThrowException_WhenNoParameterForAncestrySubCommand() {
-        try {
-            application.doMain(new String[]{"mongo", "ancestry", "A"});
-        } catch (IllegalArgumentException e) {
-            assertTrue(out.toString().isEmpty());
-            return;
-        }
-        fail();
+        application.doMain(new String[]{"mongo", "ancestry", "A"});
+
+        assertTrue(out.toString().contains("Incorrect number of arguments"));
     }
 
     @Test

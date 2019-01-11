@@ -8,11 +8,15 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import ch.thomsch.metric.SourceMeterConverter;
 import ch.thomsch.model.FormatException;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -49,6 +53,7 @@ public class SourceMeterConverterTest {
 
         CSVPrinter parser = converter.getPrinter(actual.getAbsolutePath());
         final String[] revisionFolders = converter.getRevisionFolders("src/test/resources/conversion/project");
+        Arrays.sort(revisionFolders);
         converter.convertProject(revisionFolders, parser);
         parser.close();
 
@@ -63,7 +68,8 @@ public class SourceMeterConverterTest {
             actual[i] = FilenameUtils.getBaseName(actual[i]);
         }
 
-        assertArrayEquals(new String[]{"abcdef", "ghijk"}, actual);
+        Set<String> expected = new HashSet<>(Arrays.asList(new String[]{"abcdef", "ghijk"}));
+        assertEquals(expected, new HashSet<>(Arrays.asList(actual)));
     }
 
     @Test(expected = FormatException.class)

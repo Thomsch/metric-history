@@ -17,6 +17,7 @@ import ch.thomsch.metric.SourceMeterConverter;
 import ch.thomsch.metric.MetricHistory;
 import ch.thomsch.storage.Database;
 import ch.thomsch.storage.DatabaseBuilder;
+import ch.thomsch.storage.Stores;
 import ch.thomsch.storage.export.Reporter;
 import ch.thomsch.storage.loader.RefactoringMiner;
 import ch.thomsch.metric.Collector;
