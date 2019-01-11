@@ -15,6 +15,7 @@ import ch.thomsch.cmd.Difference;
 import ch.thomsch.cmd.Help;
 import ch.thomsch.cmd.Mongo;
 import ch.thomsch.cmd.Filter;
+import ch.thomsch.cmd.Snapshot;
 
 /**
  * Entry point for the application.
@@ -33,6 +34,7 @@ public final class Application {
         addCommand(new Difference());
         addCommand(new Mongo());
         addCommand(new Filter());
+        addCommand(new Snapshot());
     }
 
     /**
