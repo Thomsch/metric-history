@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.thomsch.model.MetricDump;
 import ch.thomsch.storage.export.Reporter;
 import ch.thomsch.storage.loader.CommitReader;
-import ch.thomsch.model.MetricDump;
 import ch.thomsch.versioncontrol.Repository;
 
 /**
@@ -50,7 +50,7 @@ public class MetricHistory {
         logger.info("Output file: {}", outputFile);
 
         try {
-            reporter.initialize(outputFile);
+            reporter.initialize("ignore.temp");
             reporter.printMetaInformation();
         } catch (IOException e) {
             logger.error("Cannot initialize element:", e);
