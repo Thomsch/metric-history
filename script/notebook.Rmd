@@ -1,0 +1,300 @@
+---
+title: "Classification & exploration"
+output: html_notebook
+---
+
+Libraries
+```{r}
+#Tidyverse libraries
+#library("tidyverse")
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(readr)
+
+library(stringr)
+library(magrittr)
+
+library(utils)
+```
+
+Utility functions
+```{r}
+nonzero <- function(x) sum(x != 0)
+
+all_zeros <- function(x) {
+  refactorings_sum <- sum(x != 0)
+  if (refactorings_sum > 0){
+    0
+  } else {
+    1
+  }
+}
+```
+
+Project
+```{r}
+project <- "jfreechart"
+```
+
+Load data
+```{r}
+changes <- read_delim(paste("./","-changes.csv", sep=project), ";", escape_double = FALSE, trim_ws = TRUE)
+
+# Unzip first!
+refactorings <- read_delim(paste("./", "_refactorings.csv",sep=project), ",", escape_double = FALSE, trim_ws = TRUE)
+
+```
+
+Basic refactoring data frames
+```{r}
+# True positive refactorings
+refactorings_tp <- refactorings %>% filter(is.na(FP)) 
+refactorings_tp <- refactorings_tp %>% mutate(Rename = apply(X=.[,3:10], MARGIN=1, FUN=all_zeros))
+# Remove NA values
+refactorings_tp[is.na(refactorings_tp)] <- 0
+# Set presence of design decisions to 1
+#refactorings_tp$dd_vassilis[refactorings_tp$dd_vassilis %in% c('N', 'P', 'Ν')] <- 1
+#refactorings_tp$dd_thomas[refactorings_tp$dd_thomas %in% c('N', 'P', 'Ν')] <- 1
+#refactorings_tp <- transform(refactorings_tp, dd_vassilis = as.integer(dd_vassilis), dd_thomas = as.integer(dd_thomas))
+
+```
+
+Basic metric change data frames
+```{r}
+# Select only metrics under consideration that correspond to true positive refactorings and do not correspond to test classes
+changes <- inner_join(changes, refactorings_tp, by=c("revision"="CommitId")) # Optional join
+changes <- changes %>% filter(!grepl("Test[s\\$]?", class)) %>% select(revision, class, WMC, LCOM5, CBO, DIT)
+#changes <- inner_join(changes, refactorings_tp, by=c("revision"="CommitId")) %>% select(revision, class, LCOM5, CBO, DIT)
+
+# Metric changes per revision
+changes_count <- changes %>% group_by(revision) %>% summarise_at(vars(-class, -revision), funs(nonzero))
+# Metric change summary per revision
+rchanges <- changes %>% select(revision, WMC, LCOM5, CBO, DIT) %>% group_by(revision) %>% summarise_all(sum)
+#rchanges <- changes %>% select(revision, LCOM5, CBO, DIT) %>% group_by(revision) %>% summarise_all(sum)
+
+# Changes count with number of changed metrics per revision
+changes_count_w_hits <- changes_count %>% mutate(metric_hits = apply(X=.[,-1], MARGIN=1, FUN=nonzero))
+# revisions with number of metrics changed
+revisions_w_hits <- changes_count_w_hits %>% select(revision, metric_hits)
+# Metric changes per revision along with metric change hits
+rchanges_w_hits <- inner_join(rchanges, revisions_w_hits)
+
+```
+
+Documentation ratios
+```{r}
+changes <- changes %>% filter(!grepl("Test[s\\$]?", class))
+rchanges_doc <- changes %>% select(revision, AD, CD, CLOC, DLOC, PDA, PUA, TCD, TCLOC)  %>% group_by(revision) %>% summarise_all(sum)
+
+# Load components
+raw_class_metrics <- read_delim(paste("./", "-raw.csv",sep=project), ";", escape_double = FALSE, trim_ws = TRUE) %>% filter(!grepl("Test[s\\$]?", class)) # Unzip first!
+ancestry <- read.csv(paste(project, "-ancestry.csv", sep=""))
+scenarios <- read.csv(paste(project, "-scenarios.csv", sep=""))
+
+# Make sure parent values are computed on the same classes as the differences in 'changes'.
+raw_class_metrics_w_parent <- left_join(raw_class_metrics, ancestry, by=c("revision" = "revision"))
+parent_classes <- select(raw_class_metrics_w_parent, parent, class)
+raw_class_metrics_prunned <- inner_join(parent_classes, raw_class_metrics, by=c("parent" = "revision", "class" = "class"))
+
+# Compute the revision metric for each parent
+raw_parent_metrics <- select(raw_class_metrics_prunned, -class) %>% group_by(parent) %>% summarise_all(sum)
+
+# Use only documentation ratios
+raw_parent_metrics <- select(raw_parent_metrics, parent, AD, CD, TCD) %>% rename(AD.Parent = AD, CD.Parent = CD, TCD.Parent = TCD)
+
+# Add child revision
+parent_metrics_w_revision <- inner_join(ancestry, raw_parent_metrics, by=c("parent" = "parent"))
+
+# Bind child revisions changes and parent raw revision metrics.
+revision_changes_w_parent_metrics <- inner_join(rchanges_doc, parent_metrics_w_revision, by=c("revision" = "revision"))
+
+# Calculate the percentage increase of documentation ratios
+revision_changes_ratios <- mutate(revision_changes_w_parent_metrics, CD.Percent = round(CD / CD.Parent * 100,4), AD.Percent = round(AD / AD.Parent * 100,4), TCD.Percent = round(TCD / TCD.Parent * 100, 4))
+
+# Filter results
+revision_changes_ratios <- select(revision_changes_ratios, revision, CLOC, DLOC, PDA, PUA, TCLOC, CD.Percent, AD.Percent, TCD.Percent)
+
+# Add scenarios
+scenarios <- select(scenarios, revision, scenario)
+revision_changes_ratios <- inner_join(scenarios, revision_changes_ratios, by=c("revision" = "revision"))
+
+# Export
+write_csv(revision_changes_ratios, path = paste(project,"-doc-metrics.csv", sep=""), col_names = TRUE)
+```
+
+Scenario 1: Revisions with no change in metrics
+```{r}
+scenario1_commits <- changes_count %>% filter_at(vars(-revision), all_vars(.==0)) %>% select(revision) %>% mutate(changed = "Zero", pattern = "-", scenario = "1")
+```
+
+Scenario 2: Revisions with change in only one metric
+```{r}
+# scenario2_commits <- rchanges_w_hits %>% filter(metric_hits==1) %>% select(revision) %>% mutate(scenario = 2)
+scenario2_improving <- rchanges_w_hits %>% filter(metric_hits==1) %>% filter_at(vars(-revision, -metric_hits), any_vars(. < 0)) %>% select(revision) %>% mutate(changed = "One", pattern ="Improve", scenario = "2")
+
+scenario2_deteriorating <- rchanges_w_hits %>% filter(metric_hits==1) %>% filter_at(vars(-revision, -metric_hits), any_vars(. > 0)) %>% select(revision) %>% mutate(changed = "One", pattern = "Decline", scenario = "2")
+
+scenario2_unchanged <- rchanges_w_hits %>% filter(metric_hits==1) %>% filter_at(vars(-revision, -metric_hits), all_vars(. == 0)) %>% select(revision) %>% mutate(changed = "One", pattern = "Tradeoff", scenario = "2")
+
+scenario2_commits <- scenario2_improving %>% rbind(scenario2_deteriorating) %>% rbind(scenario2_unchanged)
+```
+
+Scenario 3: Revisions with change in more than one metric in unified direction
+```{r}
+#scenario3_commits <- rchanges_w_hits %>% filter(metric_hits > 1) %>% select(revision) %>% mutate(scenario = 3)
+scenario3_improving <- rchanges_w_hits %>% filter(metric_hits > 1) %>% filter_at(vars(-revision, -metric_hits), all_vars(. <= 0)) %>% filter_at(vars(-revision, -metric_hits), any_vars(. < 0)) %>% select(revision) %>% mutate(changed = "Many", pattern ="Improve", scenario = "3")
+
+scenario3_deteriorating <- rchanges_w_hits %>% filter(metric_hits > 1) %>% filter_at(vars(-revision, -metric_hits), all_vars(. >= 0)) %>% filter_at(vars(-revision, -metric_hits), any_vars(. > 0)) %>% select(revision) %>% mutate(changed = "Many", pattern ="Decline", scenario = "3")
+
+scenario3_neutral <- rchanges_w_hits %>% filter(metric_hits > 1) %>% filter_at(vars(-revision, -metric_hits), all_vars(. == 0)) %>% select(revision) %>% mutate(changed = "Many", pattern = "Neutral", scenario = "3")
+
+scenario3_commits <- rbind(scenario3_improving, scenario3_deteriorating, scenario3_neutral)
+```
+
+Scenario 4: Revisions with change in more than one metric in multiple directions
+```{r}
+scenario4_commits <- rchanges_w_hits %>% filter(metric_hits > 1) %>% filter_at(vars(-revision, -metric_hits), any_vars(. < 0)) %>% filter_at(vars(-revision, -metric_hits), any_vars(. > 0)) %>% select(revision) %>% mutate(changed = "Many", pattern ="Tradeoff", scenario = "4")
+```
+
+Scenarios: Summary
+```{r}
+scenarios <- bind_rows(scenario1_commits, scenario2_commits, scenario3_commits, scenario4_commits)
+
+# Verify mutual exclusion
+nrow(scenario1_commits) + nrow(scenario2_commits) + nrow(scenario3_commits) + nrow(scenario4_commits) == nrow(scenarios)
+nrow(scenarios) == nrow(rchanges_w_hits)
+
+refactoring_revisions <- rchanges_w_hits %>% left_join(scenarios, by=c("revision" = "revision"))
+
+# Sort the revisions back to the order of the input file.
+refactoring_revisions <- changes %>% select(revision) %>% distinct() %>% left_join(refactoring_revisions, by=c("revision"="revision")) %>% na.omit()
+
+# Export !
+write_csv(refactoring_revisions, path = "scenarios.csv", col_names = TRUE)
+```
+
+Changed classes per scenario
+```{r}
+
+rchanges_neutral <- scenario1_commits %>% inner_join(rchanges) %>% inner_join(refactorings_tp, by=c("revision"="CommitId")) %>% select(revision, changed, pattern, WMC, LCOM5, CBO, DIT, Refactoring, Bugfix, Feature, dd, ExtractMethod, ExtractMoveMethod, ExtractSuperclass, MoveAttribute, MoveOperation, MoveClass)
+
+changes_improving <- rbind(scenario2_improving, scenario3_improving) %>% inner_join(changes) %>% filter_at(vars(-revision, -class, -changed, -pattern), any_vars(. != 0)) # keep all classes
+
+rchanges_improving <- rbind(scenario2_improving, scenario3_improving) %>% inner_join(rchanges) %>% filter_at(vars(-revision), any_vars(. < 0)) %>% inner_join(refactorings_tp, by=c("revision"="CommitId")) %>% select(revision, changed, pattern, WMC, LCOM5, CBO, DIT, Refactoring, Bugfix, Feature, dd, ExtractMethod, ExtractMoveMethod, ExtractSuperclass, MoveAttribute, MoveOperation, MoveClass)
+
+changes_declining <- rbind(scenario2_deteriorating, scenario3_deteriorating) %>% inner_join(changes) %>% filter_at(vars(-revision, -class, -changed, -pattern), any_vars(. != 0)) # keep all classes
+
+rchanges_declining <- rbind(scenario2_deteriorating, scenario3_deteriorating) %>% inner_join(rchanges) %>% filter_at(vars(-revision), any_vars(. > 0)) %>% inner_join(refactorings_tp, by=c("revision"="CommitId")) %>% select(revision, changed, pattern, WMC, LCOM5, CBO, DIT, Refactoring, Bugfix, Feature, dd, ExtractMethod, ExtractMoveMethod, ExtractSuperclass, MoveAttribute, MoveOperation, MoveClass)
+
+changes_tradeoff <- scenario3_tradeoff %>% inner_join(changes) %>% filter_at(vars(-revision, -class, -changed, -pattern), any_vars(. != 0))
+
+rchanges_tradeoff <- scenario3_tradeoff %>% inner_join(rchanges) %>% filter_at(vars(-revision), any_vars(. != 0)) %>% inner_join(refactorings_tp, by=c("revision"="CommitId")) %>% select(revision, changed, pattern, WMC, LCOM5, CBO, DIT, Refactoring, Bugfix, Feature, dd, ExtractMethod, ExtractMoveMethod, ExtractSuperclass, MoveAttribute, MoveOperation, MoveClass)
+```
+
+#Scenario 4: Revisions with changes in different directions
+#```{r}
+#scenario4_rchanges <- rchanges_w_hits %>% filter_at(vars(-revision, -metric_hits), any_vars(. < 0)) %>% filter_at(vars(-revision, -metric_hits), any_vars(. > 0))
+#scenario4_commits <- scenario4_rchanges %>% select(revision) %>% mutate(scenario = 4)
+#```
+
+#Scenario 5: Revisions with all changes improving metrics
+#```{r}
+#scenario5_rchanges <- rchanges_w_hits %>% filter_at(vars(-revision, -metric_hits), all_vars(. >= 0)) %>% filter_at(vars(-revision, -metric_hits), any_vars(. > 0))
+#scenario5_commits <- scenario5_rchanges %>% select(revision) %>% mutate(scenario = 5)
+#```
+
+#Scenario 6: Revisions with all changes deteriorating metrics
+#```{r}
+#scenario6_rchanges <- rchanges_w_hits %>% filter_at(vars(-revision, -metric_hits), all_vars(. <= 0)) %>% filter_at(vars(-revision, -metric_hits), any_vars(. < 0))
+#scenario6_commits <- scenario6_rchanges %>% select(revision) %>% mutate(scenario = 6)
+#```
+
+Revisions and metric fluctuation patterns
+```{r}
+total_revisions <- nrow(refactorings_tp)
+total_decisions_v <- refactorings_tp %>% filter(dd > 0) %>% nrow
+#total_decisions_t <- refactorings_tp %>% filter(dd_thomas > 0) %>% nrow
+rev_pct <- function(df) {
+  paste(nrow(df), round(100 * nrow(df)/total_revisions, digits = 1), sep = " - ")
+}
+
+c( rev_pct(scenario1_commits), rev_pct(scenario2_improving), rev_pct(scenario2_deteriorating), rev_pct(scenario2_unchanged), rev_pct(scenario3_improving), rev_pct(scenario3_deteriorating), rev_pct(scenario3_tradeoff))
+```
+
+Revisions and refactoring tactic
+```{r}
+total_revisions <- nrow(refactorings_tp)
+revisions_floss_bugfix <- refactorings_tp %>% filter(Bugfix == 1)
+revisions_floss_feature <- refactorings_tp %>% filter(Feature == 1)
+revisions_root_canal <- refactorings_tp %>% filter(Refactoring == 1)
+
+c( rev_pct(revisions_root_canal), rev_pct(revisions_floss_feature), rev_pct(revisions_floss_bugfix))
+
+```
+
+Commit purpose and design decisions per scenario
+```{r}
+all_scenarios <- scenario1_commits %>% rbind(scenario2_commits) %>% rbind(scenario3_commits) 
+#%>% union(scenario4_commits) %>% union(scenario5_commits) %>% union(scenario6_commits)
+
+scenaria_decisions <- inner_join(all_scenarios, refactorings_tp, by=c("revision"="CommitId")) %>% select(changed, pattern,Refactoring, Bugfix, Feature, dd) 
+scenaria_decisions <- inner_join(scenaria_decisions%>% group_by(changed, pattern) %>% tally, scenaria_decisions %>% group_by(changed, pattern) %>% summarise_all(sum)) 
+
+# %>% summarise_all(sum)
+```
+
+Generates the scenarios.csv file for the "scenarios" sheet in Google Spreadsheet
+```{r}
+
+write.table(all_scenarios %>% inner_join(rchanges_w_hits) %>% select(revision, WMC, LCOM5, CBO, DIT, metric_hits, changed, pattern, scenario_id), "./scenarios.csv", sep=";", na="", row.names = FALSE)
+```
+
+```{r}
+#install.packages("sjstats")
+library(sjstats)
+
+stats_input <- inner_join(all_scenarios, refactorings_tp, by=c("revision"="CommitId"))
+xtab_statistics(stats_input, x1 = scenario_id, x2 = dd, statistics = c("auto"))
+  #"cramer", "phi", "spearman", "kendall", "pearson"))
+```
+
+Association rules mining
+```{r}
+#install.packages("arules")
+library(arules) 
+#http://r-statistics.co/Association-Mining-With-R.html
+arules_input <- inner_join(all_scenarios, refactorings_tp, by=c("revision"="CommitId")) %>% mutate(purpose = ifelse(Refactoring == 1, "Refactoring", ifelse(Bugfix == 1 , "Bugfix", "Feature"))) %>% select(changed, pattern, purpose, dd)
+arules_input$dd[arules_input$dd == 1] <- "Yes"
+arules_input$dd[arules_input$dd == 0] <- "No"
+
+arules_input$changed <- as.factor(arules_input$changed)
+arules_input$pattern <- as.factor(arules_input$pattern)
+arules_input$purpose <- as.factor(arules_input$purpose)
+arules_input$dd <- as.factor(arules_input$dd)
+#rules <- apriori(arules_input)
+
+rules_dd <- apriori(arules_input, parameter=list (supp=0.05,conf = 0.8),appearance = list (rhs="dd=Yes", rhs="dd=No"), control = list (verbose=F))
+#rules_nodd <- apriori(arules_input, parameter=list (supp=0.01,conf = 0.8), appearance = list (rhs="dd_vassilis=No"), control = list (verbose=F))
+
+
+inspect(rules_dd)
+#inspect(rules_nodd)
+```
+
+Distribution of sampling analysis
+```{r}
+percentage_of_DD <- c(0.8333333333,0.8,0.6,0.7,0.6,0.5,0.4,0.9,0.6,0.6,0.9)
+{boxplot(percentage_of_DD, ylim=c(0,1), ylab="# Design decision / revisions for each project", main="Design decision ratio distribution")
+stripchart(percentage_of_DD, vertical = TRUE, method = "jitter", add = TRUE, pch = 20, col = 'blue')
+segments(x0 = c(0.8), x1 = c(1.2), y0 = c(0.67), col="red")} # Mean
+```
+
+
+Distribution of scenarios
+```{r}
+scenario_classification <- read.csv("scenarios-summary.csv")
+scenario_classification <- scenario_classification[c("Scenario.1", "Scenario.2", "Scenario.3", "Scenario.4")]
+colnames(scenario_classification) <- c("Scenario 1", "Scenario 2", "Scenario 3", "Scenario 4")
+boxplot(scenario_classification[], ylab="Refactoring revisions [%]")
+```

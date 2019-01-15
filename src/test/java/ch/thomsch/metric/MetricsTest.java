@@ -10,6 +10,7 @@ import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -87,5 +88,47 @@ public class MetricsTest {
         assertEquals(2.0, metrics.get(0), 0);
 
         metrics.get(1);
+    }
+
+    @Test
+    public void hasTradeOff_ShouldReturnFalse_WhenMetricsAreZero() {
+        final Metrics metrics = new Metrics(0.0,3.0,0.0);
+
+        assertFalse(metrics.hasTradeOff(0,2));
+    }
+
+    @Test
+    public void hasTradeOff_ShouldReturnFalse_WhenMetricsArePositive() {
+        final Metrics metrics = new Metrics(1.0,3.0,0.0);
+
+        assertFalse(metrics.hasTradeOff(1,0));
+    }
+
+    @Test
+    public void hasTradeOff_ShouldReturnFalse_WhenOneMetricIsPositive() {
+        final Metrics metrics = new Metrics(1.0,3.0,0.0);
+
+        assertFalse(metrics.hasTradeOff(1));
+    }
+
+    @Test
+    public void hasTradeOff_ShouldReturnFalse_WhenMetricsAreNegative() {
+        final Metrics metrics = new Metrics(-1.0,-3.0,-0.0);
+
+        assertFalse(metrics.hasTradeOff(1,0,2));
+    }
+
+    @Test
+    public void hasTradeOff_ShouldReturnFalse_WhenOneMetricIsNegative() {
+        final Metrics metrics = new Metrics(1.0,-3.0,0.0);
+
+        assertFalse(metrics.hasTradeOff(1));
+    }
+
+    @Test
+    public void hasTradeOff_ShouldReturnTrue_WhenMetricsArePositiveAndNegative() {
+        final Metrics metrics = new Metrics(1.0,-3.0,0.0);
+
+        assertTrue(metrics.hasTradeOff(0,1,2));
     }
 }
