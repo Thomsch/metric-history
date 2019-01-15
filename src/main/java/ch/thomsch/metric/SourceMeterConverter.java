@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import ch.thomsch.DiskUtils;
 import ch.thomsch.model.FormatException;
 
 /**
@@ -29,31 +30,37 @@ public class SourceMeterConverter {
 
     private static final Logger logger = LoggerFactory.getLogger(SourceMeterConverter.class);
 
-    /**
-     * Convert results in the SourceMeter format to the raw format.
-     *
-     * @param inputPath  the absolute path of the folder containing SourceMeter's results
-     * @param outputPath the absolute path of the file that will contain the results
-     */
-    public static void convert(String inputPath, String outputPath) {
-        SourceMeterConverter converter = new SourceMeterConverter();
+    public static void convert(String inputPath, String output) throws IOException{
+        final SourceMeterConverter converter = new SourceMeterConverter();
 
-        try (CSVPrinter printer = converter.getPrinter(outputPath)) {
-            if (printer == null) {
-                logger.error("Cannot create file {}", outputPath);
-                return;
-            }
-
+        final String[] folders;
+        try {
             logger.info("Scanning {}", inputPath);
-            String[] revisionFolders = converter.getRevisionFolders(inputPath);
-
-            logger.info("Saving contents to {}", outputPath);
-            converter.convertProject(revisionFolders, printer);
-
-        } catch (IOException e) {
-            logger.error("Failed to close file {}", outputPath, e);
+            folders = converter.getRevisionFolders(inputPath);
         } catch (FormatException e) {
             logger.error("{} is not a valid SourceMeter result directory", inputPath);
+            return;
+        }
+
+        if(DiskUtils.isFile(output)) {
+            try (CSVPrinter printer = converter.getPrinter(new File(output))) {
+                logger.info("Saving contents in {}", output);
+                converter.convertProject(folders, printer);
+            } catch (IOException e) {
+                logger.error("Failed to open or write file {}", output, e);
+            }
+        } else {
+            final File outputDirectory = DiskUtils.createDirectory(output);
+            logger.info("Saving contents to {}", outputDirectory);
+            for (String folder : folders) {
+                final File classResults = converter.getClassResultsFile(folder);
+                final String revision = FilenameUtils.getBaseName(folder);
+                try (CSVPrinter printer = converter.getPrinter(new File(outputDirectory, revision + ".csv"))) {
+                    converter.convertClassResult(classResults, revision, printer);
+                } catch (IOException e) {
+                    logger.error("Failed to open or write file {}", output, e);
+                }
+            }
         }
     }
 
@@ -66,7 +73,7 @@ public class SourceMeterConverter {
     public void convertProject(String[] revisionFolders, CSVPrinter printer) {
         for (String folder : revisionFolders) {
             try {
-                File classResults = getClassResultsFile(folder);
+                final File classResults = getClassResultsFile(folder);
                 convertClassResult(classResults, FilenameUtils.getBaseName(folder), printer);
             } catch (FileNotFoundException e) {
                 logger.error(e.getMessage());
@@ -83,13 +90,9 @@ public class SourceMeterConverter {
      * @param outputFile the path of the file where the results will be print.
      * @return a new instance of {@link CSVPrinter}
      */
-    CSVPrinter getPrinter(String outputFile) {
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
-            return new CSVPrinter(out, getOutputFormat());
-        } catch (IOException e) {
-            return null;
-        }
+    public CSVPrinter getPrinter(File outputFile) throws IOException {
+        final BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
+        return new CSVPrinter(out, getOutputFormat());
     }
 
     /**
@@ -100,7 +103,7 @@ public class SourceMeterConverter {
      * @throws FormatException if the project is not using SourceMeter format
      */
     public String[] getRevisionFolders(String project) throws FormatException {
-        File file = new File(project, "java");
+        final File file = new File(project, "java");
 
         if (!file.exists()) {
             throw new FormatException("Does not recognized Source Meter directory results");
@@ -194,7 +197,7 @@ public class SourceMeterConverter {
      * @throws IllegalArgumentException if there is more than one result file for classes in the directory
      * @throws FileNotFoundException if the class result file doesn't exist in the folder
      */
-    private File getClassResultsFile(String folder) throws FileNotFoundException {
+    public File getClassResultsFile(String folder) throws FileNotFoundException {
         final Collection<File> files = FileUtils.listFiles(new File(folder), new SuffixFileFilter("-Class.csv"), null);
 
         if (files.size() > 1) {

@@ -1,13 +1,15 @@
 package ch.thomsch.cmd;
 
+import java.io.IOException;
+
 import ch.thomsch.metric.SourceMeterConverter;
 
 /**
  *
  */
 public class Convert extends Command {
-    private String inputFolder;
-    private String outputFile;
+    private String inputPath;
+    private String output;
 
     @Override
     public String getName() {
@@ -20,15 +22,15 @@ public class Convert extends Command {
             return false;
         }
 
-        inputFolder = normalizePath(parameters[0]);
-        outputFile = normalizePath(parameters[1]);
+        inputPath = normalizePath(parameters[0]);
+        output = normalizePath(parameters[1]);
 
         return true;
     }
 
     @Override
-    public void execute() {
-        SourceMeterConverter.convert(inputFolder, outputFile);
+    public void execute() throws IOException {
+        SourceMeterConverter.convert(inputPath, output);
     }
 
     @Override
@@ -37,6 +39,7 @@ public class Convert extends Command {
         System.out.println();
         System.out.println("<folder>            is the path of the root folder containing the results from the " +
                 "third party tool");
-        System.out.println("<output file>       is the path of the file where the results will be stored.");
+        System.out.println("<output>       is the path of the file where the results will be stored or a directory. " +
+                "In the case of the directory, results will be stored as one file per revision");
     }
 }

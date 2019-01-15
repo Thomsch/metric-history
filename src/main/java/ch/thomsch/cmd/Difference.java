@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import ch.thomsch.DiskUtils;
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.Stores;
@@ -58,10 +59,10 @@ public class Difference extends Command {
             return;
         }
 
-        if(isFile(output)) {
+        if(DiskUtils.isFile(output)) {
             exportDiff(ancestry, model, new File(output));
         } else {
-            final File outputDir = createDirectory(output);
+            final File outputDir = DiskUtils.createDirectory(output);
 
             final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
             entries.parallelStream().forEach(entry -> {
@@ -74,40 +75,12 @@ public class Difference extends Command {
         }
     }
 
-    /**
-     * Creates a new directory if it doesn't exists
-     * @param output the path of the directory
-     * @return a new instance of {@link File} representing the path of the directory
-     * @throws IOException when the directory cannot be created
-     */
-    private File createDirectory(String output) throws IOException {
-        final File outputDir = new File(output);
-        if (!outputDir.exists()) {
-            logger.info("Creating folder {}", outputDir);
-            final boolean success = outputDir.mkdir();
-            if (!success) {
-                throw new IOException("Cannot create directory " + outputDir);
-            }
-        }
-        return outputDir;
-    }
-
     private void exportDiff(HashMap<String, String> map, ClassStore model, File outputFile) {
         try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), Stores.getFormat())) {
             Differences.export(map, model, writer);
         } catch (IOException e) {
             logger.error("I/O error with file {}", output, e);
         }
-    }
-
-    /**
-     * Returns if the specified output location is a file or a directory. A directory is any name not containing a '.'.
-     * Otherwise the path is considered a file.
-     * @param output the canonical location of the output
-     * @return true if the path is referring to a file
-     */
-    private boolean isFile(String output) {
-        return new File(output).getName().contains(".");
     }
 
     @Override
