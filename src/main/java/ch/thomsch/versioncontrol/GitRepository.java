@@ -43,6 +43,11 @@ public class GitRepository implements Repository {
         final ObjectId revisionId = repository.resolve(revision);
         final RevWalk walk = new RevWalk(repository);
         final RevCommit commit = walk.parseCommit(revisionId);
+
+        if(commit.getParentCount() == 0) {
+            return null;
+        }
+
         final RevCommit parentRevision = commit.getParent(0);
         return parentRevision.getName();
     }

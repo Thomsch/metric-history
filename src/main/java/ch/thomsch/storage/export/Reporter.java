@@ -73,7 +73,10 @@ public class Reporter {
 
     public void report(String revision, String parent, MetricDump before, MetricDump current) {
         final List<Object[]> lines = DefaultFormatter.format(revision, parent, current);
-        lines.addAll(DefaultFormatter.format(parent, null, before));
+
+        if(before != null) {
+            lines.addAll(DefaultFormatter.format(parent, null, before));
+        }
 
         for (Object[] line : lines) {
             try {

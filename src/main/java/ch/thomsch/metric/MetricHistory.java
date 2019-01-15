@@ -114,9 +114,11 @@ public class MetricHistory {
             try {
                 logger.info("Processing {} ({})", revision, ++i);
 
+                MetricDump before = null;
                 final String parent = repository.getParent(revision);
-
-                final MetricDump before = collectCachedMetrics(repository, parent);
+                if(parent != null) {
+                    before = collectCachedMetrics(repository, parent);
+                }
                 final MetricDump current = collectCachedMetrics(repository, revision);
 
                 reporter.report(revision, parent, before, current);
