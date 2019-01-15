@@ -70,7 +70,7 @@ public class SourceMeterConverter {
      * @param revisionFolders the folders containing the results
      * @param printer         the instance responsible to write the results
      */
-    public void convertProject(String[] revisionFolders, CSVPrinter printer) {
+    void convertProject(String[] revisionFolders, CSVPrinter printer) {
         for (String folder : revisionFolders) {
             try {
                 final File classResults = getClassResultsFile(folder);
@@ -90,7 +90,7 @@ public class SourceMeterConverter {
      * @param outputFile the path of the file where the results will be print.
      * @return a new instance of {@link CSVPrinter}
      */
-    public CSVPrinter getPrinter(File outputFile) throws IOException {
+    CSVPrinter getPrinter(File outputFile) throws IOException {
         final BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
         return new CSVPrinter(out, getOutputFormat());
     }
@@ -102,7 +102,7 @@ public class SourceMeterConverter {
      * @return the absolute paths of the revision folders
      * @throws FormatException if the project is not using SourceMeter format
      */
-    public String[] getRevisionFolders(String project) throws FormatException {
+    String[] getRevisionFolders(String project) throws FormatException {
         final File file = new File(project, "java");
 
         if (!file.exists()) {
@@ -111,10 +111,13 @@ public class SourceMeterConverter {
 
         final String[] list = file.list(DirectoryFileFilter.INSTANCE);
 
+        if(list == null) {
+            return new String[0];
+        }
+
         for (int i = 0; i < list.length; i++) {
             list[i] = new File(file, list[i]).getAbsolutePath();
         }
-
         return list;
     }
 
@@ -127,7 +130,7 @@ public class SourceMeterConverter {
      * @throws IOException           if the file cannot be read
      * @throws FileNotFoundException if the file cannot be found
      */
-    public void convertClassResult(File classFile, String revision, CSVPrinter printer) throws IOException {
+    void convertClassResult(File classFile, String revision, CSVPrinter printer) throws IOException {
         try (CSVParser records = getParser(classFile)) {
             for (CSVRecord record : records) {
                 printer.printRecord(formatClassValues(revision, record));
@@ -164,7 +167,7 @@ public class SourceMeterConverter {
     }
 
     private Object[] formatClassValues(String revision, CSVRecord sourceMeterRecord) {
-        ArrayList<Object> result = new ArrayList<>();
+        final ArrayList<Object> result = new ArrayList<>();
         result.add(revision);
         result.add(sourceMeterRecord.get(2));
         result.addAll(getRecordSlice(sourceMeterRecord, 10, 61));
@@ -180,7 +183,7 @@ public class SourceMeterConverter {
      * @return the slice
      */
     private Collection<Object> getRecordSlice(CSVRecord sourceMeterRecord, int from, int to) {
-        ArrayList<Object> result = new ArrayList<>(to - from + 1);
+        final ArrayList<Object> result = new ArrayList<>(to - from + 1);
 
         for (int i = from; i <= to; i++) {
             result.add(sourceMeterRecord.get(i));
@@ -197,7 +200,7 @@ public class SourceMeterConverter {
      * @throws IllegalArgumentException if there is more than one result file for classes in the directory
      * @throws FileNotFoundException if the class result file doesn't exist in the folder
      */
-    public File getClassResultsFile(String folder) throws FileNotFoundException {
+    private File getClassResultsFile(String folder) throws FileNotFoundException {
         final Collection<File> files = FileUtils.listFiles(new File(folder), new SuffixFileFilter("-Class.csv"), null);
 
         if (files.size() > 1) {
