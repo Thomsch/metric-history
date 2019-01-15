@@ -12,10 +12,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import ch.thomsch.metric.SourceMeterConverter;
 import ch.thomsch.model.FormatException;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -37,7 +35,7 @@ public class SourceMeterConverterTest {
         File actual = new File("src/test/resources/conversion/classes.csv");
         actual.deleteOnExit();
 
-        CSVPrinter parser = converter.getPrinter(actual.getAbsolutePath());
+        CSVPrinter parser = converter.getPrinter(new File(actual.getAbsolutePath()));
         converter.convertClassResult(new File("src/test/resources/conversion/source-meter-classes.csv"), "mock",
                 parser);
         parser.close();
@@ -51,7 +49,7 @@ public class SourceMeterConverterTest {
         File actual = new File("src/test/resources/conversion/classes.csv");
         actual.deleteOnExit();
 
-        CSVPrinter parser = converter.getPrinter(actual.getAbsolutePath());
+        CSVPrinter parser = converter.getPrinter(new File(actual.getAbsolutePath()));
         final String[] revisionFolders = converter.getRevisionFolders("src/test/resources/conversion/project");
         Arrays.sort(revisionFolders);
         converter.convertProject(revisionFolders, parser);
