@@ -1,7 +1,5 @@
 package ch.thomsch;
 
-import ch.thomsch.storage.loader.CommitReader;
-import ch.thomsch.versioncontrol.Repository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -9,11 +7,17 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import ch.thomsch.storage.loader.CommitReader;
+import ch.thomsch.versioncontrol.Repository;
 
 /**
  * Contains the revisions and their respective parents.
@@ -41,12 +45,22 @@ public class Ancestry implements CommitReader {
         final List<String> revisions = commitReader.make(revisionFile);
 
         logger.info("Retrieving parents...");
+        int ignoredRevision = 0;
         for (String revision : revisions) {
             try {
-                parents.put(revision, repository.getParent(revision));
+                final String parent = repository.getParent(revision);
+
+                if (parent == null) {
+                    ignoredRevision++;
+                } else {
+                    parents.put(revision, parent);
+                }
             } catch (IOException e) {
                 logger.error("I/O error prevented retrieval {}'s parent", revision);
             }
+        }
+        if(ignoredRevision > 0) {
+            logger.info("Ignored {} revision(s)", ignoredRevision);
         }
         return revisions;
     }
