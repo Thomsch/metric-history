@@ -51,9 +51,9 @@ public class Difference extends Command {
             return;
         }
 
-        final ClassStore model;
+        final ClassStore model = new ClassStore();
         try {
-            model = Stores.loadClasses(rawFile);
+            Stores.loadClasses(rawFile, model);
         } catch (IOException e) {
             logger.error("I/O error while reading file {}", rawFile);
             return;
