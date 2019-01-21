@@ -46,7 +46,6 @@ public final class Stores {
      */
     public static ClassStore loadClasses(String filePath, ClassStore model) throws IOException {
         Objects.requireNonNull(model);
-        logger.info("Loading raw (" + filePath + ")...");
 
         final CSVParser parser = new CSVParser(new FileReader(filePath), getFormat().withSkipHeaderRecord());
 
@@ -55,6 +54,16 @@ public final class Stores {
         }
 
         return model;
+    }
+
+    /**
+     * Loads large classes. Displays status message when loading
+     * @see #loadClasses(String, ClassStore)
+     */
+    public static ClassStore loadLargeClasses(String filePath, ClassStore model) throws IOException {
+        logger.info("Loading raw (" + filePath + ")...");
+
+        return loadClasses(filePath, model);
     }
 
     /**

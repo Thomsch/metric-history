@@ -40,7 +40,7 @@ public final class Differences {
             final String revision = revisionParent.getKey();
             final String parent = revisionParent.getValue();
 
-            logger.info("Exporting revision {} parent is ({})", revision, parent);
+            logger.info("Calculating fluctuations of {} (parent: {})", revision, parent);
             final Collection<String> classes = model.getClasses(revision);
             if (classes == null) {
                 logger.warn("No data for revision {}", revision);

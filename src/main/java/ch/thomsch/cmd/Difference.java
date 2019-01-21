@@ -1,6 +1,7 @@
 package ch.thomsch.cmd;
 
 import org.apache.commons.csv.CSVPrinter;
+import org.eclipse.jgit.api.LogCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class Difference extends Command {
         if(DiskUtils.isFile(input)) {
             final ClassStore model = new ClassStore();
             try {
-                Stores.loadClasses(input, model);
+                Stores.loadLargeClasses(input, model);
             } catch (IOException e) {
                 logger.error("I/O error while reading file {}", input);
                 return;
