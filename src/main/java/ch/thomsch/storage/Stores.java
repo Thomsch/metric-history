@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
@@ -37,25 +38,35 @@ public final class Stores {
      * Loads a {@link ClassStore} in CSV format from the disk.
      *
      * @param filePath the path of the CSV file
-     * @return a new instance of ClassStore
-     * @throws FileNotFoundException if the file cannot be found.
-     * @throws IOException           if there is a reading problem with the disk.
+     * @param model the recipient to load data to.
+     * @return the same instance of <code>model</code>.
+     * @throws FileNotFoundException when the file cannot be found.
+     * @throws IOException           when there is a reading problem with the disk.
+     * @throws NullPointerException when no <code>model</code> is given
      */
-    public static ClassStore loadClasses(String filePath) throws IOException {
+    public static ClassStore loadClasses(String filePath, ClassStore model) throws IOException {
+        Objects.requireNonNull(model);
         logger.info("Loading raw (" + filePath + ")...");
 
         final CSVParser parser = new CSVParser(new FileReader(filePath), getFormat().withSkipHeaderRecord());
-        return load(parser);
-    }
-
-    private static ClassStore load(CSVParser parser) {
-        final ClassStore classStore = new ClassStore();
 
         for (CSVRecord record : parser) {
-            classStore.addMetric(record.get(0), record.get(1), convertMetrics(record));
+            model.addMetric(record.get(0), record.get(1), convertMetrics(record));
         }
 
-        return classStore;
+        return model;
+    }
+
+    /**
+     * Loads a {@link ClassStore} in CSV format from the disk.
+     *
+     * @param filePath the path of the CSV file
+     * @return a new instance of {@link ClassStore}
+     * @throws FileNotFoundException when the file cannot be found.
+     * @throws IOException           when there is a reading problem with the disk.
+     */
+    public static ClassStore loadClasses(String filePath) throws IOException {
+        return loadClasses(filePath, new ClassStore());
     }
 
     private static Metrics convertMetrics(CSVRecord record) {
