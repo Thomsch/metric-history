@@ -1,5 +1,6 @@
 package ch.thomsch.cmd;
 
+import ch.thomsch.storage.loader.SimpleCommitReader;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class Ancestry extends Command {
 
     @Override
     public void execute() {
-        final ch.thomsch.Ancestry ancestry = new ch.thomsch.Ancestry(repository, new RefactoringMiner());
+        final ch.thomsch.Ancestry ancestry = new ch.thomsch.Ancestry(repository, new SimpleCommitReader());
         ancestry.make(revisionFile);
 
         try (CSVPrinter writer = ancestry.getPrinter(outputFile)) {

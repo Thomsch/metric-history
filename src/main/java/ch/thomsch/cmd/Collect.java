@@ -1,5 +1,6 @@
 package ch.thomsch.cmd;
 
+import ch.thomsch.storage.loader.SimpleCommitReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public class Collect extends Command {
     public void execute() {
         try {
             final Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
-            final MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new RefactoringMiner());
+            final MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new SimpleCommitReader());
 
             metricHistory.collect(revisionFile, GitRepository.get(repository), "./output.csv");
         } catch (IOException e) {
