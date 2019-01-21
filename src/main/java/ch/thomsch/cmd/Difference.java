@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import ch.thomsch.model.Ancestry;
 import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
@@ -46,7 +47,7 @@ public class Difference extends Command {
 
     @Override
     public void execute() throws IOException {
-        final HashMap<String, String> ancestry = ch.thomsch.Ancestry.load(ancestryFile);
+        final HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
         if (ancestry.isEmpty()) {
             return;
         }

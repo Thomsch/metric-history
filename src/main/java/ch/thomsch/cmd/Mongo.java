@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 
+import ch.thomsch.model.Ancestry;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.Database;
 import ch.thomsch.storage.DatabaseBuilder;
@@ -58,7 +59,7 @@ public class Mongo extends Command {
                     break;
 
                 case "ancestry":
-                    final HashMap<String, String> ancestry = ch.thomsch.Ancestry.load(file);
+                    final HashMap<String, String> ancestry = Ancestry.load(file);
 
                     if (ancestry.isEmpty()) {
                         logger.warn("No ancestry was found...");

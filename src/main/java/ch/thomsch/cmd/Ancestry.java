@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import ch.thomsch.storage.loader.RefactoringMiner;
 import ch.thomsch.versioncontrol.GitRepository;
 
 /**
@@ -43,7 +42,7 @@ public class Ancestry extends Command {
 
     @Override
     public void execute() {
-        final ch.thomsch.Ancestry ancestry = new ch.thomsch.Ancestry(repository, new SimpleCommitReader());
+        final ch.thomsch.model.Ancestry ancestry = new ch.thomsch.model.Ancestry(repository, new SimpleCommitReader());
         ancestry.make(revisionFile);
 
         try (CSVPrinter writer = ancestry.getPrinter(outputFile)) {

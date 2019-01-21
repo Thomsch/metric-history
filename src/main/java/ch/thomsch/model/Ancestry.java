@@ -1,4 +1,4 @@
-package ch.thomsch;
+package ch.thomsch.model;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
