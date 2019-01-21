@@ -5,6 +5,9 @@ apply plugin: 'maven'
 group 'ch.thomsch'
 version '0.3.0'
 
+sourceCompatibility=1.8
+targetCompatibility=1.8
+
 repositories {
     mavenCentral()
     // install locally for debugging purposes
