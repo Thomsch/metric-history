@@ -1,21 +1,19 @@
 package ch.thomsch.cmd;
 
-import ch.thomsch.storage.loader.SimpleCommitReader;
-import org.apache.commons.csv.CSVPrinter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
+import java.util.List;
 
+import ch.thomsch.model.Genealogy;
+import ch.thomsch.storage.GenealogyRepo;
+import ch.thomsch.storage.RevisionRepo;
+import ch.thomsch.storage.loader.SimpleCommitReader;
 import ch.thomsch.versioncontrol.GitRepository;
 
 /**
  *
  */
 public class Ancestry extends Command {
-    private static final Logger logger = LoggerFactory.getLogger(Ancestry.class);
-
-    private String revisionFile;
+    private String revisionsFile;
     private GitRepository repository;
     private String outputFile;
 
@@ -30,7 +28,7 @@ public class Ancestry extends Command {
             return false;
         }
 
-        revisionFile = normalizePath(parameters[0]);
+        revisionsFile = normalizePath(parameters[0]);
         try {
             repository = GitRepository.get(normalizePath(parameters[1]));
         } catch (IOException e) {
@@ -42,14 +40,13 @@ public class Ancestry extends Command {
 
     @Override
     public void execute() {
-        final ch.thomsch.model.Ancestry ancestry = new ch.thomsch.model.Ancestry(repository, new SimpleCommitReader());
-        ancestry.make(revisionFile);
+        final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
+        final Genealogy genealogy = new Genealogy(repository);
+        final GenealogyRepo genealogyRepo = new GenealogyRepo();
 
-        try (CSVPrinter writer = ancestry.getPrinter(outputFile)) {
-            ancestry.export(writer);
-        } catch (IOException e) {
-            logger.error("I/O error with file {}", outputFile, e);
-        }
+        final List<String> revisions = revisionRepo.load(revisionsFile);
+        genealogy.addRevisions(revisions);
+        genealogyRepo.export(genealogy, outputFile);
     }
 
     @Override

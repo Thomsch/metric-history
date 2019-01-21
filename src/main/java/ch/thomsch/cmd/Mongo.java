@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 
-import ch.thomsch.model.Ancestry;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.Database;
 import ch.thomsch.storage.DatabaseBuilder;
+import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.Stores;
 
 /**
@@ -59,7 +59,9 @@ public class Mongo extends Command {
                     break;
 
                 case "ancestry":
-                    final HashMap<String, String> ancestry = Ancestry.load(file);
+
+                    final GenealogyRepo repo = new GenealogyRepo();
+                    final HashMap<String, String> ancestry = repo.load(file);
 
                     if (ancestry.isEmpty()) {
                         logger.warn("No ancestry was found...");

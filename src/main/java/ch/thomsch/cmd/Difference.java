@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ch.thomsch.model.Ancestry;
-import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
+import ch.thomsch.storage.DiskUtils;
+import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.Stores;
 
 /**
@@ -47,11 +47,11 @@ public class Difference extends Command {
 
     @Override
     public void execute() throws IOException {
-        final HashMap<String, String> ancestry = Ancestry.load(ancestryFile);
+        final GenealogyRepo repo = new GenealogyRepo();
+        final HashMap<String, String> ancestry = repo.load(ancestryFile);
         if (ancestry.isEmpty()) {
             return;
         }
-
 
         if(DiskUtils.isFile(input)) {
             final ClassStore model = new ClassStore();
