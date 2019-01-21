@@ -1,7 +1,6 @@
 package ch.thomsch.cmd;
 
 import org.apache.commons.csv.CSVPrinter;
-import org.eclipse.jgit.api.LogCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ch.thomsch.DiskUtils;
+import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.Stores;

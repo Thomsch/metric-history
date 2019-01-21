@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import ch.thomsch.DiskUtils;
+import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.model.FormatException;
 
 /**
