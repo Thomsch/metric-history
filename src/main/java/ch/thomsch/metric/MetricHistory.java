@@ -13,7 +13,7 @@ import java.util.Map;
 import ch.thomsch.model.MetricDump;
 import ch.thomsch.storage.export.Reporter;
 import ch.thomsch.storage.loader.CommitReader;
-import ch.thomsch.versioncontrol.Repository;
+import ch.thomsch.versioncontrol.VCS;
 
 /**
  * Builds and run {@link Collector}.
@@ -42,7 +42,7 @@ public class MetricHistory {
         filter = FileFilter.production();
     }
 
-    public void collectRevision(String commitId, Repository repository, String outputFile,
+    public void collectRevision(String commitId, VCS VCS, String outputFile,
                                 String collectorOutputDirectory) {
         final long beginning = System.nanoTime();
 
@@ -60,9 +60,9 @@ public class MetricHistory {
         try {
             logger.info("Processing {}", commitId);
 
-            final String parent = repository.getParent(commitId);
+            final String parent = VCS.getParent(commitId);
 
-            final MetricDump current = collectCachedMetrics(repository, commitId);
+            final MetricDump current = collectCachedMetrics(VCS, commitId);
 
             SourceMeterConverter.convert(collectorOutputDirectory, outputFile);
 
@@ -76,7 +76,7 @@ public class MetricHistory {
 
         try {
             reporter.finish();
-            repository.close();
+            VCS.close();
         } catch (IOException e) {
             logger.error("Cannot close output file:", e);
         } catch (Exception e) {
@@ -92,10 +92,10 @@ public class MetricHistory {
      * Collects the metrics before and after for each of the revisions found in the file <code>revisionFile</code>.
      *
      * @param revisionFile Path to the CSV file containing the revisions
-     * @param repository   The repository containing the revisions.
+     * @param VCS   The repository containing the revisions.
      * @param outputFile   Path to the file where the results will be printed
      */
-    public void collect(String revisionFile, Repository repository, String outputFile) {
+    public void collect(String revisionFile, VCS VCS, String outputFile) {
         final long beginning = System.nanoTime();
 
         final List<String> revisions = commitReader.make(revisionFile);
@@ -115,11 +115,11 @@ public class MetricHistory {
                 logger.info("Processing {} ({})", revision, ++i);
 
                 MetricDump before = null;
-                final String parent = repository.getParent(revision);
+                final String parent = VCS.getParent(revision);
                 if(parent != null) {
-                    before = collectCachedMetrics(repository, parent);
+                    before = collectCachedMetrics(VCS, parent);
                 }
-                final MetricDump current = collectCachedMetrics(repository, revision);
+                final MetricDump current = collectCachedMetrics(VCS, revision);
 
                 reporter.report(revision, parent, before, current);
             } catch (IOException e) {
@@ -131,7 +131,7 @@ public class MetricHistory {
 
         try {
             reporter.finish();
-            repository.close();
+            VCS.close();
         } catch (IOException e) {
             logger.error("Cannot close output file:", e);
         } catch (Exception e) {
@@ -143,15 +143,15 @@ public class MetricHistory {
         logger.info("Task completed in {}", Duration.ofNanos(elapsed));
     }
 
-    private MetricDump collectCachedMetrics(Repository repository, String revision) throws
+    private MetricDump collectCachedMetrics(VCS VCS, String revision) throws
             GitAPIException {
         final MetricDump cachedMetrics = cache.get(revision);
         if (cachedMetrics != null) {
             return cachedMetrics;
         }
 
-        repository.checkout(revision);
-        final MetricDump metrics = collector.collect(repository.getDirectory(), revision, filter);
+        VCS.checkout(revision);
+        final MetricDump metrics = collector.collect(VCS.getDirectory(), revision, filter);
         cache.put(revision, metrics);
         collector.afterCollect(revision);
         return metrics;

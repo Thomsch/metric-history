@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Represents a repository from a version control system.
+ * Represent a generic Version Control System.
  *
  * @author Thomsch
  */
-public interface Repository extends AutoCloseable {
+public interface VCS extends AutoCloseable {
 
     /**
      * Checkout the repository to the revision.

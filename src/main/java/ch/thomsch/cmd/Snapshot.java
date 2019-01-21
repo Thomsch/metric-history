@@ -11,7 +11,7 @@ import ch.thomsch.metric.MetricHistory;
 import ch.thomsch.metric.SourceMeter;
 import ch.thomsch.storage.export.Reporter;
 import ch.thomsch.storage.loader.RefactoringMiner;
-import ch.thomsch.versioncontrol.GitRepository;
+import ch.thomsch.versioncontrol.GitVCS;
 
 public class Snapshot extends Command {
 
@@ -61,7 +61,7 @@ public class Snapshot extends Command {
             String outputFilePath = executableOutput + File.separator + commitId + ".csv";
             String collectorOutputDirectory = executableOutput + File.separator + projectName;
 
-            metricHistory.collectRevision(commitId, GitRepository.get(repository),
+            metricHistory.collectRevision(commitId, GitVCS.get(repository),
                     outputFilePath, collectorOutputDirectory);
         } catch (IOException e) {
             logger.error("Resource access problem", e);

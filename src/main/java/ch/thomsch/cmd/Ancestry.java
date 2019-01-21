@@ -7,14 +7,14 @@ import ch.thomsch.model.Genealogy;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;
-import ch.thomsch.versioncontrol.GitRepository;
+import ch.thomsch.versioncontrol.GitVCS;
 
 /**
  *
  */
 public class Ancestry extends Command {
     private String revisionsFile;
-    private GitRepository repository;
+    private GitVCS repository;
     private String outputFile;
 
     @Override
@@ -30,7 +30,7 @@ public class Ancestry extends Command {
 
         revisionsFile = normalizePath(parameters[0]);
         try {
-            repository = GitRepository.get(normalizePath(parameters[1]));
+            repository = GitVCS.get(normalizePath(parameters[1]));
         } catch (IOException e) {
             System.out.println("This repository doesn't have version control: " + repository.getDirectory());
         }

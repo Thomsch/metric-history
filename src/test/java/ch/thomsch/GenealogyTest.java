@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ch.thomsch.model.Genealogy;
-import ch.thomsch.versioncontrol.Repository;
+import ch.thomsch.versioncontrol.VCS;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -21,17 +21,17 @@ import static org.mockito.Mockito.when;
 public class GenealogyTest {
 
     private Genealogy genealogy;
-    private Repository repository;
+    private VCS VCS;
 
     @Before
     public void setUp() throws Exception {
-        repository = mock(Repository.class);
-        when(repository.getParent("a")).thenReturn("b");
-        when(repository.getParent("b")).thenReturn("c");
-        when(repository.getParent("c")).thenReturn("d");
-        when(repository.getParent("d")).thenReturn(null);
+        VCS = mock(VCS.class);
+        when(VCS.getParent("a")).thenReturn("b");
+        when(VCS.getParent("b")).thenReturn("c");
+        when(VCS.getParent("c")).thenReturn("d");
+        when(VCS.getParent("d")).thenReturn(null);
 
-        genealogy = new Genealogy(repository);
+        genealogy = new Genealogy(VCS);
     }
 
     @Test

@@ -1,6 +1,5 @@
 package ch.thomsch.cmd;
 
-import ch.thomsch.storage.loader.SimpleCommitReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +9,8 @@ import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.MetricHistory;
 import ch.thomsch.metric.SourceMeter;
 import ch.thomsch.storage.export.Reporter;
-import ch.thomsch.storage.loader.RefactoringMiner;
-import ch.thomsch.versioncontrol.GitRepository;
+import ch.thomsch.storage.loader.SimpleCommitReader;
+import ch.thomsch.versioncontrol.GitVCS;
 
 /**
  *
@@ -60,7 +59,7 @@ public class Collect extends Command {
             final Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
             final MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new SimpleCommitReader());
 
-            metricHistory.collect(revisionFile, GitRepository.get(repository), "./output.csv");
+            metricHistory.collect(revisionFile, GitVCS.get(repository), "./output.csv");
         } catch (IOException e) {
             logger.error("Resource access problem", e);
         } catch (Exception e) {

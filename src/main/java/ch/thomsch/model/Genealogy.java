@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ch.thomsch.versioncontrol.Repository;
+import ch.thomsch.versioncontrol.VCS;
 
 /**
  * Contains the revisions and their respective parents.
@@ -22,13 +22,13 @@ import ch.thomsch.versioncontrol.Repository;
 public class Genealogy {
     private static final Logger logger = LoggerFactory.getLogger(Genealogy.class);
 
-    private final Repository repository;
+    private final VCS VCS;
 
     private final Map<String, String> model; // The key is the revision, the value is its first parent.
     private final Set<String> ignored;
 
-    public Genealogy(Repository repository) {
-        this.repository = repository;
+    public Genealogy(VCS VCS) {
+        this.VCS = VCS;
 
         model = new LinkedHashMap<>();
         ignored = new HashSet<>();
@@ -42,7 +42,7 @@ public class Genealogy {
         logger.info("Retrieving parents...");
         for (String revision : revisions) {
             try {
-                final String parent = repository.getParent(revision);
+                final String parent = VCS.getParent(revision);
 
                 if (parent == null) {
                     ignored.add(revision);

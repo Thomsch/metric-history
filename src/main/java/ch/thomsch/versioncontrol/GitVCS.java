@@ -7,6 +7,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -22,13 +23,13 @@ import java.util.List;
 /**
  * @author Thomsch
  */
-public class GitRepository implements Repository {
+public class GitVCS implements VCS {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitVCS.class);
 
-    private final org.eclipse.jgit.lib.Repository repository;
+    private final Repository repository;
 
-    GitRepository(org.eclipse.jgit.lib.Repository repository) {
+    GitVCS(Repository repository) {
         this.repository = repository;
     }
 
@@ -116,11 +117,11 @@ public class GitRepository implements Repository {
      * @return the instance
      * @throws IOException when there is no repository at the specified location.
      */
-    public static GitRepository get(String path) throws IOException {
+    public static GitVCS get(String path) throws IOException {
         final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        final org.eclipse.jgit.lib.Repository repository = builder.setGitDir(new File(path, ".git")).setMustExist
+        final Repository repository = builder.setGitDir(new File(path, ".git")).setMustExist
                 (true).build();
 
-        return new GitRepository(repository);
+        return new GitVCS(repository);
     }
 }
