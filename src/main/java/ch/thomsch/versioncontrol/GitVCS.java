@@ -42,15 +42,16 @@ public class GitVCS implements VCS {
     @Override
     public String getParent(String revision) throws IOException {
         final ObjectId revisionId = repository.resolve(revision);
-        final RevWalk walk = new RevWalk(repository);
-        final RevCommit commit = walk.parseCommit(revisionId);
+        try(RevWalk walk = new RevWalk(repository)){
+            final RevCommit commit = walk.parseCommit(revisionId);
 
-        if(commit.getParentCount() == 0) {
-            return null;
+            if(commit.getParentCount() == 0) {
+                return null;
+            }
+
+            final RevCommit parentRevision = commit.getParent(0);
+            return parentRevision.getName();
         }
-
-        final RevCommit parentRevision = commit.getParent(0);
-        return parentRevision.getName();
     }
 
     @Override
@@ -60,18 +61,19 @@ public class GitVCS implements VCS {
         final ObjectReader reader = repository.newObjectReader();
 
         final ObjectId revisionId = repository.resolve(revision);
-        final RevWalk walk = new RevWalk(repository);
-        final RevCommit commit = walk.parseCommit(revisionId);
 
-        final CanonicalTreeParser oldTree = new CanonicalTreeParser();
-        final CanonicalTreeParser newTree = new CanonicalTreeParser();
-        newTree.reset(reader, commit.getTree());
+        try (RevWalk walk = new RevWalk(repository)) {
+            final RevCommit commit = walk.parseCommit(revisionId);
 
-        walk.markStart(commit.getParent(0));
+            final CanonicalTreeParser oldTree = new CanonicalTreeParser();
+            final CanonicalTreeParser newTree = new CanonicalTreeParser();
+            newTree.reset(reader, commit.getTree());
 
-        oldTree.reset(reader, commit.getParent(0).getTree());
+            walk.markStart(commit.getParent(0));
 
-        try {
+            oldTree.reset(reader, commit.getParent(0).getTree());
+
+
             final List<DiffEntry> diffEntries = git.diff().setNewTree(newTree).setOldTree(oldTree).call();
 
             for (DiffEntry diffEntry : diffEntries) {
