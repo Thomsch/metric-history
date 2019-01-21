@@ -1,14 +1,11 @@
 package ch.thomsch.storage;
 
-import java.util.HashMap;
-
 import ch.thomsch.model.ClassStore;
-import ch.thomsch.model.Metrics;
 
 /**
  * Exports metrics.
  */
-public interface TradeoffOutput {
+public interface StoreOutput {
 
     /**
      * Exports the metrics of a list of revisions.

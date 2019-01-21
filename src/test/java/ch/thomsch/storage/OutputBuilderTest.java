@@ -2,13 +2,14 @@ package ch.thomsch.storage;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class OutputBuilderTest {
 
     @Test
     public void create_ShouldInstantiateConsoleOutput_WhenNoFileIsGiven() {
-        final TradeoffOutput output = OutputBuilder.create(null);
+        final StoreOutput output = OutputBuilder.create(null);
 
         assertNotNull(output);
         assertTrue(output instanceof ConsoleOutput);
@@ -16,7 +17,7 @@ public class OutputBuilderTest {
 
     @Test
     public void create_ShouldInstantiateConsoleOutput_WhenStringIsEmpty() {
-        final TradeoffOutput output = OutputBuilder.create("");
+        final StoreOutput output = OutputBuilder.create("");
 
         assertNotNull(output);
         assertTrue(output instanceof ConsoleOutput);
@@ -24,7 +25,7 @@ public class OutputBuilderTest {
 
     @Test
     public void create_ShouldInstantiateCsvOutput_WhenAFileIsGiven() {
-        final TradeoffOutput output = OutputBuilder.create("some/file.csv");
+        final StoreOutput output = OutputBuilder.create("some/file.csv");
 
         assertNotNull(output);
         assertTrue(output instanceof CsvOutput);

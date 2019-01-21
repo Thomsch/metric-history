@@ -17,8 +17,8 @@ import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 import ch.thomsch.storage.OutputBuilder;
 import ch.thomsch.storage.RefactoringDetail;
+import ch.thomsch.storage.StoreOutput;
 import ch.thomsch.storage.Stores;
-import ch.thomsch.storage.TradeoffOutput;
 
 /**
  *
@@ -68,7 +68,7 @@ public class Filter extends Command {
         final HashMap<String, List<String>> changeSet = aggregateClassesForEachRevision(detailedRefactorings);
         final ClassStore results = filter(model, changeSet);
 
-        final TradeoffOutput output = OutputBuilder.create(outputFile);
+        final StoreOutput output = OutputBuilder.create(outputFile);
         output.export(results);
     }
 

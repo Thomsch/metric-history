@@ -1,15 +1,11 @@
 package ch.thomsch.storage;
 
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.TreeMap;
 
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
@@ -18,7 +14,7 @@ import ch.thomsch.model.Metrics;
 /**
  * Exports results to a CSV file.
  */
-public class CsvOutput implements TradeoffOutput {
+public class CsvOutput implements StoreOutput {
     private static final Logger logger = LoggerFactory.getLogger(CsvOutput.class);
 
     private final String file;
