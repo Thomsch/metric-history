@@ -81,4 +81,15 @@ public class Genealogy {
     public Map<Object, Object> getMap() {
         return Collections.unmodifiableMap(model);
     }
+
+    /**
+     * Returns a list of unique revisions present in the genealogy.
+     * @return a list containing the unique revisions of the genealogy.
+     */
+    public List<String> getUniqueRevisions() {
+        final Set<String> uniques = new HashSet<>();
+        uniques.addAll(model.keySet());
+        uniques.addAll(model.values());
+        return new ArrayList<>(uniques);
+    }
 }
