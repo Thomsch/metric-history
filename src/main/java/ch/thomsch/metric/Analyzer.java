@@ -18,7 +18,7 @@ public interface Analyzer {
     MetricDump collect(String folder, String revision, FileFilter filter);
 
     /**
-     * Is invoked automatically by {@link MetricHistory} after {@link #collect(String, String, FileFilter)}.
+     * Is invoked automatically by {@link Collector} after {@link #collect(String, String, FileFilter)}.
      *
      * @param revision the revision that has been collected.
      */

@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.util.List;
 
 import ch.thomsch.metric.Analyzer;
-import ch.thomsch.metric.MetricHistory;
+import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.SourceMeter;
 import ch.thomsch.model.Genealogy;
 import ch.thomsch.storage.RevisionRepo;
@@ -61,7 +61,7 @@ public class Collect extends Command {
         final List<String> revisions = revisionRepo.load(revisionFile);
         final GitVCS vcs = GitVCS.get(repository);
         final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
-        final MetricHistory metricHistory = new MetricHistory(analyzer, vcs);
+        final Collector collector = new Collector(analyzer, vcs);
 
         final Genealogy genealogy = new Genealogy(vcs);
         genealogy.addRevisions(revisions);
@@ -74,7 +74,7 @@ public class Collect extends Command {
         int i = 0;
         for (String revision : analysisTargets) {
             logger.info("Processing {} ({})", revision, ++i);
-            metricHistory.analyzeRevision(projectPath, revision);
+            collector.analyzeRevision(projectPath, revision);
         }
         final long elapsed = System.nanoTime() - beginning;
         logger.info("Collection completed in {}", Duration.ofNanos(elapsed));

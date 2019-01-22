@@ -9,15 +9,15 @@ import ch.thomsch.versioncontrol.VCS;
 /**
  * Uses an {@link Analyzer} on a specific version of a project.
  */
-public class MetricHistory {
-    private static final Logger logger = LoggerFactory.getLogger(MetricHistory.class);
+public class Collector {
+    private static final Logger logger = LoggerFactory.getLogger(Collector.class);
 
     private final Analyzer analyzer;
 
     private final FileFilter filter;
     private final VCS vcs;
 
-    public MetricHistory(Analyzer analyzer, VCS vcs) {
+    public Collector(Analyzer analyzer, VCS vcs) {
         this.analyzer = analyzer;
         this.vcs = vcs;
 
