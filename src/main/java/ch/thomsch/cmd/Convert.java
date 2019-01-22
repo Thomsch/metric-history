@@ -4,9 +4,6 @@ import java.io.IOException;
 
 import ch.thomsch.mining.SourceMeterConverter;
 
-/**
- *
- */
 public class Convert extends Command {
     private String inputPath;
     private String output;

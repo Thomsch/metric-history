@@ -20,9 +20,6 @@ import ch.thomsch.storage.RefactoringDetail;
 import ch.thomsch.storage.StoreOutput;
 import ch.thomsch.storage.Stores;
 
-/**
- *
- */
 public class Filter extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Filter.class);
 

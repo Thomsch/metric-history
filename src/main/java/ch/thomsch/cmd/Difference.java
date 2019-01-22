@@ -17,9 +17,6 @@ import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.Stores;
 
-/**
- *
- */
 public class Difference extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Difference.class);
 

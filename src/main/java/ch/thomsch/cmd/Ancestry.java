@@ -9,9 +9,6 @@ import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;
 import ch.thomsch.versioncontrol.GitVCS;
 
-/**
- *
- */
 public class Ancestry extends Command {
     private String revisionsFile;
     private GitVCS repository;
