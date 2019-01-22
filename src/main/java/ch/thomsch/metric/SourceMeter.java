@@ -19,8 +19,6 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.thomsch.model.MetricDump;
-
 /**
  * Collects metrics from the command line.
  *
@@ -65,7 +63,7 @@ public class SourceMeter implements Analyzer {
     }
 
     @Override
-    public MetricDump collect(String folder, String revision, FileFilter filter) {
+    public void execute(String revision, String folder, FileFilter filter) {
         final DefaultExecutor executor = new DefaultExecutor();
         final DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
         map.put("currentDate", "-currentDate=" + revision);
@@ -76,11 +74,10 @@ public class SourceMeter implements Analyzer {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return MetricDump.EMPTY;
     }
 
     @Override
-    public void afterCollect(String revision) {
+    public void postExecute(String revision) {
         final String baseDir = Paths.stripTrailingSeparator(resultDir) + File.separatorChar + projectName + File
                 .separatorChar + "java" + File.separatorChar + revision;
 

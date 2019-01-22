@@ -18,7 +18,7 @@ import ch.thomsch.model.Metrics;
 public class CKMetrics implements Analyzer {
 
     @Override
-    public MetricDump collect(String folder, String revision, FileFilter filter) {
+    public void execute(String revision, String folder, FileFilter filter) {
         final CKReport report = new CK().calculate(folder);
 
         final MetricDump dump = new MetricDump();
@@ -26,11 +26,10 @@ public class CKMetrics implements Analyzer {
         report.all().stream()
                 .filter(ckNumber -> filter.accept(FilenameUtils.normalize(ckNumber.getFile())))
                 .forEach(ckNumber -> dump.add(ckNumber.getClassName(), convertToMetric(ckNumber)));
-        return dump;
     }
 
     @Override
-    public void afterCollect(String revision) {
+    public void postExecute(String revision) {
         // Nothing needs to be done
     }
 
