@@ -22,20 +22,18 @@ import static org.mockito.Mockito.when;
 public class GenealogyTest {
 
     private Genealogy genealogy;
-    private VCS VCS;
 
     @Before
     public void setUp() throws Exception {
-        VCS = mock(VCS.class);
-        when(VCS.getParent("a")).thenReturn("b");
-        when(VCS.getParent("b")).thenReturn("c");
-        when(VCS.getParent("c")).thenReturn("d");
-        when(VCS.getParent("e")).thenReturn(null);
-        when(VCS.getParent("f")).thenReturn("g");
-        when(VCS.getParent("h")).thenReturn("i");
+        final VCS vcs = mock(VCS.class);
+        when(vcs.getParent("a")).thenReturn("b");
+        when(vcs.getParent("b")).thenReturn("c");
+        when(vcs.getParent("c")).thenReturn("d");
+        when(vcs.getParent("e")).thenReturn(null);
+        when(vcs.getParent("f")).thenReturn("g");
+        when(vcs.getParent("h")).thenReturn("i");
 
-
-        genealogy = new Genealogy(VCS);
+        genealogy = new Genealogy(vcs);
     }
 
     @Test
