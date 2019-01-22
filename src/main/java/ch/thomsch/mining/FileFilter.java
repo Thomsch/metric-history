@@ -1,4 +1,4 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 /**
  * Abstraction for a third party static code analyzer.

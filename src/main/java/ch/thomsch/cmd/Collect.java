@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.List;
 
-import ch.thomsch.metric.Analyzer;
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.SourceMeter;
+import ch.thomsch.mining.Analyzer;
+import ch.thomsch.mining.Collector;
+import ch.thomsch.mining.SourceMeter;
 import ch.thomsch.model.Genealogy;
 import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;

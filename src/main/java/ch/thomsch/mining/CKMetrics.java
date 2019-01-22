@@ -1,4 +1,4 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNumber;

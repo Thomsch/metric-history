@@ -7,10 +7,10 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 
-import ch.thomsch.metric.Analyzer;
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.metric.SourceMeterConverter;
+import ch.thomsch.mining.Analyzer;
+import ch.thomsch.mining.Collector;
+import ch.thomsch.mining.SourceMeter;
+import ch.thomsch.mining.SourceMeterConverter;
 import ch.thomsch.versioncontrol.GitVCS;
 
 /**

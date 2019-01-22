@@ -1,4 +1,4 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;

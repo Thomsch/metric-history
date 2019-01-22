@@ -1,4 +1,4 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.model.FormatException;
+import ch.thomsch.storage.DiskUtils;
 
 /**
  * @author Thomsch
