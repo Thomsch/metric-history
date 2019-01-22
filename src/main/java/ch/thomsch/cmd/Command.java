@@ -1,8 +1,6 @@
 package ch.thomsch.cmd;
 
-import org.apache.commons.io.FilenameUtils;
-
-import java.io.File;
+import ch.thomsch.storage.DiskUtils;
 
 public abstract class Command {
 
@@ -30,6 +28,6 @@ public abstract class Command {
     public abstract void printUsage();
 
     String normalizePath(String arg) {
-        return FilenameUtils.normalize(new File(arg).getAbsolutePath());
+        return DiskUtils.normalizePath(arg);
     }
 }

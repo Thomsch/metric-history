@@ -1,5 +1,6 @@
 package ch.thomsch.storage;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,10 @@ public final class DiskUtils {
             }
         }
         return outputDir;
+    }
+
+    public static String normalizePath(String arg) {
+        return FilenameUtils.normalize(new File(arg).getAbsolutePath());
     }
 
 }
