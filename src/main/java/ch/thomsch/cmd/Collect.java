@@ -77,7 +77,7 @@ public class Collect extends Command {
             collector.analyzeRevision(projectPath, revision);
         }
         final long elapsed = System.nanoTime() - beginning;
-        logger.info("Collection completed in {}", Duration.ofNanos(elapsed));
+        logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
 
         vcs.close();
     }

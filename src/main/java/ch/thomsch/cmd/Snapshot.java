@@ -77,7 +77,7 @@ public class Snapshot extends Command {
             logger.error("Resource access problem", e);
         } finally {
             final long elapsed = System.nanoTime() - beginning;
-            logger.info("Task completed in {}", Duration.ofNanos(elapsed));
+            logger.info("Snapshot completed in {}", Duration.ofNanos(elapsed));
         }
     }
 
