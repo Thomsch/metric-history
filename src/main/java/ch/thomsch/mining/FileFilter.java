@@ -7,8 +7,6 @@ import java.util.List;
  * Filters file paths.
  * All credits goes to this implementation:
  * https://github.com/bzafiris/RefactoringMiner/commit/08ba7d54e64eb61a59208f67dadc352b87391b97
- *
- * @author Thomsch
  */
 public class FileFilter {
 

@@ -8,8 +8,6 @@ import ch.thomsch.model.Metrics;
 
 /**
  * Default CSV formatter
- *
- * @author Thomsch
  */
 public class DefaultFormatter {
 

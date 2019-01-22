@@ -4,9 +4,6 @@ import java.util.HashMap;
 
 import ch.thomsch.model.ClassStore;
 
-/**
- * @author Thomsch
- */
 public interface Database {
     void persist(HashMap<String, String> ancestry);
 

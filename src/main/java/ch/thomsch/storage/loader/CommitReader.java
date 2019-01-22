@@ -2,9 +2,6 @@ package ch.thomsch.storage.loader;
 
 import java.util.List;
 
-/**
- * @author Thomsch
- */
 public interface CommitReader {
 
     /**

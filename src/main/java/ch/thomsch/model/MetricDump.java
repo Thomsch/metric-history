@@ -6,8 +6,6 @@ import java.util.Map;
 
 /**
  * Contains the metrics for a project at different granularity.
- *
- * @author Thomsch
  */
 public class MetricDump {
     public static final MetricDump EMPTY = new MetricDump();

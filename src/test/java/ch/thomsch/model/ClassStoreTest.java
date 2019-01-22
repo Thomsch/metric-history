@@ -9,9 +9,6 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Thomsch
- */
 public class ClassStoreTest {
 
     private ClassStore instance;

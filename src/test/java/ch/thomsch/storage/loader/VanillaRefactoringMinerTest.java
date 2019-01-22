@@ -9,9 +9,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author Thomsch
- */
 public class VanillaRefactoringMinerTest {
 
     private static final String TEST_FILE = "src/test/resources/test-revisions.csv";

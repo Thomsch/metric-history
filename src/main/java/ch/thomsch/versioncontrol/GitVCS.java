@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Thomsch
- */
 public class GitVCS implements VCS {
 
     private static final Logger logger = LoggerFactory.getLogger(GitVCS.class);

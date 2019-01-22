@@ -8,8 +8,6 @@ import java.util.Collection;
 
 /**
  * Represent a generic Version Control System.
- *
- * @author Thomsch
  */
 public interface VCS extends AutoCloseable {
 

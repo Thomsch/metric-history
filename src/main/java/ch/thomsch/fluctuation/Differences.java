@@ -14,9 +14,6 @@ import java.util.Map;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 
-/**
- * @author Thomsch
- */
 public final class Differences {
     private static final Logger logger = LoggerFactory.getLogger(Differences.class);
 

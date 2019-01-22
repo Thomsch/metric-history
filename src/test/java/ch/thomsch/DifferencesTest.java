@@ -15,9 +15,6 @@ import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertArrayEquals;
 
-/**
- * @author Thomsch
- */
 public class DifferencesTest {
 
     @Test

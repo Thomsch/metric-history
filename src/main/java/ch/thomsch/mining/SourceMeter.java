@@ -23,8 +23,6 @@ import java.util.Set;
 
 /**
  * Collects metrics from the command line.
- *
- * @author Thomsch
  */
 public class SourceMeter implements Analyzer {
     private static final Logger logger = LoggerFactory.getLogger(SourceMeter.class);

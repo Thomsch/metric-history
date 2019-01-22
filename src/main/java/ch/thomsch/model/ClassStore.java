@@ -8,8 +8,6 @@ import java.util.Map;
 /**
  * Represent metrics associated to all classes for multiple revisions.
  * This class is not thread safe.
- *
- * @author Thomsch
  */
 public class ClassStore {
     private final Map<String, Map<String, Metrics>> data;

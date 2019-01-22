@@ -16,7 +16,6 @@ import ch.thomsch.model.Metrics;
 /**
  * Collects metrics using the CKMetrics library.
  * https://github.com/mauricioaniche/ck
- * @author Thomsch
  */
 public class CKMetrics implements Analyzer {
 

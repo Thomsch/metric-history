@@ -10,11 +10,7 @@ import java.io.PrintStream;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-/**
- * @author Thomsch
- */
 public class ApplicationTest {
 
     private Application application;

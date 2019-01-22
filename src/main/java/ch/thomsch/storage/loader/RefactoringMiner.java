@@ -6,9 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/**
- * @author Thomsch
- */
 public class RefactoringMiner extends VanillaRefactoringMiner {
 
     private static final Logger logger = LoggerFactory.getLogger(RefactoringMiner.class);

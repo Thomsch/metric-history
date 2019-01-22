@@ -16,8 +16,6 @@ import ch.thomsch.versioncontrol.VCS;
 
 /**
  * Contains the revisions and their respective parents.
- *
- * @author Thomsch
  */
 public class Genealogy {
     private static final Logger logger = LoggerFactory.getLogger(Genealogy.class);

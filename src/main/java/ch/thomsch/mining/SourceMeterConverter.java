@@ -23,9 +23,6 @@ import java.util.Collection;
 import ch.thomsch.model.FormatException;
 import ch.thomsch.storage.DiskUtils;
 
-/**
- * @author Thomsch
- */
 public class SourceMeterConverter {
 
     private static final Logger logger = LoggerFactory.getLogger(SourceMeterConverter.class);

@@ -9,9 +9,6 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Thomsch
- */
 public class ReporterTest {
 
     private File expectedFile;
