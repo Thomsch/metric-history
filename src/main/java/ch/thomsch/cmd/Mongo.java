@@ -12,6 +12,9 @@ import ch.thomsch.storage.DatabaseBuilder;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.Stores;
 
+/**
+ * Exports different files produced by this application to mongodb.
+ */
 public class Mongo extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Mongo.class);
 

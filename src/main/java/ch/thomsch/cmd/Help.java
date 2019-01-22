@@ -3,6 +3,9 @@ package ch.thomsch.cmd;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Provides general help for the user.
+ */
 public class Help extends Command {
     private final Collection<Command> values;
 

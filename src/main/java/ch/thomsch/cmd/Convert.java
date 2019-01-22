@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import ch.thomsch.mining.SourceMeterConverter;
 
+/**
+ * Converts the results from an analyser to the RAW format.
+ */
 public class Convert extends Command {
     private String inputPath;
     private String output;

@@ -17,6 +17,9 @@ import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.Stores;
 
+/**
+ * Computes the metric fluctuations from file(s) in RAW format.
+ */
 public class Difference extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Difference.class);
 

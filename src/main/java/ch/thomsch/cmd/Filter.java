@@ -20,6 +20,10 @@ import ch.thomsch.storage.RefactoringDetail;
 import ch.thomsch.storage.StoreOutput;
 import ch.thomsch.storage.Stores;
 
+/**
+ * Filters out metric fluctuations for all given versions of a project that are not desired.
+ * The filtered metric fluctuations are stored in a new file.
+ */
 public class Filter extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Filter.class);
 

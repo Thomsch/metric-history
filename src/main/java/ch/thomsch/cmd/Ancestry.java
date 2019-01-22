@@ -9,6 +9,11 @@ import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;
 import ch.thomsch.versioncontrol.GitVCS;
 
+/**
+ * Generates a CSV file containing the list of pairs "version, parent". The version in the first column corresponds
+ * to the versions we provide in argument.
+ * If a parent version cannot be found for a version, this version will NOT appear in the final file.
+ */
 public class Ancestry extends Command {
     private String revisionsFile;
     private GitVCS repository;
