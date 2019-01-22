@@ -34,6 +34,11 @@ public class CKMetrics implements Collector {
         // Nothing needs to be done
     }
 
+    @Override
+    public boolean hasInCache(String version) {
+        return false;
+    }
+
     private Metrics convertToMetric(CKNumber metric) {
         return new Metrics(
                 (double) metric.getCbo(), (double) metric.getDit(), (double) metric.getNoc(), (double) metric.getNof(),

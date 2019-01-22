@@ -49,6 +49,7 @@ public class SourceMeter implements Collector {
         commandLine.addArgument("-cleanProject=" + true);
         commandLine.addArgument("-resultsDir=" + resultDir);
         commandLine.addArgument("${currentDate}");
+
         commandLine.setSubstitutionMap(map);
     }
 
@@ -90,6 +91,11 @@ public class SourceMeter implements Collector {
         } catch (IOException e) {
             logger.error("An error occurred while cleaning up revision " + revision, e);
         }
+    }
+
+    @Override
+    public boolean hasInCache(String version) {
+        return false;
     }
 
     private void deleteFile(String baseDir, String file) throws IOException {

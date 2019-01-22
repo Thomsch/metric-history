@@ -3,12 +3,14 @@ package ch.thomsch.cmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.time.Duration;
+import java.util.List;
 
 import ch.thomsch.metric.Collector;
 import ch.thomsch.metric.MetricHistory;
 import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.storage.export.Reporter;
+import ch.thomsch.model.Genealogy;
+import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;
 import ch.thomsch.versioncontrol.GitVCS;
 
@@ -20,8 +22,8 @@ public class Collect extends Command {
 
     private String revisionFile;
     private String executable;
-    private String project;
-    private String executableOutput;
+    private String projectPath;
+    private String outputPath;
     private String projectName;
     private String repository;
 
@@ -38,33 +40,46 @@ public class Collect extends Command {
 
         revisionFile = normalizePath(parameters[0]);
         executable = normalizePath(parameters[1]);
-        project = normalizePath(parameters[2]);
+        projectPath = normalizePath(parameters[2]);
 
         repository = parameters[3];
         if (repository.equalsIgnoreCase("same")) {
-            repository = project;
+            repository = projectPath;
         } else {
             repository = normalizePath(repository);
         }
 
-        executableOutput = normalizePath(parameters[4]);
+        outputPath = normalizePath(parameters[4]);
         projectName = parameters[5];
 
         return true;
     }
 
     @Override
-    public void execute() {
-        try {
-            final Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
-            final MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new SimpleCommitReader());
+    public void execute() throws Exception {
+        final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
+        final List<String> revisions = revisionRepo.load(revisionFile);
+        final GitVCS vcs = GitVCS.get(repository);
+        final Collector collector = new SourceMeter(executable, outputPath, projectName, projectPath);
+        final MetricHistory metricHistory = new MetricHistory(collector, vcs);
 
-            metricHistory.collect(revisionFile, GitVCS.get(repository), "./output.csv");
-        } catch (IOException e) {
-            logger.error("Resource access problem", e);
-        } catch (Exception e) {
-            logger.error("Something went wrong", e);
+        final Genealogy genealogy = new Genealogy(vcs);
+        genealogy.addRevisions(revisions);
+
+        final List<String> analysisTargets = genealogy.getUniqueRevisions();
+
+        logger.info("Read {} distinct revisions", revisions.size());
+
+        final long beginning = System.nanoTime();
+        int i = 0;
+        for (String revision : analysisTargets) {
+            logger.info("Processing {} ({})", revision, ++i);
+            metricHistory.analyzeRevision(projectPath, revision);
         }
+        final long elapsed = System.nanoTime() - beginning;
+        logger.info("Collection completed in {}", Duration.ofNanos(elapsed));
+
+        vcs.close();
     }
 
     @Override

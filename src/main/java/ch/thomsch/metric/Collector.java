@@ -23,4 +23,6 @@ public interface Collector {
      * @param revision the revision that has been collected.
      */
     void afterCollect(String revision);
+
+    boolean hasInCache(String version);
 }
