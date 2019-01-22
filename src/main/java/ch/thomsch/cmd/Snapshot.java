@@ -13,6 +13,9 @@ import ch.thomsch.storage.export.Reporter;
 import ch.thomsch.storage.loader.RefactoringMiner;
 import ch.thomsch.versioncontrol.GitVCS;
 
+/**
+ * Analyze and build the RAW file for a single version of the project.
+ */
 public class Snapshot extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Snapshot.class);

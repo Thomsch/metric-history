@@ -13,7 +13,7 @@ import ch.thomsch.storage.loader.SimpleCommitReader;
 import ch.thomsch.versioncontrol.GitVCS;
 
 /**
- *
+ * Execute a code analyzer for multiple versions and their parents. The results are written on disk.
  */
 public class Collect extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Collect.class);
