@@ -15,7 +15,7 @@ import ch.thomsch.model.Metrics;
  * https://github.com/mauricioaniche/ck
  * @author Thomsch
  */
-public class CKMetrics implements Collector {
+public class CKMetrics implements Analyzer {
 
     @Override
     public MetricDump collect(String folder, String revision, FileFilter filter) {

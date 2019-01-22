@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.List;
 
-import ch.thomsch.metric.Collector;
+import ch.thomsch.metric.Analyzer;
 import ch.thomsch.metric.MetricHistory;
 import ch.thomsch.metric.SourceMeter;
 import ch.thomsch.model.Genealogy;
@@ -60,8 +60,8 @@ public class Collect extends Command {
         final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
         final List<String> revisions = revisionRepo.load(revisionFile);
         final GitVCS vcs = GitVCS.get(repository);
-        final Collector collector = new SourceMeter(executable, outputPath, projectName, projectPath);
-        final MetricHistory metricHistory = new MetricHistory(collector, vcs);
+        final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
+        final MetricHistory metricHistory = new MetricHistory(analyzer, vcs);
 
         final Genealogy genealogy = new Genealogy(vcs);
         genealogy.addRevisions(revisions);

@@ -26,7 +26,7 @@ import ch.thomsch.model.MetricDump;
  *
  * @author Thomsch
  */
-public class SourceMeter implements Collector {
+public class SourceMeter implements Analyzer {
     private static final Logger logger = LoggerFactory.getLogger(SourceMeter.class);
 
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

@@ -5,7 +5,7 @@ import ch.thomsch.model.MetricDump;
 /**
  * @author Thomsch
  */
-public interface Collector {
+public interface Analyzer {
     /**
      * Computes the metrics for the element in the folder according to the filter.
      *

@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 
-import ch.thomsch.metric.Collector;
+import ch.thomsch.metric.Analyzer;
 import ch.thomsch.metric.MetricHistory;
 import ch.thomsch.metric.SourceMeter;
 import ch.thomsch.metric.SourceMeterConverter;
@@ -57,9 +57,9 @@ public class Snapshot extends Command {
 
     @Override
     public void execute() throws Exception {
-        final Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
+        final Analyzer analyzer = new SourceMeter(executable, executableOutput, projectName, project);
         final GitVCS vcs = GitVCS.get(repository);
-        final MetricHistory metricHistory = new MetricHistory(collector, vcs);
+        final MetricHistory metricHistory = new MetricHistory(analyzer, vcs);
 
         final String outputFilePath = executableOutput + File.separator + commitId + ".csv";
         final String collectorOutputDirectory = executableOutput + File.separator + projectName;
