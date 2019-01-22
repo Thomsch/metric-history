@@ -35,6 +35,7 @@ public class Collector {
             analyzer.postExecute(version);
         } catch (GitAPIException e) {
             logger.error("Failed to load version {} of the project", version);
+            logger.error("Details:", e);
         }
     }
 }
