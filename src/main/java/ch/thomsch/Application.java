@@ -6,25 +6,31 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import ch.thomsch.cmd.Ancestry;
 import ch.thomsch.cmd.Collect;
 import ch.thomsch.cmd.Command;
 import ch.thomsch.cmd.Convert;
 import ch.thomsch.cmd.Difference;
+import ch.thomsch.cmd.Filter;
 import ch.thomsch.cmd.Help;
 import ch.thomsch.cmd.Mongo;
-import ch.thomsch.cmd.Filter;
 import ch.thomsch.cmd.Snapshot;
+import picocli.CommandLine;
 
 /**
  * Entry point for the application.
  */
-public final class Application {
+@CommandLine.Command(name = "metric-history", version = "metric-history version 0.3", mixinStandardHelpOptions = true)
+public final class Application implements Callable<Void>{
     private final Logger logger = LoggerFactory.getLogger("Application");
 
     private final Map<String, Command> commands = new HashMap<>();
     private final Help help;
+
+    @CommandLine.Parameters(arity = "*")
+    private String[] options;
 
     Application() {
         help = new Help(commands.values());
@@ -35,6 +41,12 @@ public final class Application {
         addCommand(new Mongo());
         addCommand(new Filter());
         addCommand(new Snapshot());
+    }
+
+    @Override
+    public Void call() throws Exception {
+        doMain(options);
+        return null;
     }
 
     /**
@@ -99,6 +111,6 @@ public final class Application {
     }
 
     public static void main(String[] args) {
-        new Application().doMain(args);
+        CommandLine.call(new Application(), args);
     }
 }
