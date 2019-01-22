@@ -5,14 +5,17 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 
-import ch.thomsch.metric.Collector;
-import ch.thomsch.metric.MetricHistory;
-import ch.thomsch.metric.SourceMeter;
-import ch.thomsch.storage.export.Reporter;
-import ch.thomsch.storage.loader.RefactoringMiner;
+import ch.thomsch.mining.Analyzer;
+import ch.thomsch.mining.Collector;
+import ch.thomsch.mining.SourceMeter;
+import ch.thomsch.mining.SourceMeterConverter;
 import ch.thomsch.versioncontrol.GitVCS;
 
+/**
+ * Analyze and build the RAW file for a single version of the project.
+ */
 public class Snapshot extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Snapshot.class);
@@ -53,20 +56,28 @@ public class Snapshot extends Command {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws Exception {
+        final Analyzer analyzer = new SourceMeter(executable, executableOutput, projectName, project);
+        final GitVCS vcs = GitVCS.get(repository);
+        final Collector collector = new Collector(analyzer, vcs);
+
+        final String outputFilePath = executableOutput + File.separator + commitId + ".csv";
+        final String collectorOutputDirectory = executableOutput + File.separator + projectName;
+
+        logger.info("Output file: {}", outputFilePath);
+        logger.info("Processing single revision {}", commitId);
+
+        final long beginning = System.nanoTime();
         try {
-            final Collector collector = new SourceMeter(executable, executableOutput, projectName, project);
-            final MetricHistory metricHistory = new MetricHistory(collector, new Reporter(), new RefactoringMiner());
+            collector.analyzeRevision(commitId, project);
+            vcs.close();
 
-            String outputFilePath = executableOutput + File.separator + commitId + ".csv";
-            String collectorOutputDirectory = executableOutput + File.separator + projectName;
-
-            metricHistory.collectRevision(commitId, GitVCS.get(repository),
-                    outputFilePath, collectorOutputDirectory);
+            SourceMeterConverter.convert(collectorOutputDirectory, outputFilePath);
         } catch (IOException e) {
             logger.error("Resource access problem", e);
-        } catch (Exception e) {
-            logger.error("Something went wrong", e);
+        } finally {
+            final long elapsed = System.nanoTime() - beginning;
+            logger.info("Snapshot completed in {}", Duration.ofNanos(elapsed));
         }
     }
 

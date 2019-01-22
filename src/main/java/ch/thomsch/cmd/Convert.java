@@ -2,7 +2,7 @@ package ch.thomsch.cmd;
 
 import java.io.IOException;
 
-import ch.thomsch.metric.SourceMeterConverter;
+import ch.thomsch.mining.SourceMeterConverter;
 
 /**
  *

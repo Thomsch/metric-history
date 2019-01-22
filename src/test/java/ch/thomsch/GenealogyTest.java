@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import ch.thomsch.model.Genealogy;
 import ch.thomsch.versioncontrol.VCS;
@@ -21,17 +22,18 @@ import static org.mockito.Mockito.when;
 public class GenealogyTest {
 
     private Genealogy genealogy;
-    private VCS VCS;
 
     @Before
     public void setUp() throws Exception {
-        VCS = mock(VCS.class);
-        when(VCS.getParent("a")).thenReturn("b");
-        when(VCS.getParent("b")).thenReturn("c");
-        when(VCS.getParent("c")).thenReturn("d");
-        when(VCS.getParent("d")).thenReturn(null);
+        final VCS vcs = mock(VCS.class);
+        when(vcs.getParent("a")).thenReturn("b");
+        when(vcs.getParent("b")).thenReturn("c");
+        when(vcs.getParent("c")).thenReturn("d");
+        when(vcs.getParent("e")).thenReturn(null);
+        when(vcs.getParent("f")).thenReturn("g");
+        when(vcs.getParent("h")).thenReturn("i");
 
-        genealogy = new Genealogy(VCS);
+        genealogy = new Genealogy(vcs);
     }
 
     @Test
@@ -47,12 +49,28 @@ public class GenealogyTest {
 
     @Test
     public void hasIgnored_ShouldReturnTrue_WhenAParentIsNotFound() {
-
         genealogy.addRevisions(Arrays.asList("a", "d"));
 
         assertEquals(1, genealogy.getMap().size());
         assertTrue(genealogy.hasIgnoredRevisions());
         assertEquals(1, genealogy.getIgnoredRevisions().size());
         assertEquals("d", genealogy.getIgnoredRevisions().get(0));
+    }
+
+    @Test
+    public void getUniqueRevisions_ShouldNotReturnDuplicates() {
+        genealogy.addRevisions(Arrays.asList("a", "b", "c", "e", "f", "h"));
+
+        final List<String> result = genealogy.getUniqueRevisions();
+
+        assertEquals(8, result.size());
+        assertTrue(result.contains("a"));
+        assertTrue(result.contains("b"));
+        assertTrue(result.contains("c"));
+        assertTrue(result.contains("d"));
+        assertTrue(result.contains("f"));
+        assertTrue(result.contains("g"));
+        assertTrue(result.contains("h"));
+        assertTrue(result.contains("i"));
     }
 }

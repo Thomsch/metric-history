@@ -1,10 +1,13 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNumber;
 import com.github.mauricioaniche.ck.CKReport;
 
 import org.apache.commons.io.FilenameUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import ch.thomsch.model.MetricDump;
 import ch.thomsch.model.Metrics;
@@ -15,10 +18,16 @@ import ch.thomsch.model.Metrics;
  * https://github.com/mauricioaniche/ck
  * @author Thomsch
  */
-public class CKMetrics implements Collector {
+public class CKMetrics implements Analyzer {
+
+    private final Map<String, MetricDump> results;
+
+    public CKMetrics() {
+        results = new HashMap<>();
+    }
 
     @Override
-    public MetricDump collect(String folder, String revision, FileFilter filter) {
+    public void execute(String revision, String folder, FileFilter filter) {
         final CKReport report = new CK().calculate(folder);
 
         final MetricDump dump = new MetricDump();
@@ -26,12 +35,22 @@ public class CKMetrics implements Collector {
         report.all().stream()
                 .filter(ckNumber -> filter.accept(FilenameUtils.normalize(ckNumber.getFile())))
                 .forEach(ckNumber -> dump.add(ckNumber.getClassName(), convertToMetric(ckNumber)));
-        return dump;
+
+        results.put(revision, dump);
     }
 
     @Override
-    public void afterCollect(String revision) {
+    public void postExecute(String revision) {
         // Nothing needs to be done
+    }
+
+    @Override
+    public boolean hasInCache(String version) {
+        return results.get(version) != null;
+    }
+
+    public MetricDump getResult(String version) {
+        return results.get(version);
     }
 
     private Metrics convertToMetric(CKNumber metric) {

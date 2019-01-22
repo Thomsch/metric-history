@@ -1,8 +1,6 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 import org.junit.Test;
-
-import ch.thomsch.metric.FileFilter;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

@@ -22,13 +22,13 @@ import ch.thomsch.versioncontrol.VCS;
 public class Genealogy {
     private static final Logger logger = LoggerFactory.getLogger(Genealogy.class);
 
-    private final VCS VCS;
+    private final VCS vcs;
 
     private final Map<String, String> model; // The key is the revision, the value is its first parent.
     private final Set<String> ignored;
 
-    public Genealogy(VCS VCS) {
-        this.VCS = VCS;
+    public Genealogy(VCS vcs) {
+        this.vcs = vcs;
 
         model = new LinkedHashMap<>();
         ignored = new HashSet<>();
@@ -42,7 +42,7 @@ public class Genealogy {
         logger.info("Retrieving parents...");
         for (String revision : revisions) {
             try {
-                final String parent = VCS.getParent(revision);
+                final String parent = vcs.getParent(revision);
 
                 if (parent == null) {
                     ignored.add(revision);
@@ -80,5 +80,16 @@ public class Genealogy {
      */
     public Map<Object, Object> getMap() {
         return Collections.unmodifiableMap(model);
+    }
+
+    /**
+     * Returns a list of unique revisions present in the genealogy.
+     * @return a list containing the unique revisions of the genealogy.
+     */
+    public List<String> getUniqueRevisions() {
+        final Set<String> uniques = new HashSet<>();
+        uniques.addAll(model.keySet());
+        uniques.addAll(model.values());
+        return new ArrayList<>(uniques);
     }
 }

@@ -1,4 +1,4 @@
-package ch.thomsch.metric;
+package ch.thomsch.mining;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -17,16 +17,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-
-import ch.thomsch.model.MetricDump;
+import java.util.Set;
 
 /**
  * Collects metrics from the command line.
  *
  * @author Thomsch
  */
-public class SourceMeter implements Collector {
+public class SourceMeter implements Analyzer {
     private static final Logger logger = LoggerFactory.getLogger(SourceMeter.class);
 
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -37,9 +37,12 @@ public class SourceMeter implements Collector {
     private final String resultDir;
     private final String projectName;
 
+    private final Set<String> cache;
+
     public SourceMeter(String executable, String resultDir, String projectName, String projectDir) {
         this.projectName = projectName;
         this.resultDir = FilenameUtils.normalize(resultDir);
+        cache = new HashSet<>();
 
         commandLine = new CommandLine(executable);
         enableOnlyMetrics();
@@ -49,6 +52,7 @@ public class SourceMeter implements Collector {
         commandLine.addArgument("-cleanProject=" + true);
         commandLine.addArgument("-resultsDir=" + resultDir);
         commandLine.addArgument("${currentDate}");
+
         commandLine.setSubstitutionMap(map);
     }
 
@@ -64,7 +68,7 @@ public class SourceMeter implements Collector {
     }
 
     @Override
-    public MetricDump collect(String folder, String revision, FileFilter filter) {
+    public void execute(String revision, String folder, FileFilter filter) {
         final DefaultExecutor executor = new DefaultExecutor();
         final DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
         map.put("currentDate", "-currentDate=" + revision);
@@ -72,14 +76,14 @@ public class SourceMeter implements Collector {
         try {
             executor.execute(commandLine, resultHandler);
             resultHandler.waitFor();
+            cache.add(revision);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return MetricDump.EMPTY;
     }
 
     @Override
-    public void afterCollect(String revision) {
+    public void postExecute(String revision) {
         final String baseDir = Paths.stripTrailingSeparator(resultDir) + File.separatorChar + projectName + File
                 .separatorChar + "java" + File.separatorChar + revision;
 
@@ -90,6 +94,11 @@ public class SourceMeter implements Collector {
         } catch (IOException e) {
             logger.error("An error occurred while cleaning up revision " + revision, e);
         }
+    }
+
+    @Override
+    public boolean hasInCache(String version) {
+        return cache.contains(version);
     }
 
     private void deleteFile(String baseDir, String file) throws IOException {
