@@ -29,7 +29,7 @@ public class GitVCS implements VCS {
 
     private final Repository repository;
 
-    GitVCS(Repository repository) {
+    private GitVCS(Repository repository) {
         this.repository = repository;
     }
 
