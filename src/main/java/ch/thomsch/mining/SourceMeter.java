@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Collects metrics from the command line.
@@ -35,9 +37,12 @@ public class SourceMeter implements Analyzer {
     private final String resultDir;
     private final String projectName;
 
+    private final Set<String> cache;
+
     public SourceMeter(String executable, String resultDir, String projectName, String projectDir) {
         this.projectName = projectName;
         this.resultDir = FilenameUtils.normalize(resultDir);
+        cache = new HashSet<>();
 
         commandLine = new CommandLine(executable);
         enableOnlyMetrics();
@@ -71,6 +76,7 @@ public class SourceMeter implements Analyzer {
         try {
             executor.execute(commandLine, resultHandler);
             resultHandler.waitFor();
+            cache.add(revision);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -92,7 +98,7 @@ public class SourceMeter implements Analyzer {
 
     @Override
     public boolean hasInCache(String version) {
-        return false;
+        return cache.contains(version);
     }
 
     private void deleteFile(String baseDir, String file) throws IOException {
