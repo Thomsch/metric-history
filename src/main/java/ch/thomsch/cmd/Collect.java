@@ -87,7 +87,8 @@ public class Collect extends Command {
         System.out.println("Usage: metric-history collect <revision file> <executable path> <project path> " +
                 "<repository path> <output dir> <project name>");
         System.out.println();
-        System.out.println("<revision file>     is the path to the file containing the revision to analyse.");
+        System.out.println("<revision file>     is the path to the file containing the revision to analyse." +
+                "DO NOT include the parents of the revisions of interest. This will be retrieved automatically.");
         System.out.println("<executable path>   is the path to the executable to collect metrics.");
         System.out.println("<project path>      is the path to the folder containing the source code or the " +
                 "project.");
