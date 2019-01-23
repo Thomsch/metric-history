@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,46 +18,38 @@ import ch.thomsch.storage.OutputBuilder;
 import ch.thomsch.storage.RefactoringDetail;
 import ch.thomsch.storage.StoreOutput;
 import ch.thomsch.storage.Stores;
+import picocli.CommandLine;
 
 /**
  * Filters out metric fluctuations for all given versions of a project that are not desired.
  * The filtered metric fluctuations are stored in a new file.
  */
+
+@CommandLine.Command(
+        name = "filter",
+        description = "Filters out metric fluctuations for all given versions of a project that are not desired.")
 public class Filter extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Filter.class);
 
+    @CommandLine.Parameters(description = "Path of the file containing each refactoring.")
     private String changesFile;
+
+    @CommandLine.Parameters(description = "Path of the file produced by 'diff' command.")
     private String refactoringsFile;
+
+    @CommandLine.Option(names = {"-a"}, description = "Path of the file where the results will be stored.")
     private String outputFile;
 
     @Override
-    public String getName() {
-        return "filter";
-    }
+    public void run() {
+        refactoringsFile = normalizePath(refactoringsFile);
+        changesFile = normalizePath(changesFile);
 
-    @Override
-    public boolean parse(String[] parameters) {
-        if (parameters.length < 2 || parameters.length > 3) {
-            return false;
+        try {
+            execute();
+        } catch (Exception e) {
+            logger.error("An error occurred:", e);
         }
-
-        refactoringsFile = normalizePath(parameters[0]);
-        changesFile = normalizePath(parameters[1]);
-
-        for (String parameter : Arrays.copyOfRange(parameters, 2, parameters.length)) {
-            final String[] split = parameter.split("=");
-
-            switch (split[0]) {
-                case "-o":
-                    outputFile = split[1];
-                    break;
-
-                default:
-                    logger.warn("Unknown option '{}' with option '{}'", split[0], split[1]);
-                    return false;
-            }
-        }
-        return true;
     }
 
     @Override
@@ -135,14 +126,5 @@ public class Filter extends Command {
             }
         }
         return detailedRefactorings;
-    }
-
-    @Override
-    public void printUsage() {
-        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <change file> [-o=<output file>]");
-        System.out.println();
-        System.out.println("<refactoring list>  is the path of the file containing each refactoring.");
-        System.out.println("<changes file>      is the path of the file produced by 'diff' command.");
-        System.out.println("<output file>       is the path of the file where the results will be stored.");
     }
 }

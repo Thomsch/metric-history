@@ -12,47 +12,54 @@ import ch.thomsch.mining.Collector;
 import ch.thomsch.mining.SourceMeter;
 import ch.thomsch.mining.SourceMeterConverter;
 import ch.thomsch.versioncontrol.GitVCS;
+import picocli.CommandLine;
 
 /**
  * Analyze and build the RAW file for a single version of the project.
  */
+@CommandLine.Command(
+        name = "snapshot",
+        description = "Analyze and build the RAW file for a single version of the project.\nOutput: commitId.csv with collected metrics inside the <output dir>")
 public class Snapshot extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Snapshot.class);
 
+    @CommandLine.Parameters(description = "Commit id of the project revision to be analyzed.")
     private String commitId;
+
+    @CommandLine.Parameters(description = "Path to the executable to collect metrics.")
     private String executable;
+
+    @CommandLine.Parameters(description = "Path to the folder containing the source code or the project.")
     private String project;
-    private String executableOutput;
-    private String projectName;
+
+    @CommandLine.Parameters(description = "Path to the folder containing .git folder. It can also be set to 'same' if it's the same as <project path>.")
     private String repository;
 
-    @Override
-    public String getName() {
-        return "snapshot";
-    }
+    @CommandLine.Parameters(description = "Path to the folder where the results should be extracted.")
+    private String executableOutput;
+
+    @CommandLine.Parameters(description = "Name of the project.")
+    private String projectName;
 
     @Override
-    public boolean parse(String[] parameters) {
-        if (parameters.length < 6) {
-            return false;
-        }
+    public void run() {
+        executable = normalizePath(executable);
+        project = normalizePath(project);
 
-        commitId = parameters[0];
-        executable = normalizePath(parameters[1]);
-        project = normalizePath(parameters[2]);
-
-        repository = parameters[3];
         if (repository.equalsIgnoreCase("same")) {
             repository = project;
         } else {
             repository = normalizePath(repository);
         }
 
-        executableOutput = normalizePath(parameters[4]);
-        projectName = parameters[5];
+        executableOutput = normalizePath(executableOutput);
 
-        return true;
+        try {
+            execute();
+        } catch (Exception e) {
+            logger.error("An error occurred:", e);
+        }
     }
 
     @Override
@@ -79,21 +86,5 @@ public class Snapshot extends Command {
             final long elapsed = System.nanoTime() - beginning;
             logger.info("Snapshot completed in {}", Duration.ofNanos(elapsed));
         }
-    }
-
-    @Override
-    public void printUsage() {
-        System.out.println("Usage: metric-history snapshot <commitId> <executable path> <project path> " +
-                "<repository path> <output dir> <project name>");
-        System.out.println();
-        System.out.println("<commitId>     is the commit id of the project revision to be analyzed.");
-        System.out.println("<executable path>   is the path to the executable to collect metrics.");
-        System.out.println("<project path>      is the path to the folder containing the source code or the " +
-                "project.");
-        System.out.println("<repository path>   is the path to the folder containing .git folder. It can also be " +
-                "set to 'same' if it's the same as <project path>.");
-        System.out.println("<output dir>        is the path to the folder where the results should be extracted.");
-        System.out.println("<project name>      is the name of the project.");
-        System.out.println("Output: commitId.csv with collected metrics inside the <output dir>");
     }
 }

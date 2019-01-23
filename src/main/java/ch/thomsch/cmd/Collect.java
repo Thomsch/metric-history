@@ -13,47 +13,36 @@ import ch.thomsch.model.Genealogy;
 import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;
 import ch.thomsch.versioncontrol.GitVCS;
+import picocli.CommandLine;
 
 /**
  * Execute a code analyzer for multiple versions and their parents. The results are written on disk.
  */
+@CommandLine.Command(
+        name = "collect",
+        description = "Execute a code analyzer for multiple versions and their parents.")
 public class Collect extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Collect.class);
 
+    @CommandLine.Parameters(description = "Path to the file containing the revision to analyse. DO NOT " +
+            "include the parents of the revisions of interest. This will be retrieved automatically.")
     private String revisionFile;
+
+    @CommandLine.Parameters(description = "Path to the executable to collect metrics.")
     private String executable;
+
+    @CommandLine.Parameters(description = "Path to the folder containing the source code or the project.")
     private String projectPath;
-    private String outputPath;
-    private String projectName;
+
+    @CommandLine.Parameters(description = "Path to the folder containing .git folder. It can also be set to 'same' if" +
+            " it's the same as <project path>.")
     private String repository;
 
-    @Override
-    public String getName() {
-        return "collect";
-    }
+    @CommandLine.Parameters(description = "Path to the folder where the results should be extracted.")
+    private String outputPath;
 
-    @Override
-    public boolean parse(String[] parameters) {
-        if (parameters.length < 6) {
-            return false;
-        }
-
-        revisionFile = normalizePath(parameters[0]);
-        executable = normalizePath(parameters[1]);
-        projectPath = normalizePath(parameters[2]);
-
-        repository = parameters[3];
-        if (repository.equalsIgnoreCase("same")) {
-            repository = projectPath;
-        } else {
-            repository = normalizePath(repository);
-        }
-
-        outputPath = normalizePath(parameters[4]);
-        projectName = parameters[5];
-
-        return true;
-    }
+    @CommandLine.Parameters(description = "Name of the project.")
+    private String projectName;
 
     @Override
     public void execute() throws Exception {
@@ -83,18 +72,22 @@ public class Collect extends Command {
     }
 
     @Override
-    public void printUsage() {
-        System.out.println("Usage: metric-history collect <revision file> <executable path> <project path> " +
-                "<repository path> <output dir> <project name>");
-        System.out.println();
-        System.out.println("<revision file>     is the path to the file containing the revision to analyse." +
-                "DO NOT include the parents of the revisions of interest. This will be retrieved automatically.");
-        System.out.println("<executable path>   is the path to the executable to collect metrics.");
-        System.out.println("<project path>      is the path to the folder containing the source code or the " +
-                "project.");
-        System.out.println("<repository path>   is the path to the folder containing .git folder. It can also be " +
-                "set to 'same' if it's the same as <project path>.");
-        System.out.println("<output dir>        is the path to the folder where the results should be extracted.");
-        System.out.println("<project name>      is the name of the project.");
+    public void run() {
+        revisionFile = normalizePath(revisionFile);
+        executable = normalizePath(executable);
+        projectPath = normalizePath(projectPath);
+
+        if (repository.equalsIgnoreCase("same")) {
+            repository = projectPath;
+        } else {
+            repository = normalizePath(repository);
+        }
+        outputPath = normalizePath(outputPath);
+
+        try {
+            execute();
+        } catch (Exception e) {
+            logger.error("An error occurred:", e);
+        }
     }
 }
