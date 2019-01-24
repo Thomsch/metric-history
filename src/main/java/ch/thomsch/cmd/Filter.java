@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,58 +18,46 @@ import ch.thomsch.storage.OutputBuilder;
 import ch.thomsch.storage.RefactoringDetail;
 import ch.thomsch.storage.StoreOutput;
 import ch.thomsch.storage.Stores;
+import picocli.CommandLine;
 
 /**
  * Filters out metric fluctuations for all given versions of a project that are not desired.
  * The filtered metric fluctuations are stored in a new file.
  */
+
+@CommandLine.Command(
+        name = "filter",
+        description = "Filters out metric fluctuations for all given versions of a project that are not desired.")
 public class Filter extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Filter.class);
 
+    @CommandLine.Parameters(index = "0", description = "Path of the file produced by 'diff' command.")
     private String changesFile;
+
+    @CommandLine.Parameters(index = "1", description = "Path of the file containing each refactoring.")
     private String refactoringsFile;
+
+    @CommandLine.Option(names = {"-a"}, description = "Path of the file where the results will be stored. Prints " +
+            "results in the standard output if omitted.")
     private String outputFile;
 
     @Override
-    public String getName() {
-        return "filter";
-    }
+    public void run() {
+        refactoringsFile = normalizePath(refactoringsFile);
+        changesFile = normalizePath(changesFile);
 
-    @Override
-    public boolean parse(String[] parameters) {
-        if (parameters.length < 2 || parameters.length > 3) {
-            return false;
+        try {
+            final ClassStore model = Stores.loadClasses(changesFile);
+            final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactoringsFile);
+
+            final HashMap<String, List<String>> changeSet = aggregateClassesForEachRevision(detailedRefactorings);
+            final ClassStore results = filter(model, changeSet);
+
+            final StoreOutput output = OutputBuilder.create(outputFile);
+            output.export(results);
+        } catch (Exception e) {
+            logger.error("An error occurred:", e);
         }
-
-        refactoringsFile = normalizePath(parameters[0]);
-        changesFile = normalizePath(parameters[1]);
-
-        for (String parameter : Arrays.copyOfRange(parameters, 2, parameters.length)) {
-            final String[] split = parameter.split("=");
-
-            switch (split[0]) {
-                case "-o":
-                    outputFile = split[1];
-                    break;
-
-                default:
-                    logger.warn("Unknown option '{}' with option '{}'", split[0], split[1]);
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public void execute() throws IOException {
-        final ClassStore model = Stores.loadClasses(changesFile);
-        final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactoringsFile);
-
-        final HashMap<String, List<String>> changeSet = aggregateClassesForEachRevision(detailedRefactorings);
-        final ClassStore results = filter(model, changeSet);
-
-        final StoreOutput output = OutputBuilder.create(outputFile);
-        output.export(results);
     }
 
     private HashMap<String, List<String>> aggregateClassesForEachRevision(
@@ -86,7 +73,8 @@ public class Filter extends Command {
 
     /**
      * Filters the class store to keep only the versions of the classes selected.
-     * @param changes the class store to filter
+     *
+     * @param changes   the class store to filter
      * @param revisions the list of classes per revision to keep
      * @return the new instance of class store that has been filtered
      */
@@ -100,15 +88,16 @@ public class Filter extends Command {
             for (String className : classes) {
                 final Metrics revisionMetrics = changes.getMetric(revision, className);
 
-                if(revisionMetrics == null) {
+                if (revisionMetrics == null) {
                     missingClasses.add(className);
                 }
 
                 filteredChanges.addMetric(revision, className, revisionMetrics);
             }
 
-            if(missingClasses.size() > 0) {
-                logger.warn("{} - Ignored {} classes ([{}])", revision, missingClasses.size(), String.join(",", missingClasses));
+            if (missingClasses.size() > 0) {
+                logger.warn("{} - Ignored {} classes ([{}])", revision, missingClasses.size(), String.join(",",
+                        missingClasses));
             }
         });
         return filteredChanges;
@@ -116,7 +105,8 @@ public class Filter extends Command {
 
     private HashMap<String, RefactoringDetail> loadRefactorings(String refactoringsPath) throws IOException {
         final HashMap<String, RefactoringDetail> detailedRefactorings = new HashMap<>();
-        try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().withDelimiter(';').parse(new FileReader(refactoringsPath))) {
+        try (CSVParser parser =
+                     CSVFormat.RFC4180.withFirstRecordAsHeader().withDelimiter(';').parse(new FileReader(refactoringsPath))) {
             for (CSVRecord record : parser) {
                 final String revision = record.get(0);
                 final String refactoringType = record.get(1);
@@ -128,21 +118,12 @@ public class Filter extends Command {
                     detailedRefactorings.put(revision, detail);
                 }
 
-                if(!refactoringType.equalsIgnoreCase("Move Source Folder")
+                if (!refactoringType.equalsIgnoreCase("Move Source Folder")
                         && !refactoringType.equalsIgnoreCase("Rename Package")) {
                     detail.addRefactoring(refactoringType, description);
                 }
             }
         }
         return detailedRefactorings;
-    }
-
-    @Override
-    public void printUsage() {
-        System.out.println("Usage: metric-history " + getName() + " <refactoring list> <ancestry file> <change file> [-o=<output file>]");
-        System.out.println();
-        System.out.println("<refactoring list>  is the path of the file containing each refactoring.");
-        System.out.println("<changes file>      is the path of the file produced by 'diff' command.");
-        System.out.println("<output file>       is the path of the file where the results will be stored.");
     }
 }

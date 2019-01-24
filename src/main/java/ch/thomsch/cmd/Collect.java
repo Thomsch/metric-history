@@ -3,6 +3,7 @@ package ch.thomsch.cmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
@@ -13,88 +14,75 @@ import ch.thomsch.model.Genealogy;
 import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;
 import ch.thomsch.versioncontrol.GitVCS;
+import picocli.CommandLine;
 
 /**
  * Execute a code analyzer for multiple versions and their parents. The results are written on disk.
  */
+@CommandLine.Command(
+        name = "collect",
+        description = "Execute a code analyzer for multiple versions and their parents.")
 public class Collect extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Collect.class);
 
+    @CommandLine.Parameters(index = "0", description = "Path to the file containing the revision to analyse. DO NOT " +
+            "include the parents of the revisions of interest. This will be retrieved automatically.")
     private String revisionFile;
+
+    @CommandLine.Parameters(index = "1", description = "Path to the executable to collect metrics.")
     private String executable;
+
+    @CommandLine.Parameters(index = "2", description = "Path to the folder containing the source code or the project.")
     private String projectPath;
+
+    @CommandLine.Parameters(index = "3", description = "Path to the folder where the results should be extracted.")
     private String outputPath;
+
+    @CommandLine.Parameters(index = "4", description = "Name of the project.")
     private String projectName;
+
+    @CommandLine.Option(names = {"-r", "--repository"}, arity = "0..1", description = "Path to the folder containing .git folder. If omitted, will be searched in the project path.")
     private String repository;
 
     @Override
-    public String getName() {
-        return "collect";
-    }
+    public void run() {
+        revisionFile = normalizePath(revisionFile);
+        executable = normalizePath(executable);
+        projectPath = normalizePath(projectPath);
 
-    @Override
-    public boolean parse(String[] parameters) {
-        if (parameters.length < 6) {
-            return false;
-        }
-
-        revisionFile = normalizePath(parameters[0]);
-        executable = normalizePath(parameters[1]);
-        projectPath = normalizePath(parameters[2]);
-
-        repository = parameters[3];
-        if (repository.equalsIgnoreCase("same")) {
+        if (repository == null) {
             repository = projectPath;
         } else {
             repository = normalizePath(repository);
         }
+        outputPath = normalizePath(outputPath);
 
-        outputPath = normalizePath(parameters[4]);
-        projectName = parameters[5];
-
-        return true;
-    }
-
-    @Override
-    public void execute() throws Exception {
         final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
         final List<String> revisions = revisionRepo.load(revisionFile);
-        final GitVCS vcs = GitVCS.get(repository);
-        final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
-        final Collector collector = new Collector(analyzer, vcs);
 
-        final Genealogy genealogy = new Genealogy(vcs);
-        genealogy.addRevisions(revisions);
+        try(GitVCS vcs = GitVCS.get(repository)) {
+            final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
+            final Collector collector = new Collector(analyzer, vcs);
 
-        final List<String> analysisTargets = genealogy.getUniqueRevisions();
+            final Genealogy genealogy = new Genealogy(vcs);
+            genealogy.addRevisions(revisions);
 
-        logger.info("Read {} distinct revisions", revisions.size());
+            final List<String> analysisTargets = genealogy.getUniqueRevisions();
 
-        final long beginning = System.nanoTime();
-        int i = 0;
-        for (String revision : analysisTargets) {
-            logger.info("Processing {} ({})", revision, ++i);
-            collector.analyzeRevision(revision, projectPath);
+            logger.info("Read {} distinct revisions", revisions.size());
+
+            final long beginning = System.nanoTime();
+            int i = 0;
+            for (String revision : analysisTargets) {
+                logger.info("Processing {} ({})", revision, ++i);
+                collector.analyzeRevision(revision, projectPath);
+            }
+            final long elapsed = System.nanoTime() - beginning;
+            logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
+        } catch (IOException e) {
+            logger.error("Failed to access repository {}", repository);
+        } catch (Exception e) {
+            logger.error("Failed to dispose the repository.");
         }
-        final long elapsed = System.nanoTime() - beginning;
-        logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
-
-        vcs.close();
-    }
-
-    @Override
-    public void printUsage() {
-        System.out.println("Usage: metric-history collect <revision file> <executable path> <project path> " +
-                "<repository path> <output dir> <project name>");
-        System.out.println();
-        System.out.println("<revision file>     is the path to the file containing the revision to analyse." +
-                "DO NOT include the parents of the revisions of interest. This will be retrieved automatically.");
-        System.out.println("<executable path>   is the path to the executable to collect metrics.");
-        System.out.println("<project path>      is the path to the folder containing the source code or the " +
-                "project.");
-        System.out.println("<repository path>   is the path to the folder containing .git folder. It can also be " +
-                "set to 'same' if it's the same as <project path>.");
-        System.out.println("<output dir>        is the path to the folder where the results should be extracted.");
-        System.out.println("<project name>      is the name of the project.");
     }
 }

@@ -23,6 +23,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     compile group: 'org.mongodb', name:'mongo-java-driver', version: '3.8.0'
+    compile 'info.picocli:picocli:3.9.2'
 
     compile files('lib/ck-0.2.1.jar')
 

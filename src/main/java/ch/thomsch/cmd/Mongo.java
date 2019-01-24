@@ -11,39 +11,34 @@ import ch.thomsch.storage.Database;
 import ch.thomsch.storage.DatabaseBuilder;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.Stores;
+import picocli.CommandLine;
 
 /**
  * Exports different files produced by this application to mongodb.
  */
+
+@CommandLine.Command(
+        name = "mongo",
+        description = "Exports different files produced by this application to mongodb.")
 public class Mongo extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Mongo.class);
 
+    @CommandLine.Parameters(index = "0", description = "Type of data to export to mongo.")
     private String action;
+
+    @CommandLine.Parameters(index = "1", description = "Path of the file to export.")
     private String file;
+
+    @CommandLine.Parameters(index = "2", description = "Name of the database (storage name).")
     private String databaseName;
+
+    @CommandLine.Parameters(index = "3", arity = "0..1", description = "URI of the database")
     private String connectionString;
 
     @Override
-    public String getName() {
-        return "mongo";
-    }
+    public void run() {
+        file = normalizePath(file);
 
-    @Override
-    public boolean parse(String[] parameters) {
-        if (parameters.length < 3) {
-            return false;
-        }
-
-        action = parameters[0];
-        this.file = normalizePath(parameters[1]);
-        databaseName = parameters[2];
-        connectionString = parameters.length == 4 ? parameters[3] : null;
-
-        return true;
-    }
-
-    @Override
-    public void execute() {
         final Database database = DatabaseBuilder.build(connectionString, databaseName);
 
         try {
@@ -70,21 +65,9 @@ public class Mongo extends Command {
 
                     database.persist(ancestry);
                     break;
-
-                default:
-                    printUsage();
-                    break;
             }
         } catch (IOException e) {
             logger.error("I/O error with file {}", file, e);
         }
-    }
-
-    @Override
-    public void printUsage() {
-        System.out.println("Usages:");
-        System.out.println("     metric-history mongo raw <raw file> <storage name> [remote URI]");
-        System.out.println("     metric-history mongo diff <diff file> <storage name> [remote URI]");
-        System.out.println("     metric-history mongo ancestry <ancestry file> <storage name> [remote URI]");
     }
 }

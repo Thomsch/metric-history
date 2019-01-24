@@ -16,37 +16,40 @@ import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.Stores;
+import picocli.CommandLine;
 
 /**
  * Computes the metric fluctuations from file(s) in RAW format.
  */
+@CommandLine.Command(
+        name = "diff",
+        description = "Computes the metric fluctuations from file(s) in RAW format.")
 public class Difference extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Difference.class);
 
+    @CommandLine.Parameters(index = "0", description = "Path of the file produced by 'ancestry' command.")
     private String ancestryFile;
+
+    @CommandLine.Parameters(index = "1", description = "Path of the file or directory produced by 'convert' command.")
     private String input;
+
+    @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored or a directory that will contain one file per revision.")
     private String output;
 
     @Override
-    public String getName() {
-        return "diff";
-    }
+    public void run() {
+        ancestryFile = normalizePath(ancestryFile);
+        input = normalizePath(input);
+        output = normalizePath(output);
 
-    @Override
-    public boolean parse(String[] parameters) {
-        if (parameters.length < 3) {
-            return false;
+        try {
+            execute();
+        } catch (Exception e) {
+            logger.error("An error occurred:", e);
         }
-
-        ancestryFile = normalizePath(parameters[0]);
-        input = normalizePath(parameters[1]);
-        output = normalizePath(parameters[2]);
-
-        return true;
     }
 
-    @Override
-    public void execute() throws IOException {
+    private void execute() throws IOException {
         final GenealogyRepo repo = new GenealogyRepo();
         final HashMap<String, String> ancestry = repo.load(ancestryFile);
         if (ancestry.isEmpty()) {
@@ -111,14 +114,5 @@ public class Difference extends Command {
         } catch (IOException e) {
             logger.error("I/O error with file {}", output, e);
         }
-    }
-
-    @Override
-    public void printUsage() {
-        System.out.println("Usage: metric-history diff <ancestry file> <raw file> <output>");
-        System.out.println();
-        System.out.println("<ancestry file>     is the path of the file produced by 'ancestry' command");
-        System.out.println("<input>             is the path of the file or directory produced by 'convert' command");
-        System.out.println("<output>            is the path of the file where the results will be stored or a directory that will contain one file per revision");
     }
 }
