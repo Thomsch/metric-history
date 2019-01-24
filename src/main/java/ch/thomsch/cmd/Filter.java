@@ -31,10 +31,10 @@ import picocli.CommandLine;
 public class Filter extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Filter.class);
 
-    @CommandLine.Parameters(description = "Path of the file produced by 'diff' command.")
+    @CommandLine.Parameters(index = "0", description = "Path of the file produced by 'diff' command.")
     private String changesFile;
 
-    @CommandLine.Parameters(description = "Path of the file containing each refactoring.")
+    @CommandLine.Parameters(index = "1", description = "Path of the file containing each refactoring.")
     private String refactoringsFile;
 
     @CommandLine.Option(names = {"-a"}, description = "Path of the file where the results will be stored. Prints " +

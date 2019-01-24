@@ -24,22 +24,22 @@ public class Snapshot extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Snapshot.class);
 
-    @CommandLine.Parameters(description = "Commit id of the project revision to be analyzed.")
+    @CommandLine.Parameters(index = "0", description = "Commit id of the project revision to be analyzed.")
     private String commitId;
 
-    @CommandLine.Parameters(description = "Path to the executable to collect metrics.")
+    @CommandLine.Parameters(index = "1", description = "Path to the executable to collect metrics.")
     private String executable;
 
-    @CommandLine.Parameters(description = "Path to the folder containing the source code or the project.")
+    @CommandLine.Parameters(index = "2", description = "Path to the folder containing the source code or the project.")
     private String project;
 
-    @CommandLine.Parameters(description = "Path to the folder containing .git folder. It can also be set to 'same' if it's the same as <project path>.")
+    @CommandLine.Option(names = {"-r", "--repository"}, arity = "0..1", description = "Path to the folder containing .git folder. If omitted, will be searched in the project path.")
     private String repository;
 
-    @CommandLine.Parameters(description = "Path to the folder where the results should be extracted.")
+    @CommandLine.Parameters(index = "3", description = "Path to the folder where the results should be extracted.")
     private String executableOutput;
 
-    @CommandLine.Parameters(description = "Name of the project.")
+    @CommandLine.Parameters(index = "4", description = "Name of the project.")
     private String projectName;
 
     @Override
@@ -47,7 +47,7 @@ public class Snapshot extends Command {
         executable = normalizePath(executable);
         project = normalizePath(project);
 
-        if (repository.equalsIgnoreCase("same")) {
+        if (repository == null) {
             repository = project;
         } else {
             repository = normalizePath(repository);

@@ -17,10 +17,10 @@ import picocli.CommandLine;
 public class Convert extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Convert.class);
 
-    @CommandLine.Parameters(description = "Path of the root folder containing the results from the third party tool.")
+    @CommandLine.Parameters(index = "0", description = "Path of the root folder containing the results from the third party tool.")
     private String inputPath;
 
-    @CommandLine.Parameters(description = "is the path of the file where the results will be stored or a directory. In the case of the directory, results will be stored as one file per revision.")
+    @CommandLine.Parameters(index = "1", description = "is the path of the file where the results will be stored or a directory. In the case of the directory, results will be stored as one file per revision.")
     private String output;
 
     @Override

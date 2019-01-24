@@ -27,13 +27,13 @@ import picocli.CommandLine;
 public class Difference extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Difference.class);
 
-    @CommandLine.Parameters(description = "Path of the file produced by 'ancestry' command.")
+    @CommandLine.Parameters(index = "0", description = "Path of the file produced by 'ancestry' command.")
     private String ancestryFile;
 
-    @CommandLine.Parameters(description = "Path of the file or directory produced by 'convert' command.")
+    @CommandLine.Parameters(index = "1", description = "Path of the file or directory produced by 'convert' command.")
     private String input;
 
-    @CommandLine.Parameters(description = "Path of the file where the results will be stored or a directory that will contain one file per revision.")
+    @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored or a directory that will contain one file per revision.")
     private String output;
 
     @Override

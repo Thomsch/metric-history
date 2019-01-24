@@ -26,13 +26,13 @@ public class Ancestry extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(Ancestry.class);
 
-    @CommandLine.Parameters(description = "Path to the file containing the revisions.")
+    @CommandLine.Parameters(index = "0", description = "Path to the file containing the revisions.")
     private String revisionsFile;
 
-    @CommandLine.Parameters(description = "Path to the root folder of the version controlled project.")
+    @CommandLine.Parameters(index = "1", description = "Path to the root folder of the version controlled project.")
     private String repositoryPath;
 
-    @CommandLine.Parameters(description = "Path of the file where the results will be stored.")
+    @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored.")
     private String outputFile;
 
     private GitVCS repository;
