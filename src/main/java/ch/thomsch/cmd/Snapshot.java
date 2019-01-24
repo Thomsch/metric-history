@@ -62,8 +62,7 @@ public class Snapshot extends Command {
         }
     }
 
-    @Override
-    public void execute() throws Exception {
+    private void execute() throws Exception {
         final Analyzer analyzer = new SourceMeter(executable, executableOutput, projectName, project);
         final GitVCS vcs = GitVCS.get(repository);
         final Collector collector = new Collector(analyzer, vcs);

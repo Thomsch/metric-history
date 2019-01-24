@@ -29,7 +29,7 @@ public class Ancestry extends Command {
     @CommandLine.Parameters(description = "Path to the file containing the revisions.")
     private String revisionsFile;
 
-    @CommandLine.Parameters(description = "Path to the folder containing .git folder.")
+    @CommandLine.Parameters(description = "Path to the root folder of the version controlled project.")
     private String repositoryPath;
 
     @CommandLine.Parameters(description = "Path of the file where the results will be stored.")
@@ -48,11 +48,6 @@ public class Ancestry extends Command {
             logger.error("Cannot find version information in {}", repositoryPath);
         }
 
-        execute();
-    }
-
-    @Override
-    public void execute() {
         final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
         final Genealogy genealogy = new Genealogy(repository);
         final GenealogyRepo genealogyRepo = new GenealogyRepo();

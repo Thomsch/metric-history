@@ -3,6 +3,7 @@ package ch.thomsch.cmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
@@ -45,33 +46,6 @@ public class Collect extends Command {
     private String projectName;
 
     @Override
-    public void execute() throws Exception {
-        final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
-        final List<String> revisions = revisionRepo.load(revisionFile);
-        final GitVCS vcs = GitVCS.get(repository);
-        final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
-        final Collector collector = new Collector(analyzer, vcs);
-
-        final Genealogy genealogy = new Genealogy(vcs);
-        genealogy.addRevisions(revisions);
-
-        final List<String> analysisTargets = genealogy.getUniqueRevisions();
-
-        logger.info("Read {} distinct revisions", revisions.size());
-
-        final long beginning = System.nanoTime();
-        int i = 0;
-        for (String revision : analysisTargets) {
-            logger.info("Processing {} ({})", revision, ++i);
-            collector.analyzeRevision(revision, projectPath);
-        }
-        final long elapsed = System.nanoTime() - beginning;
-        logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
-
-        vcs.close();
-    }
-
-    @Override
     public void run() {
         revisionFile = normalizePath(revisionFile);
         executable = normalizePath(executable);
@@ -84,10 +58,32 @@ public class Collect extends Command {
         }
         outputPath = normalizePath(outputPath);
 
-        try {
-            execute();
+        final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
+        final List<String> revisions = revisionRepo.load(revisionFile);
+
+        try(GitVCS vcs = GitVCS.get(repository)) {
+            final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
+            final Collector collector = new Collector(analyzer, vcs);
+
+            final Genealogy genealogy = new Genealogy(vcs);
+            genealogy.addRevisions(revisions);
+
+            final List<String> analysisTargets = genealogy.getUniqueRevisions();
+
+            logger.info("Read {} distinct revisions", revisions.size());
+
+            final long beginning = System.nanoTime();
+            int i = 0;
+            for (String revision : analysisTargets) {
+                logger.info("Processing {} ({})", revision, ++i);
+                collector.analyzeRevision(revision, projectPath);
+            }
+            final long elapsed = System.nanoTime() - beginning;
+            logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
+        } catch (IOException e) {
+            logger.error("Failed to access repository {}", repository);
         } catch (Exception e) {
-            logger.error("An error occurred:", e);
+            logger.error("Failed to dispose the repository.");
         }
     }
 }

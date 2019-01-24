@@ -21,7 +21,6 @@ import picocli.CommandLine;
 /**
  * Computes the metric fluctuations from file(s) in RAW format.
  */
-
 @CommandLine.Command(
         name = "diff",
         description = "Computes the metric fluctuations from file(s) in RAW format.")
@@ -50,8 +49,7 @@ public class Difference extends Command {
         }
     }
 
-    @Override
-    public void execute() throws IOException {
+    private void execute() throws IOException {
         final GenealogyRepo repo = new GenealogyRepo();
         final HashMap<String, String> ancestry = repo.load(ancestryFile);
         if (ancestry.isEmpty()) {

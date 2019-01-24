@@ -11,7 +11,6 @@ import picocli.CommandLine;
 /**
  * Converts the results from an analyser to the RAW format.
  */
-
 @CommandLine.Command(
         name = "convert",
         description = "Converts the results from an analyser to the RAW format.")
@@ -25,22 +24,14 @@ public class Convert extends Command {
     private String output;
 
     @Override
-    public void execute() throws IOException {
-        inputPath = normalizePath(inputPath);
-        output = normalizePath(output);
-
-        SourceMeterConverter.convert(inputPath, output);
-    }
-
-    @Override
     public void run() {
         inputPath = normalizePath(inputPath);
         output = normalizePath(output);
 
         try {
-            execute();
-        } catch (Exception e) {
-            logger.error("An error occurred:", e);
+            SourceMeterConverter.convert(inputPath, output);
+        } catch (IOException e) {
+            logger.error("An error occurred", e);
         }
     }
 }

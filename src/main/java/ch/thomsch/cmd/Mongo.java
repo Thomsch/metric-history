@@ -39,11 +39,6 @@ public class Mongo extends Command {
     public void run() {
         file = normalizePath(file);
 
-        execute();
-    }
-
-    @Override
-    public void execute() {
         final Database database = DatabaseBuilder.build(connectionString, databaseName);
 
         try {
