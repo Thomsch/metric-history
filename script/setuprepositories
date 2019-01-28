@@ -1,0 +1,12 @@
+git clone https://github.com/square/retrofit.git
+git clone https://github.com/google/dagger.git
+git clone https://github.com/junit-team/junit4.git
+git clone https://github.com/square/okhttp.git
+git clone https://github.com/jfree/jfreechart.git
+git clone https://github.com/ReactiveX/RxJava.git
+git clone https://github.com/apache/jena.git
+git clone https://github.com/hibernate/hibernate-orm.git
+git clone https://github.com/apache/ant.git
+git clone https://github.com/apache/jmeter
+git clone https://thomsch@bitbucket.org/thomsch/jedit.git
+git clone https://thomsch@bitbucket.org/thomsch/argouml.git
