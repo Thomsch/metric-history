@@ -39,8 +39,6 @@ public class SourceMeter implements Analyzer {
         commandLine.setSubstitutionMap(map);
 
         rootOutputDirectory = new File(resultDir, projectName + File.separatorChar + "java");
-
-        logger.info("{}", rootOutputDirectory);
     }
 
     private void enableOnlyMetrics() {
