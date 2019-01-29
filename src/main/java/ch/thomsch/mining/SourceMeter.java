@@ -5,21 +5,14 @@ import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.eclipse.jgit.util.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Collects metrics from the command line.
@@ -27,31 +20,27 @@ import java.util.Set;
 public class SourceMeter implements Analyzer {
     private static final Logger logger = LoggerFactory.getLogger(SourceMeter.class);
 
-    private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-    private final CommandLine commandLine;
-
-    private final Map<String, Object> map = new HashMap<>();
-    private final String resultDir;
     private final String projectName;
-
-    private final Set<String> cache;
+    private final File rootOutputDirectory;
+    private final CommandLine commandLine;
+    private final Map<String, Object> map = new HashMap<>();
 
     public SourceMeter(String executable, String resultDir, String projectName, String projectDir) {
         this.projectName = projectName;
-        this.resultDir = FilenameUtils.normalize(resultDir);
-        cache = new HashSet<>();
+        resultDir = FilenameUtils.normalize(resultDir);
 
         commandLine = new CommandLine(executable);
         enableOnlyMetrics();
-
         commandLine.addArgument("-projectName=" + projectName);
         commandLine.addArgument("-projectBaseDir=" + projectDir);
         commandLine.addArgument("-cleanProject=" + true);
         commandLine.addArgument("-resultsDir=" + resultDir);
         commandLine.addArgument("${currentDate}");
-
         commandLine.setSubstitutionMap(map);
+
+        rootOutputDirectory = new File(resultDir, projectName + File.separatorChar + "java");
+
+        logger.info("{}", rootOutputDirectory);
     }
 
     private void enableOnlyMetrics() {
@@ -74,40 +63,35 @@ public class SourceMeter implements Analyzer {
         try {
             executor.execute(commandLine, resultHandler);
             resultHandler.waitFor();
-            cache.add(revision);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void postExecute(String revision) {
-        final String baseDir = Paths.stripTrailingSeparator(resultDir) + File.separatorChar + projectName + File
-                .separatorChar + "java" + File.separatorChar + revision;
+    public void postExecute(String version) {
+        final File output = new File(rootOutputDirectory, version);
 
         try {
-            deleteFile(baseDir, projectName + ".graph");
-            deleteFile(baseDir, projectName + ".xml");
-            FileUtils.deleteDirectory(new File(baseDir + File.separatorChar + "sourcemeter"));
+            deleteFile(output, projectName + ".graph");
+            deleteFile(output, projectName + ".xml");
+            FileUtils.deleteDirectory(new File(output, "sourcemeter"));
         } catch (IOException e) {
-            logger.error("An error occurred while cleaning up revision " + revision, e);
+            logger.error("An error occurred while cleaning up version " + version, e);
         }
     }
 
     @Override
     public boolean hasInCache(String version) {
-        return cache.contains(version);
+        final File output = new File(rootOutputDirectory, version);
+        return output.exists();
     }
 
-    private void deleteFile(String baseDir, String file) throws IOException {
-        final File currentFile = new File(baseDir + File.separatorChar + file);
+    private void deleteFile(File baseDir, String file) throws IOException {
+        final File currentFile = new File(baseDir, file);
         final boolean result = Files.deleteIfExists(currentFile.toPath());
         if (!result) {
             logger.error("File " + currentFile.getAbsolutePath() + " could not be deleted.");
         }
-    }
-
-    public BufferedReader getOutput() {
-        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outputStream.toByteArray())));
     }
 }
