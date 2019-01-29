@@ -39,7 +39,7 @@ public class CKMetrics implements Analyzer {
     }
 
     @Override
-    public void postExecute(String revision) {
+    public void postExecute(String version) {
         // Nothing needs to be done
     }
 

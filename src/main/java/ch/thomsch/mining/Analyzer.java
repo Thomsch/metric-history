@@ -16,9 +16,9 @@ public interface Analyzer {
     /**
      * Is invoked automatically by {@link Collector} after {@link #execute(String, String, FileFilter)}.
      *
-     * @param revision the revision that has been analyzed.
+     * @param version the version that has been analyzed.
      */
-    void postExecute(String revision);
+    void postExecute(String version);
 
     /**
      * Determines if the analyzer has been executed for a given version.
