@@ -32,7 +32,7 @@ public class GitVCS implements VCS {
 
     @Override
     public void checkout(String revision) throws GitAPIException {
-        final CheckoutCommand command = new Git(repository).checkout().setName(revision);
+        final CheckoutCommand command = new Git(repository).checkout().setName(revision).setForce(true);
         command.call();
     }
 
