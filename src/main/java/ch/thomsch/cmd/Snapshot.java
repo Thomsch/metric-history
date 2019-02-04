@@ -76,9 +76,9 @@ public class Snapshot extends Command {
         final long beginning = System.nanoTime();
         try {
             collector.analyzeRevision(commitId, project);
-            vcs.close();
-
             SourceMeterConverter.convert(collectorOutputDirectory, outputFilePath);
+
+            vcs.close();
         } catch (IOException e) {
             logger.error("Resource access problem", e);
         } finally {
