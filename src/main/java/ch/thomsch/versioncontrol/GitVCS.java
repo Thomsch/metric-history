@@ -3,6 +3,7 @@ package ch.thomsch.versioncontrol;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.ObjectId;
@@ -33,6 +34,11 @@ public class GitVCS implements VCS {
     @Override
     public void checkout(String revision) throws GitAPIException {
         final CheckoutCommand command = new Git(repository).checkout().setName(revision).setForce(true);
+        command.call();
+    }
+
+    private void resetToHead() throws GitAPIException {
+        final ResetCommand command = new Git(repository).reset().setMode(ResetCommand.ResetType.HARD);
         command.call();
     }
 
@@ -106,7 +112,8 @@ public class GitVCS implements VCS {
 
     @Override
     public void close() throws Exception {
-        checkout("master");
+        //checkout("master");
+        resetToHead();
         repository.close();
     }
 
