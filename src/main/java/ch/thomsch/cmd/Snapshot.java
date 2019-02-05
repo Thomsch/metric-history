@@ -11,7 +11,8 @@ import ch.thomsch.mining.Analyzer;
 import ch.thomsch.mining.Collector;
 import ch.thomsch.mining.SourceMeter;
 import ch.thomsch.mining.SourceMeterConverter;
-import ch.thomsch.versioncontrol.GitVCS;
+import ch.thomsch.versioncontrol.VCS;
+import ch.thomsch.versioncontrol.VcsBuilder;
 import picocli.CommandLine;
 
 /**
@@ -64,7 +65,7 @@ public class Snapshot extends Command {
 
     private void execute() throws Exception {
         final Analyzer analyzer = new SourceMeter(executable, executableOutput, projectName, project);
-        final GitVCS vcs = GitVCS.get(repository);
+        final VCS vcs = VcsBuilder.create(repository);
         final Collector collector = new Collector(analyzer, vcs);
 
         final String outputFilePath = executableOutput + File.separator + commitId + ".csv";

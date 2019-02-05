@@ -3,14 +3,15 @@ package ch.thomsch.cmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 import ch.thomsch.model.Genealogy;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;
-import ch.thomsch.versioncontrol.GitVCS;
+import ch.thomsch.versioncontrol.VCS;
+import ch.thomsch.versioncontrol.VcsBuilder;
+import ch.thomsch.versioncontrol.VcsNotFound;
 import picocli.CommandLine;
 
 /**
@@ -35,7 +36,7 @@ public class Ancestry extends Command {
     @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored.")
     private String outputFile;
 
-    private GitVCS repository;
+    private VCS repository;
 
     @Override
     public void run() {
@@ -43,8 +44,8 @@ public class Ancestry extends Command {
         outputFile = normalizePath(outputFile);
 
         try {
-            repository = GitVCS.get(normalizePath(repositoryPath));
-        } catch (IOException e) {
+            repository = VcsBuilder.create(normalizePath(repositoryPath));
+        } catch (VcsNotFound e) {
             logger.error("Cannot find version information in {}", repositoryPath);
         }
 

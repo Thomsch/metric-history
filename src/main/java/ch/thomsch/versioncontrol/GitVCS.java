@@ -11,7 +11,6 @@ import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,7 @@ public class GitVCS implements VCS {
 
     private final Repository repository;
 
-    private GitVCS(Repository repository) {
+    GitVCS(Repository repository) {
         this.repository = repository;
     }
 
@@ -112,22 +111,7 @@ public class GitVCS implements VCS {
 
     @Override
     public void close() throws Exception {
-        //checkout("master");
         resetToHead();
         repository.close();
-    }
-
-    /**
-     * Creates a new instance for the repository located at <code>path</code>.
-     * @param path the location of the repository
-     * @return the instance
-     * @throws IOException when there is no repository at the specified location.
-     */
-    public static GitVCS get(String path) throws IOException {
-        final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        final Repository repository = builder.setGitDir(new File(path, ".git")).setMustExist
-                (true).build();
-
-        return new GitVCS(repository);
     }
 }
