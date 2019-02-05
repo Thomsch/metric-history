@@ -25,6 +25,6 @@ public final class VcsBuilder {
             throw new VcsNotFound();
         }
 
-        return new GitVCS(repository);
+        return new GitVcs(repository);
     }
 }

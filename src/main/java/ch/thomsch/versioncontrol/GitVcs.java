@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-public class GitVCS implements VCS {
+public class GitVcs implements VCS {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitVCS.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitVcs.class);
 
     private final Repository repository;
 
-    GitVCS(Repository repository) {
+    GitVcs(Repository repository) {
         this.repository = repository;
     }
 
