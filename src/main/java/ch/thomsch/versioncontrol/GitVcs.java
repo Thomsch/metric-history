@@ -127,8 +127,7 @@ public class GitVcs implements VCS {
     }
 
     @Override
-    public void close() throws Exception {
-        clean();
+    public void close() {
         repository.close();
     }
 }
