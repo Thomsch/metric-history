@@ -19,6 +19,21 @@ public interface VCS extends AutoCloseable {
     void checkout(String revision) throws GitAPIException;
 
     /**
+     * Discard any modification made to tracked or un-tracked files and reset any conflicts.
+     */
+    void clean();
+
+    /**
+     * Saves the current version of the repository. Erases last version saved if any.
+     */
+    void saveVersion();
+
+    /**
+     * Restore the version saved by {@link #saveVersion()}.
+     */
+    void restoreVersion();
+
+    /**
      * Retrieve the files changed for a revision and puts them in <code>beforeFiles</code> or <code>afterFiles</code>.
      *
      * @param revision    the revision
@@ -42,9 +57,4 @@ public interface VCS extends AutoCloseable {
      * @return the parent of the revision
      */
     String getParent(String revision) throws IOException;
-
-    /**
-     * Discard any modification made to tracked or un-tracked files and reset any conflicts.
-     */
-    void clean();
 }

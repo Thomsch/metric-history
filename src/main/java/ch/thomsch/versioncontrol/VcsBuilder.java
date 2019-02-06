@@ -12,7 +12,7 @@ public final class VcsBuilder {
     }
 
     /**
-     * Creates an adapter for the version control system used by the project
+     * Creates an adapter for the version control system used by the project. Automatically calls {@link VCS#saveVersion()}.
      * @param path the location of the VCS on the disk
      * @return a new instance of the adapter
      */
@@ -25,6 +25,8 @@ public final class VcsBuilder {
             throw new VcsNotFound();
         }
 
-        return new GitVcs(repository);
+        final GitVcs vcs = new GitVcs(repository);
+        vcs.saveVersion();
+        return vcs;
     }
 }

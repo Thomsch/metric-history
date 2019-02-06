@@ -81,7 +81,7 @@ public class Collect extends Command {
             final long elapsed = System.nanoTime() - beginning;
             logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
 
-            vcs.clean();
+            vcs.restoreVersion();
         } catch (VcsNotFound e) {
             logger.error("Failed to access repository {}", repository);
         } catch (Exception e) {
