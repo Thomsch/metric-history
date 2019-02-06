@@ -4,8 +4,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
@@ -36,11 +38,6 @@ public class GitVcs implements VCS {
         command.call();
     }
 
-    private void resetToHead() throws GitAPIException {
-        final ResetCommand command = new Git(repository).reset().setMode(ResetCommand.ResetType.HARD);
-        command.call();
-    }
-
     @Override
     public String getParent(String revision) throws IOException {
         final ObjectId revisionId = repository.resolve(revision);
@@ -53,6 +50,26 @@ public class GitVcs implements VCS {
 
             final RevCommit parentRevision = commit.getParent(0);
             return parentRevision.getName();
+        }
+    }
+
+    @Override
+    public void clean() {
+        try {
+            final Status status = new Git(repository).status().call();
+
+            if(status.getUntracked().size() > 0) {
+                new Git(repository).clean().setCleanDirectories(true).call();
+            }
+
+            if(status.getUncommittedChanges().size() > 0 || status.getConflicting().size() > 0) {
+                new Git(repository).reset().setMode(ResetCommand.ResetType.HARD).call();
+            }
+
+        } catch (NoWorkTreeException e) {
+            logger.error("Cannot clean a bare working directory:", e);
+        } catch (GitAPIException e) {
+            logger.error("An unexpected error occurred in git:", e);
         }
     }
 
@@ -111,7 +128,7 @@ public class GitVcs implements VCS {
 
     @Override
     public void close() throws Exception {
-        resetToHead();
+        clean();
         repository.close();
     }
 }

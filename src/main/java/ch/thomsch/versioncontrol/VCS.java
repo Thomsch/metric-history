@@ -42,4 +42,9 @@ public interface VCS extends AutoCloseable {
      * @return the parent of the revision
      */
     String getParent(String revision) throws IOException;
+
+    /**
+     * Discard any modification made to tracked or un-tracked files and reset any conflicts.
+     */
+    void clean();
 }

@@ -30,6 +30,7 @@ public class Collector {
         }
 
         try {
+            vcs.clean();
             vcs.checkout(version);
             analyzer.execute(version, projectDir, filter);
             analyzer.postExecute(version);
