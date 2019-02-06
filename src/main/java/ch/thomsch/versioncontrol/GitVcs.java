@@ -27,6 +27,7 @@ public class GitVcs implements VCS {
     private static final Logger logger = LoggerFactory.getLogger(GitVcs.class);
 
     private final Repository repository;
+    private String saved;
 
     GitVcs(Repository repository) {
         this.repository = repository;
@@ -36,21 +37,6 @@ public class GitVcs implements VCS {
     public void checkout(String revision) throws GitAPIException {
         final CheckoutCommand command = new Git(repository).checkout().setName(revision).setForce(true);
         command.call();
-    }
-
-    @Override
-    public String getParent(String revision) throws IOException {
-        final ObjectId revisionId = repository.resolve(revision);
-        try(RevWalk walk = new RevWalk(repository)){
-            final RevCommit commit = walk.parseCommit(revisionId);
-
-            if(commit.getParentCount() == 0) {
-                return null;
-            }
-
-            final RevCommit parentRevision = commit.getParent(0);
-            return parentRevision.getName();
-        }
     }
 
     @Override
@@ -69,7 +55,35 @@ public class GitVcs implements VCS {
         } catch (NoWorkTreeException e) {
             logger.error("Cannot clean a bare working directory:", e);
         } catch (GitAPIException e) {
-            logger.error("An unexpected error occurred in git:", e);
+            unexpectedGitError(e);
+        }
+    }
+
+    @Override
+    public void saveVersion() {
+        try {
+            saved = repository.getBranch();
+
+            if (saved == null) {
+                logger.warn("No reference was saved!");
+            }
+        } catch (IOException e) {
+            logger.error("An error occurred when trying to retrieve the current branch checked out", e);
+        }
+    }
+
+    @Override
+    public void restoreVersion() {
+        if(saved == null) {
+            logger.warn("No reference was saved. Ignoring.");
+            return;
+        }
+
+        try {
+            clean();
+            checkout(saved);
+        } catch (GitAPIException e) {
+            unexpectedGitError(e);
         }
     }
 
@@ -110,11 +124,6 @@ public class GitVcs implements VCS {
         }
     }
 
-    @Override
-    public String getDirectory() {
-        return FilenameUtils.normalize(repository.getDirectory().getParentFile().getAbsolutePath());
-    }
-
     /**
      * Converts a {@link DiffEntry} path to the corresponding absolute {@link File}.
      *
@@ -127,8 +136,31 @@ public class GitVcs implements VCS {
     }
 
     @Override
-    public void close() throws Exception {
-        clean();
+    public String getDirectory() {
+        return FilenameUtils.normalize(repository.getDirectory().getParentFile().getAbsolutePath());
+    }
+
+    @Override
+    public String getParent(String revision) throws IOException {
+        final ObjectId revisionId = repository.resolve(revision);
+        try(RevWalk walk = new RevWalk(repository)){
+            final RevCommit commit = walk.parseCommit(revisionId);
+
+            if(commit.getParentCount() == 0) {
+                return null;
+            }
+
+            final RevCommit parentRevision = commit.getParent(0);
+            return parentRevision.getName();
+        }
+    }
+
+    @Override
+    public void close() {
         repository.close();
+    }
+
+    private void unexpectedGitError(GitAPIException e) {
+        logger.error("An unexpected error occurred in git:", e);
     }
 }
