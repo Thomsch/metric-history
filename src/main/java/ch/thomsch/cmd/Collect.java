@@ -3,7 +3,6 @@ package ch.thomsch.cmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
@@ -13,7 +12,9 @@ import ch.thomsch.mining.SourceMeter;
 import ch.thomsch.model.Genealogy;
 import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.loader.SimpleCommitReader;
-import ch.thomsch.versioncontrol.GitVCS;
+import ch.thomsch.versioncontrol.VCS;
+import ch.thomsch.versioncontrol.VcsBuilder;
+import ch.thomsch.versioncontrol.VcsNotFound;
 import picocli.CommandLine;
 
 /**
@@ -60,7 +61,7 @@ public class Collect extends Command {
         final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
         final List<String> revisions = revisionRepo.load(revisionFile);
 
-        try(GitVCS vcs = GitVCS.get(repository)) {
+        try(VCS vcs = VcsBuilder.create(repository)) {
             final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
             final Collector collector = new Collector(analyzer, vcs);
 
@@ -79,7 +80,7 @@ public class Collect extends Command {
             }
             final long elapsed = System.nanoTime() - beginning;
             logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
-        } catch (IOException e) {
+        } catch (VcsNotFound e) {
             logger.error("Failed to access repository {}", repository);
         } catch (Exception e) {
             logger.error("Failed to dispose the repository.");

@@ -3,14 +3,16 @@ package ch.thomsch.versioncontrol;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +22,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-public class GitVCS implements VCS {
+public class GitVcs implements VCS {
 
-    private static final Logger logger = LoggerFactory.getLogger(GitVCS.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitVcs.class);
 
     private final Repository repository;
 
-    private GitVCS(Repository repository) {
+    GitVcs(Repository repository) {
         this.repository = repository;
     }
 
@@ -48,6 +50,26 @@ public class GitVCS implements VCS {
 
             final RevCommit parentRevision = commit.getParent(0);
             return parentRevision.getName();
+        }
+    }
+
+    @Override
+    public void clean() {
+        try {
+            final Status status = new Git(repository).status().call();
+
+            if(status.getUntracked().size() > 0) {
+                new Git(repository).clean().setCleanDirectories(true).call();
+            }
+
+            if(status.getUncommittedChanges().size() > 0 || status.getConflicting().size() > 0) {
+                new Git(repository).reset().setMode(ResetCommand.ResetType.HARD).call();
+            }
+
+        } catch (NoWorkTreeException e) {
+            logger.error("Cannot clean a bare working directory:", e);
+        } catch (GitAPIException e) {
+            logger.error("An unexpected error occurred in git:", e);
         }
     }
 
@@ -106,21 +128,7 @@ public class GitVCS implements VCS {
 
     @Override
     public void close() throws Exception {
-        checkout("master");
+        clean();
         repository.close();
-    }
-
-    /**
-     * Creates a new instance for the repository located at <code>path</code>.
-     * @param path the location of the repository
-     * @return the instance
-     * @throws IOException when there is no repository at the specified location.
-     */
-    public static GitVCS get(String path) throws IOException {
-        final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        final Repository repository = builder.setGitDir(new File(path, ".git")).setMustExist
-                (true).build();
-
-        return new GitVCS(repository);
     }
 }
