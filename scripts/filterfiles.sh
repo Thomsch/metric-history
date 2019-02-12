@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# != 3 ]; then
 	echo "Filters revisions in <file> from <dir> in <output>"

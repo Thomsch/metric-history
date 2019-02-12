@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# != 3 ]; then
     echo "Missing arguments. Sample: <project name> <repo name> <n>"

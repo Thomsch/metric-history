@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# != 2 ]; then
 	echo "Merges CSV files in <DIR> to file <OUTPUT>"
