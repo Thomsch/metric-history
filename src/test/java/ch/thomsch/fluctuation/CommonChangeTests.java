@@ -18,9 +18,9 @@ final class CommonChangeTests {
         final Metrics b = new Metrics(1.0);
         final Metrics c = new Metrics(2.0);
 
-        final Metrics adiffb = changes.compute(a, b);
-        final Metrics bdiffc = changes.compute(b, c);
-        final Metrics cdiffb = changes.compute(c, b);
+        final Metrics adiffb = changes.compute(b, a);
+        final Metrics bdiffc = changes.compute(c, b);
+        final Metrics cdiffb = changes.compute(b, c);
 
         assertArrayEquals(new Double[]{0.0}, adiffb.get().toArray());
         assertArrayEquals(new Double[]{1.0}, bdiffc.get().toArray());
@@ -31,7 +31,7 @@ final class CommonChangeTests {
         final Metrics a = new Metrics(1.0, 2.0, 3.0);
         final Metrics b = new Metrics(10.0, 20.0, 30.0);
 
-        final Metrics actual = changes.compute(a, b);
+        final Metrics actual = changes.compute(b, a);
 
         final Double[] expected = {9.0, 18.0, 27.0};
         assertArrayEquals(expected, actual.get().toArray());

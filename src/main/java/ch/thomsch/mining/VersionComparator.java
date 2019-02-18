@@ -39,7 +39,7 @@ public final class VersionComparator {
 
             final Metrics otherMeasures = data.getMetric(other, artifact);
 
-            final Metrics result = computer.compute(otherMeasures, referenceMeasures);
+            final Metrics result = computer.compute(referenceMeasures, otherMeasures);
 
             results.addMetric(version, artifact, result);
         }
