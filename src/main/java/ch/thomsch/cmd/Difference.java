@@ -64,16 +64,42 @@ public class Difference extends Command {
 
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
         final ProgressIndicator progressIndicator = new ProgressIndicator(entries.size());
+        final LinkedList<Error> errors = new LinkedList<>();
+
         entries.forEach(entry -> {
             final String version = entry.getKey();
             final String parent = entry.getValue();
 
-            final ClassStore measures = measureRepository.get(version, parent);
-
-            final ClassStore classStore = versionComparator.fluctuations(version, parent, measures);
-
-            outputSink.export(classStore);
-            progressIndicator.update();
+            try {
+                final ClassStore measures = measureRepository.get(version, parent);
+                final ClassStore classStore = versionComparator.fluctuations(version, parent, measures);
+                outputSink.export(classStore);
+            } catch (Exception e) {
+                errors.add(new Error(version, parent, e));
+            } finally {
+                progressIndicator.update();
+            }
         });
+
+        if(errors.size() > 0) {
+            logger.error("{} errors occurred during processing:", errors.size());
+            errors.forEach(Error::display);
+        }
+    }
+
+    private class Error {
+        final String version;
+        final String parent;
+        final Exception e;
+
+        Error(String version, String parent, Exception e) {
+            this.version = version;
+            this.parent = parent;
+            this.e = e;
+        }
+
+        void display() {
+            logger.error("At {} (w. parent {}):", version, parent, e);
+        }
     }
 }
