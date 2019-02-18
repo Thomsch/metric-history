@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -56,14 +57,8 @@ public final class Stores {
         return model;
     }
 
-    /**
-     * Loads large classes. Displays status message when loading
-     * @see #loadClasses(String, ClassStore)
-     */
-    public static ClassStore loadLargeClasses(String filePath, ClassStore model) throws IOException {
-        logger.info("Loading raw (" + filePath + ")...");
-
-        return loadClasses(filePath, model);
+    public static ClassStore loadClasses(File file, ClassStore model) throws IOException {
+        return loadClasses(file.getPath(), model);
     }
 
     /**
@@ -88,10 +83,27 @@ public final class Stores {
         return metrics;
     }
 
+    /**
+     * Returns the format for CSV files. The header for sourcemeter is included.
+     * @return a new instance of {@link CSVFormat}
+     */
     public static CSVFormat getFormat() {
-        return CSVFormat.RFC4180
-                .withHeader(HEADER_SOURCEMETER)
-                .withDelimiter(';');
+        return getFormat(true);
+    }
+
+    /**
+     * Returns the format for CSV files.
+     * @param header determines if the sourcemeter header is included.
+     * @return a new instance of {@link CSVFormat}
+     */
+    public static CSVFormat getFormat(boolean header) {
+        CSVFormat format = CSVFormat.RFC4180.withDelimiter(';');
+
+        if(header) {
+            format = format.withHeader(HEADER_SOURCEMETER);
+        }
+
+        return format;
     }
 
     /**

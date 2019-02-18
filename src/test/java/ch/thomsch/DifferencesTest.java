@@ -1,46 +1,51 @@
 package ch.thomsch;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class DifferencesTest {
 
-    @Test
-    public void export() throws IOException {
-        final HashMap<String, String> ancestry = setupAncestry();
-        final ClassStore model = setupModel();
-        final StringWriter out = new StringWriter();
-        final CSVPrinter writer = new CSVPrinter(out, CSVFormat.DEFAULT);
+    private ClassStore model;
 
-        Differences.export(ancestry, model, writer);
-
-        assertArrayEquals(expectedExport(), out.toString().split("\\r?\\n"));
+    @Before
+    public void setUp() throws Exception {
+        model = setupModel();
     }
 
-    private String[] expectedExport() {
-        return new String[]{
-                "a,X,-0.1,0.5,0.0",
-                "a,Y,0.1,0.0,5.0",
-                "d,X,1.0,-5.0,21.0",
-                "e,X,0.0,0.0,0.0"
-        };
+    @Test
+    public void calculate() {
+        ClassStore result = Differences.calculate("a", "b", model);
+
+        assertEquals(2, result.getClasses("a").size());
+        assertEqualsMetrics(new Metrics(-0.1, 0.5, 0.0), result.getMetric("a", "X"));
+        assertEqualsMetrics(new Metrics(0.1,0.0,5.0), result.getMetric("a", "Y"));
+
+        result = Differences.calculate("d", "e", model);
+        assertEquals(1, result.getClasses("d").size());
+        assertEqualsMetrics(new Metrics(1.0,-5.0,21.0), result.getMetric("d", "X"));
+
+        result = Differences.calculate("e", "f", model);
+        assertEquals(1, result.getClasses("e").size());
+        assertEqualsMetrics(new Metrics(0.0,0.0,0.0), result.getMetric("e", "X"));
+    }
+
+    @Test
+    public void calculate_ShouldReturnEmpty_WhenVersionHasNoMetrics() {
+        final ClassStore result = Differences.calculate("g", "a", model);
+
+        assertNotNull(result);
+        assertEquals(0, result.getVersions().size());
     }
 
     private ClassStore setupModel() {
         final ClassStore classStore = new ClassStore();
-
         classStore.addMetric("a", "X", new Metrics(0.0, 1.0, 10.0));
         classStore.addMetric("a", "Y", new Metrics(0.1, 0.5, 10.0));
         classStore.addMetric("a", "W", new Metrics(2.0, 3.0, 4.0));
@@ -51,15 +56,13 @@ public class DifferencesTest {
         classStore.addMetric("d", "X", new Metrics(6.0, 5.0, 1.0));
         classStore.addMetric("e", "X", new Metrics(5.0, 10.0, -20.0));
         classStore.addMetric("f", "X", new Metrics(5.0, 10.0, -20.0));
-
         return classStore;
     }
 
-    private HashMap<String, String> setupAncestry() {
-        final HashMap<String, String> ancestry = new LinkedHashMap<>();
-        ancestry.put("a", "b");
-        ancestry.put("d", "e");
-        ancestry.put("e", "f");
-        return ancestry;
+    private void assertEqualsMetrics(Metrics expected, Metrics actual) {
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertEquals(expected.get(i), actual.get(i));
+        }
     }
 }

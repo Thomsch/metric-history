@@ -1,11 +1,8 @@
 package ch.thomsch.cmd;
 
-import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,7 +12,8 @@ import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.storage.GenealogyRepo;
-import ch.thomsch.storage.Stores;
+import ch.thomsch.storage.MeasureRepository;
+import ch.thomsch.storage.SaveTarget;
 import picocli.CommandLine;
 
 /**
@@ -56,63 +54,29 @@ public class Difference extends Command {
             return;
         }
 
-        if(DiskUtils.isFile(input)) {
-            final ClassStore model = new ClassStore();
-            try {
-                Stores.loadLargeClasses(input, model);
-            } catch (IOException e) {
-                logger.error("I/O error while reading file {}", input);
-                return;
-            }
-            export(ancestry, model);
-        } else if (DiskUtils.isFile(output)) {
-            logger.info("Multi-input to output one file is not supported.");
-        } else {
-            final File inputDir = new File(input);
-            final File outputDir = DiskUtils.createDirectory(output);
-            final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
-            entries.forEach(entry -> {
-                final ClassStore model = new ClassStore();
-                final String revision = entry.getKey();
-                final String parent = entry.getValue();
-
-                final HashMap<String, String> map = new HashMap<>();
-                map.put(entry.getKey(), entry.getValue());
-
-                try {
-                    Stores.loadClasses(new File(inputDir, revision + ".csv").getPath(), model);
-                    Stores.loadClasses(new File(inputDir, parent + ".csv").getPath(), model);
-
-                    exportDiff(map, model, new File(outputDir, revision + ".csv"));
-                } catch (IOException e) {
-                    logger.error("Failed to access file", e);
-                }
-            });
+        if (!DiskUtils.isFile(input) && DiskUtils.isFile(output)) {
+            logger.warn("Multi-input to output one file is not supported.");
+            return;
         }
-    }
 
-    private void export(HashMap<String, String> ancestry, ClassStore model) throws IOException {
-        if(DiskUtils.isFile(output)) {
-            exportDiff(ancestry, model, new File(output));
-        } else {
-            final File outputDir = DiskUtils.createDirectory(output);
-
-            final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
-            entries.parallelStream().forEach(entry -> {
-                final HashMap<String, String> map = new HashMap<>();
-                map.put(entry.getKey(), entry.getValue());
-
-                final File outputFile = new File(outputDir, entry.getKey() + ".csv");
-                exportDiff(map, model, outputFile);
-            });
+        final SaveTarget outputSink = SaveTarget.build(output);
+        if(outputSink == null) {
+            return;
         }
-    }
 
-    private void exportDiff(HashMap<String, String> map, ClassStore model, File outputFile) {
-        try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), Stores.getFormat())) {
-            Differences.export(map, model, writer);
-        } catch (IOException e) {
-            logger.error("I/O error with file {}", output, e);
-        }
+        final MeasureRepository measureRepository = MeasureRepository.build(input);
+
+        final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
+        entries.forEach(entry -> {
+            final String version = entry.getKey();
+            final String parent = entry.getValue();
+
+            final ClassStore measures = measureRepository.get(version, parent);
+
+            logger.info("Calculating fluctuations of {} (parent: {})", version, parent);
+            final ClassStore classStore = Differences.calculate(version, parent, measures);
+
+            outputSink.export(classStore);
+        });
     }
 }
