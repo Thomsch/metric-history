@@ -1,9 +1,8 @@
-package ch.thomsch;
+package ch.thomsch.mining;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.thomsch.fluctuation.VersionComparator;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ch.thomsch.fluctuation.VersionComparator;
+import ch.thomsch.mining.VersionComparator;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.MeasureRepository;

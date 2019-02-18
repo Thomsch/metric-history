@@ -1,10 +1,12 @@
-package ch.thomsch.fluctuation;
+package ch.thomsch.mining;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
+import ch.thomsch.fluctuation.Computer;
+import ch.thomsch.fluctuation.StrictChange;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 
