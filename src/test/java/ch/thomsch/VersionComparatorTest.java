@@ -3,42 +3,44 @@ package ch.thomsch;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.thomsch.fluctuation.Differences;
+import ch.thomsch.fluctuation.VersionComparator;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class DifferencesTest {
+public class VersionComparatorTest {
 
     private ClassStore model;
+    private VersionComparator versionComparator;
 
     @Before
     public void setUp() throws Exception {
         model = setupModel();
+        versionComparator = new VersionComparator();
     }
 
     @Test
     public void calculate() {
-        ClassStore result = Differences.calculate("a", "b", model);
+        ClassStore result = versionComparator.fluctuations("a", "b", model);
 
         assertEquals(2, result.getClasses("a").size());
         assertEqualsMetrics(new Metrics(-0.1, 0.5, 0.0), result.getMetric("a", "X"));
         assertEqualsMetrics(new Metrics(0.1,0.0,5.0), result.getMetric("a", "Y"));
 
-        result = Differences.calculate("d", "e", model);
+        result = versionComparator.fluctuations("d", "e", model);
         assertEquals(1, result.getClasses("d").size());
         assertEqualsMetrics(new Metrics(1.0,-5.0,21.0), result.getMetric("d", "X"));
 
-        result = Differences.calculate("e", "f", model);
+        result = versionComparator.fluctuations("e", "f", model);
         assertEquals(1, result.getClasses("e").size());
         assertEqualsMetrics(new Metrics(0.0,0.0,0.0), result.getMetric("e", "X"));
     }
 
     @Test
     public void calculate_ShouldReturnEmpty_WhenVersionHasNoMetrics() {
-        final ClassStore result = Differences.calculate("g", "a", model);
+        final ClassStore result = versionComparator.fluctuations("g", "a", model);
 
         assertNotNull(result);
         assertEquals(0, result.getVersions().size());

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ch.thomsch.fluctuation.Differences;
+import ch.thomsch.fluctuation.VersionComparator;
 import ch.thomsch.model.ClassStore;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.MeasureRepository;
@@ -59,6 +59,7 @@ public class Difference extends Command {
         }
 
         final MeasureRepository measureRepository = MeasureRepository.build(input);
+        final VersionComparator versionComparator = new VersionComparator();
 
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
         entries.forEach(entry -> {
@@ -68,7 +69,7 @@ public class Difference extends Command {
             final ClassStore measures = measureRepository.get(version, parent);
 
             logger.info("Calculating fluctuations of {} (parent: {})", version, parent);
-            final ClassStore classStore = Differences.calculate(version, parent, measures);
+            final ClassStore classStore = versionComparator.fluctuations(version, parent, measures);
 
             outputSink.export(classStore);
         });
