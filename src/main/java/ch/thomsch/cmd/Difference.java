@@ -10,7 +10,6 @@ import java.util.Map;
 
 import ch.thomsch.fluctuation.Differences;
 import ch.thomsch.model.ClassStore;
-import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.MeasureRepository;
 import ch.thomsch.storage.SaveTarget;
@@ -51,11 +50,6 @@ public class Difference extends Command {
         final GenealogyRepo repo = new GenealogyRepo();
         final HashMap<String, String> ancestry = repo.load(ancestryFile);
         if (ancestry.isEmpty()) {
-            return;
-        }
-
-        if (!DiskUtils.isFile(input) && DiskUtils.isFile(output)) {
-            logger.warn("Multi-input to output one file is not supported.");
             return;
         }
 
