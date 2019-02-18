@@ -20,7 +20,7 @@ public class AllChangeTest {
     public void computesAllowsMissingFirstOperand() {
         final Metrics m = new Metrics(1.0, 2.0, 3.0);
 
-        final Metrics actual = changes.compute(null, m);
+        final Metrics actual = changes.compute(m, null);
 
         final Double[] expected = {1.0, 2.0, 3.0};
         assertArrayEquals(expected, actual.get().toArray());
@@ -30,7 +30,7 @@ public class AllChangeTest {
     public void computesAllowsMissingSecondOperand() {
         final Metrics m = new Metrics(1.0, 2.0, 3.0);
 
-        final Metrics actual = changes.compute(m, null);
+        final Metrics actual = changes.compute(null, m);
 
         final Double[] expected = {-1.0, -2.0, -3.0};
         assertArrayEquals(expected, actual.get().toArray());

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ClassStoreTest {
@@ -98,5 +99,22 @@ public class ClassStoreTest {
 
         assertEquals(1, instance.revisions());
         assertEquals(1, instance.getClasses("alpha").size());
+    }
+
+    @Test
+    public void hasSingleRevision_ShouldReturnTrue_WhenOnlyOneVersionHasBeenAdded() {
+        instance.addMetric("alpha", "A", dummy);
+
+        assertTrue(instance.hasSingleVersion());
+    }
+
+    @Test
+    public void hasSingleRevision_ShouldReturnTrue_WhenMoreOrLessThanOneVersionHasBeenAdded() {
+        assertFalse(instance.hasSingleVersion());
+
+        instance.addMetric("alpha", "A", dummy);
+        instance.addMetric("beta", "A", dummy);
+
+        assertFalse(instance.hasSingleVersion());
     }
 }

@@ -6,29 +6,29 @@ import ch.thomsch.model.Metrics;
 
 public class AllChange implements Computer {
     @Override
-    public Metrics compute(Metrics old, Metrics current) {
-        if(old == null && current == null) return null;
+    public Metrics compute(Metrics reference, Metrics other) {
+        if(other == null && reference == null) return null;
 
-        if(old == null) {
-            return current.copy();
+        if(other == null) {
+            return reference.copy();
         }
 
-        final List<Double> currents;
-        if(current == null) {
-            currents = new Metrics(old.size()).get();
+        final List<Double> references;
+        if(reference == null) {
+            references = new Metrics(other.size()).get();
         } else {
-            currents = current.get();
+            references = reference.get();
         }
 
-        final List<Double> olds = old.get();
+        final List<Double> others = other.get();
 
-        if (currents.size() != olds.size()) {
+        if (references.size() != others.size()) {
             throw new IllegalArgumentException("These metrics are not from the same source!");
         }
 
         final Metrics result = new Metrics();
-        for (int i = 0; i < currents.size(); i++) {
-            result.add(currents.get(i) - olds.get(i));
+        for (int i = 0; i < references.size(); i++) {
+            result.add(references.get(i) - others.get(i));
         }
 
         return result;

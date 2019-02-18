@@ -1,21 +1,18 @@
 package ch.thomsch.cmd;
 
-import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ch.thomsch.fluctuation.Differences;
+import ch.thomsch.mining.VersionComparator;
 import ch.thomsch.model.ClassStore;
-import ch.thomsch.storage.DiskUtils;
 import ch.thomsch.storage.GenealogyRepo;
-import ch.thomsch.storage.Stores;
+import ch.thomsch.storage.MeasureRepository;
+import ch.thomsch.storage.SaveTarget;
 import picocli.CommandLine;
 
 /**
@@ -56,63 +53,53 @@ public class Difference extends Command {
             return;
         }
 
-        if(DiskUtils.isFile(input)) {
-            final ClassStore model = new ClassStore();
+        final SaveTarget outputSink = SaveTarget.build(output);
+        if(outputSink == null) {
+            return;
+        }
+
+        final MeasureRepository measureRepository = MeasureRepository.build(input);
+        final VersionComparator versionComparator = new VersionComparator();
+
+
+        final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
+        final ProgressIndicator progressIndicator = new ProgressIndicator(entries.size(), 5);
+        final LinkedList<Error> errors = new LinkedList<>();
+
+        entries.forEach(entry -> {
+            final String version = entry.getKey();
+            final String parent = entry.getValue();
+
             try {
-                Stores.loadLargeClasses(input, model);
-            } catch (IOException e) {
-                logger.error("I/O error while reading file {}", input);
-                return;
+                final ClassStore measures = measureRepository.get(version, parent);
+                final ClassStore classStore = versionComparator.fluctuations(version, parent, measures);
+                outputSink.export(classStore);
+            } catch (Exception e) {
+                errors.add(new Error(version, parent, e));
+            } finally {
+                progressIndicator.update();
             }
-            export(ancestry, model);
-        } else if (DiskUtils.isFile(output)) {
-            logger.info("Multi-input to output one file is not supported.");
-        } else {
-            final File inputDir = new File(input);
-            final File outputDir = DiskUtils.createDirectory(output);
-            final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
-            entries.forEach(entry -> {
-                final ClassStore model = new ClassStore();
-                final String revision = entry.getKey();
-                final String parent = entry.getValue();
+        });
 
-                final HashMap<String, String> map = new HashMap<>();
-                map.put(entry.getKey(), entry.getValue());
-
-                try {
-                    Stores.loadClasses(new File(inputDir, revision + ".csv").getPath(), model);
-                    Stores.loadClasses(new File(inputDir, parent + ".csv").getPath(), model);
-
-                    exportDiff(map, model, new File(outputDir, revision + ".csv"));
-                } catch (IOException e) {
-                    logger.error("Failed to access file", e);
-                }
-            });
+        if(errors.size() > 0) {
+            logger.error("{} errors occurred during processing:", errors.size());
+            errors.forEach(Error::display);
         }
     }
 
-    private void export(HashMap<String, String> ancestry, ClassStore model) throws IOException {
-        if(DiskUtils.isFile(output)) {
-            exportDiff(ancestry, model, new File(output));
-        } else {
-            final File outputDir = DiskUtils.createDirectory(output);
+    private class Error {
+        final String version;
+        final String parent;
+        final Exception e;
 
-            final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
-            entries.parallelStream().forEach(entry -> {
-                final HashMap<String, String> map = new HashMap<>();
-                map.put(entry.getKey(), entry.getValue());
-
-                final File outputFile = new File(outputDir, entry.getKey() + ".csv");
-                exportDiff(map, model, outputFile);
-            });
+        Error(String version, String parent, Exception e) {
+            this.version = version;
+            this.parent = parent;
+            this.e = e;
         }
-    }
 
-    private void exportDiff(HashMap<String, String> map, ClassStore model, File outputFile) {
-        try (CSVPrinter writer = new CSVPrinter(new FileWriter(outputFile), Stores.getFormat())) {
-            Differences.export(map, model, writer);
-        } catch (IOException e) {
-            logger.error("I/O error with file {}", output, e);
+        void display() {
+            logger.error("At {} (w. parent {}):", version, parent, e);
         }
     }
 }

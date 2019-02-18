@@ -11,20 +11,20 @@ import ch.thomsch.model.Metrics;
  */
 public class StrictChange implements Computer {
     @Override
-    public Metrics compute(Metrics old, Metrics current) {
+    public Metrics compute(Metrics reference, Metrics other) {
         Metrics result = null;
 
-        if (old != null && current != null) {
-            final List<Double> olds = old.get();
-            final List<Double> currents = current.get();
+        if (other != null && reference != null) {
+            final List<Double> others = other.get();
+            final List<Double> references = reference.get();
 
-            if (olds.size() != currents.size()) {
+            if (others.size() != references.size()) {
                 throw new IllegalArgumentException("These metrics are not from the same source!");
             }
 
             result = new Metrics();
-            for (int i = 0; i < olds.size(); i++) {
-                result.add(currents.get(i) - olds.get(i));
+            for (int i = 0; i < others.size(); i++) {
+                result.add(references.get(i) - others.get(i));
             }
         }
 

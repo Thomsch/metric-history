@@ -85,4 +85,12 @@ public class ClassStore {
     public long revisions() {
         return getVersions().size();
     }
+
+    public boolean hasSingleVersion() {
+        return getVersions().size() == 1;
+    }
+
+    public boolean hasNoVersion() {
+        return getVersions().size() == 0;
+    }
 }

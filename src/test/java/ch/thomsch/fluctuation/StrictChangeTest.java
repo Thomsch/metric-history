@@ -20,7 +20,7 @@ public class StrictChangeTest {
     public void computesDoNotAllowsMissingFirstOperand() {
         final Metrics m = new Metrics(1.0, 2.0, 3.0);
 
-        final Metrics actual = changes.compute(null, m);
+        final Metrics actual = changes.compute(m, null);
         assertNull(actual);
     }
 
@@ -28,7 +28,7 @@ public class StrictChangeTest {
     public void computesDoNotAllowsMissingSecondOperand() {
         final Metrics m = new Metrics(1.0, 2.0, 3.0);
 
-        final Metrics actual = changes.compute(m, null);
+        final Metrics actual = changes.compute(null, m);
         assertNull(actual);
     }
 
