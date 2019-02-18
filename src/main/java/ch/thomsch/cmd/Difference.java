@@ -61,17 +61,19 @@ public class Difference extends Command {
         final MeasureRepository measureRepository = MeasureRepository.build(input);
         final VersionComparator versionComparator = new VersionComparator();
 
+
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
+        final ProgressIndicator progressIndicator = new ProgressIndicator(entries.size());
         entries.forEach(entry -> {
             final String version = entry.getKey();
             final String parent = entry.getValue();
 
             final ClassStore measures = measureRepository.get(version, parent);
 
-            logger.info("Calculating fluctuations of {} (parent: {})", version, parent);
             final ClassStore classStore = versionComparator.fluctuations(version, parent, measures);
 
             outputSink.export(classStore);
+            progressIndicator.update();
         });
     }
 }
