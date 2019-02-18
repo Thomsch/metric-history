@@ -15,15 +15,16 @@ public class ProgressIndicator {
     /**
      * Create a new instance of {@link ProgressIndicator} outputting to the default system output.
      * @param tasks The total number of tasks.
+     * @param interval interval between each progress report in percent
      */
-    public ProgressIndicator(int tasks) {
-        this(tasks, 10, System.out);
+    public ProgressIndicator(int tasks, int interval) {
+        this(tasks, interval, System.out);
     }
 
     /**
      * Create a new instance of {@link ProgressIndicator} outputting to the default system output.
      * @param tasks The total number of tasks
-     * @param interval The interval, in percent, between progress reports
+     * @param interval interval between each progress report in percent
      * @param stream the stream where the report is written
      */
     public ProgressIndicator(int tasks, int interval, PrintStream stream) {

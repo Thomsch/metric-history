@@ -63,7 +63,7 @@ public class Difference extends Command {
 
 
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
-        final ProgressIndicator progressIndicator = new ProgressIndicator(entries.size());
+        final ProgressIndicator progressIndicator = new ProgressIndicator(entries.size(), 5);
         final LinkedList<Error> errors = new LinkedList<>();
 
         entries.forEach(entry -> {
