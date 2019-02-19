@@ -3,8 +3,8 @@ package ch.thomsch;
 import java.io.File;
 import java.io.IOException;
 
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.storage.Stores;
-import ch.thomsch.model.ClassStore;
 
 public final class MemoryPerformance {
 
@@ -18,7 +18,7 @@ public final class MemoryPerformance {
             System.out.println("Memory available " + bToMb(Runtime.getRuntime().maxMemory()) + "MBs.");
             System.out.println("Loading...");
             final long start = System.currentTimeMillis();
-            final ClassStore store = Stores.loadClasses(baseDir.getPath() + '/' + "rxjava-raw.csv");
+            final MeasureStore store = Stores.loadClasses(baseDir.getPath() + '/' + "rxjava-raw.csv");
             final long diff = System.currentTimeMillis() - start;
             System.out.println("Loaded in " + diff / 1000 + " seconds.");
 
@@ -30,8 +30,8 @@ public final class MemoryPerformance {
         }
     }
 
-    private static void printStoreStatistics(ClassStore store) {
-        System.out.println("Revisions: " + store.revisions());
+    private static void printStoreStatistics(MeasureStore store) {
+        System.out.println("Revisions: " + store.versionCount());
         System.out.println("Average classes/revision: " + averageInstances(store));
         System.out.println("Total instances: " + store.instances());
     }
@@ -46,8 +46,8 @@ public final class MemoryPerformance {
     /**
      * Returns the average number of class per revision
      */
-    private static double averageInstances(ClassStore store) {
-        return store.instances() / (float) store.revisions();
+    private static double averageInstances(MeasureStore store) {
+        return store.instances() / (float) store.versionCount();
     }
 
     /**

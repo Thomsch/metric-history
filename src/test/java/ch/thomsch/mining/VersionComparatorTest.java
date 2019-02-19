@@ -3,7 +3,7 @@ package ch.thomsch.mining;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.model.Metrics;
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class VersionComparatorTest {
 
-    private ClassStore model;
+    private MeasureStore model;
     private VersionComparator versionComparator;
 
     @Before
@@ -22,42 +22,42 @@ public class VersionComparatorTest {
 
     @Test
     public void calculate() {
-        ClassStore result = versionComparator.fluctuations("a", "b", model);
+        MeasureStore result = versionComparator.fluctuations("a", "b", model);
 
-        assertEquals(2, result.getClasses("a").size());
-        assertEqualsMetrics(new Metrics(-0.1, 0.5, 0.0), result.getMetric("a", "X"));
-        assertEqualsMetrics(new Metrics(0.1,0.0,5.0), result.getMetric("a", "Y"));
+        assertEquals(2, result.artifacts("a").size());
+        assertEqualsMetrics(new Metrics(-0.1, 0.5, 0.0), result.get("a", "X"));
+        assertEqualsMetrics(new Metrics(0.1,0.0,5.0), result.get("a", "Y"));
 
         result = versionComparator.fluctuations("d", "e", model);
-        assertEquals(1, result.getClasses("d").size());
-        assertEqualsMetrics(new Metrics(1.0,-5.0,21.0), result.getMetric("d", "X"));
+        assertEquals(1, result.artifacts("d").size());
+        assertEqualsMetrics(new Metrics(1.0,-5.0,21.0), result.get("d", "X"));
 
         result = versionComparator.fluctuations("e", "f", model);
-        assertEquals(1, result.getClasses("e").size());
-        assertEqualsMetrics(new Metrics(0.0,0.0,0.0), result.getMetric("e", "X"));
+        assertEquals(1, result.artifacts("e").size());
+        assertEqualsMetrics(new Metrics(0.0,0.0,0.0), result.get("e", "X"));
     }
 
     @Test
     public void calculate_ShouldReturnEmpty_WhenVersionHasNoMetrics() {
-        final ClassStore result = versionComparator.fluctuations("g", "a", model);
+        final MeasureStore result = versionComparator.fluctuations("g", "a", model);
 
         assertNotNull(result);
-        assertEquals(0, result.getVersions().size());
+        assertEquals(0, result.versions().size());
     }
 
-    private ClassStore setupModel() {
-        final ClassStore classStore = new ClassStore();
-        classStore.addMetric("a", "X", new Metrics(0.0, 1.0, 10.0));
-        classStore.addMetric("a", "Y", new Metrics(0.1, 0.5, 10.0));
-        classStore.addMetric("a", "W", new Metrics(2.0, 3.0, 4.0));
-        classStore.addMetric("b", "X", new Metrics(0.1, 0.5, 10.0));
-        classStore.addMetric("b", "Y", new Metrics(0.0, 0.5, 5.0));
-        classStore.addMetric("b", "Z", new Metrics(0.0, 0.5, 5.0));
-        classStore.addMetric("c", "X", new Metrics(Double.NaN, Double.NaN, Double.NaN));
-        classStore.addMetric("d", "X", new Metrics(6.0, 5.0, 1.0));
-        classStore.addMetric("e", "X", new Metrics(5.0, 10.0, -20.0));
-        classStore.addMetric("f", "X", new Metrics(5.0, 10.0, -20.0));
-        return classStore;
+    private MeasureStore setupModel() {
+        final MeasureStore measureStore = new MeasureStore();
+        measureStore.add("a", "X", new Metrics(0.0, 1.0, 10.0));
+        measureStore.add("a", "Y", new Metrics(0.1, 0.5, 10.0));
+        measureStore.add("a", "W", new Metrics(2.0, 3.0, 4.0));
+        measureStore.add("b", "X", new Metrics(0.1, 0.5, 10.0));
+        measureStore.add("b", "Y", new Metrics(0.0, 0.5, 5.0));
+        measureStore.add("b", "Z", new Metrics(0.0, 0.5, 5.0));
+        measureStore.add("c", "X", new Metrics(Double.NaN, Double.NaN, Double.NaN));
+        measureStore.add("d", "X", new Metrics(6.0, 5.0, 1.0));
+        measureStore.add("e", "X", new Metrics(5.0, 10.0, -20.0));
+        measureStore.add("f", "X", new Metrics(5.0, 10.0, -20.0));
+        return measureStore;
     }
 
     private void assertEqualsMetrics(Metrics expected, Metrics actual) {

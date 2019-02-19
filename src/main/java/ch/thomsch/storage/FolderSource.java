@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 
 /**
  * Reads the contents of a directory. Each file in the folder represents a revision.
@@ -21,8 +21,8 @@ public class FolderSource extends MeasureRepository {
     }
 
     @Override
-    public ClassStore get(String ... versions) {
-        final ClassStore model = new ClassStore();
+    public MeasureStore get(String ... versions) {
+        final MeasureStore model = new MeasureStore();
 
         for (String version : versions) {
             final File file = new File(directory, version + ".csv");

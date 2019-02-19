@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 
 /**
  * Encapsulate measures for a project from the file system.
@@ -25,7 +25,7 @@ public abstract class MeasureRepository {
         final File source = new File(sourcePath);
 
         if(source.isFile()) {
-            final ClassStore model = new ClassStore();
+            final MeasureStore model = new MeasureStore();
 
             logger.info("Loading {}...", source.getPath());
             Stores.loadClasses(source, model);
@@ -36,9 +36,9 @@ public abstract class MeasureRepository {
     }
 
     /**
-     * Returns a {@link ClassStore} populated with the artifacts of the given versions.
+     * Returns a {@link MeasureStore} populated with the artifacts of the given versions.
      * @param versions the versions to load into the class store
-     * @return the new instance of {@link ClassStore}
+     * @return the new instance of {@link MeasureStore}
      */
-    public abstract ClassStore get(String ... versions);
+    public abstract MeasureStore get(String ... versions);
 }

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.storage.Database;
 import ch.thomsch.storage.DatabaseBuilder;
 import ch.thomsch.storage.GenealogyRepo;
@@ -44,12 +44,12 @@ public class Mongo extends Command {
         try {
             switch (action) {
                 case "raw":
-                    final ClassStore raw = Stores.loadClasses(file);
+                    final MeasureStore raw = Stores.loadClasses(file);
                     database.setRaw(raw);
                     break;
 
                 case "diff":
-                    final ClassStore diff = Stores.loadClasses(file);
+                    final MeasureStore diff = Stores.loadClasses(file);
                     database.setDiff(diff);
                     break;
 

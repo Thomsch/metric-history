@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import ch.thomsch.mining.VersionComparator;
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.MeasureRepository;
 import ch.thomsch.storage.SaveTarget;
@@ -71,9 +71,9 @@ public class Difference extends Command {
             final String parent = entry.getValue();
 
             try {
-                final ClassStore measures = measureRepository.get(version, parent);
-                final ClassStore classStore = versionComparator.fluctuations(version, parent, measures);
-                outputSink.export(classStore);
+                final MeasureStore measures = measureRepository.get(version, parent);
+                final MeasureStore measureStore = versionComparator.fluctuations(version, parent, measures);
+                outputSink.export(measureStore);
             } catch (Exception e) {
                 errors.add(new Error(version, parent, e));
             } finally {

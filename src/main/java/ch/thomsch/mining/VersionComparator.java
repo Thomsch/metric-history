@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import ch.thomsch.fluctuation.Computer;
 import ch.thomsch.fluctuation.StrictChange;
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.model.Metrics;
 
 /**
@@ -23,25 +23,25 @@ public final class VersionComparator {
      * @param data contains the measurements for at least the two versions of the project
      * @return a new instance containing the fluctuations for <code>version</code>
      */
-    public ClassStore fluctuations(String version, String other, ClassStore data) {
+    public MeasureStore fluctuations(String version, String other, MeasureStore data) {
         final Computer computer = new StrictChange();
-        final ClassStore results = new ClassStore();
+        final MeasureStore results = new MeasureStore();
 
-        final Collection<String> artifacts = data.getClasses(version);
+        final Collection<String> artifacts = data.artifacts(version);
         if(artifacts == null) return results;
 
         for (String artifact : artifacts) {
-            final Metrics referenceMeasures = data.getMetric(version, artifact);
+            final Metrics referenceMeasures = data.get(version, artifact);
             if (referenceMeasures == null) {
                 logger.warn("No data for revision {}", version);
                 continue;
             }
 
-            final Metrics otherMeasures = data.getMetric(other, artifact);
+            final Metrics otherMeasures = data.get(other, artifact);
 
             final Metrics result = computer.compute(referenceMeasures, otherMeasures);
 
-            results.addMetric(version, artifact, result);
+            results.add(version, artifact, result);
         }
         return results;
     }

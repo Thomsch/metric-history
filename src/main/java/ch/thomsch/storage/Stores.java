@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.model.Metrics;
 
 /**
@@ -36,7 +36,7 @@ public final class Stores {
     }
 
     /**
-     * Loads a {@link ClassStore} in CSV format from the disk.
+     * Loads a {@link MeasureStore} in CSV format from the disk.
      *
      * @param filePath the path of the CSV file
      * @param model the recipient to load data to.
@@ -45,32 +45,32 @@ public final class Stores {
      * @throws IOException           when there is a reading problem with the disk.
      * @throws NullPointerException when no <code>model</code> is given
      */
-    public static ClassStore loadClasses(String filePath, ClassStore model) throws IOException {
+    public static MeasureStore loadClasses(String filePath, MeasureStore model) throws IOException {
         Objects.requireNonNull(model);
 
         final CSVParser parser = new CSVParser(new FileReader(filePath), getFormat().withSkipHeaderRecord());
 
         for (CSVRecord record : parser) {
-            model.addMetric(record.get(0), record.get(1), convertMetrics(record));
+            model.add(record.get(0), record.get(1), convertMetrics(record));
         }
 
         return model;
     }
 
-    public static ClassStore loadClasses(File file, ClassStore model) throws IOException {
+    public static MeasureStore loadClasses(File file, MeasureStore model) throws IOException {
         return loadClasses(file.getPath(), model);
     }
 
     /**
-     * Loads a {@link ClassStore} in CSV format from the disk.
+     * Loads a {@link MeasureStore} in CSV format from the disk.
      *
      * @param filePath the path of the CSV file
-     * @return a new instance of {@link ClassStore}
+     * @return a new instance of {@link MeasureStore}
      * @throws FileNotFoundException when the file cannot be found.
      * @throws IOException           when there is a reading problem with the disk.
      */
-    public static ClassStore loadClasses(String filePath) throws IOException {
-        return loadClasses(filePath, new ClassStore());
+    public static MeasureStore loadClasses(String filePath) throws IOException {
+        return loadClasses(filePath, new MeasureStore());
     }
 
     private static Metrics convertMetrics(CSVRecord record) {

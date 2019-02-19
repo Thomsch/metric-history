@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 
 /**
  * Encapsulate the location for saving data on the file system.
@@ -30,5 +30,5 @@ public abstract class SaveTarget {
         }
     }
 
-    public abstract void export(ClassStore classStore);
+    public abstract void export(MeasureStore measureStore);
 }

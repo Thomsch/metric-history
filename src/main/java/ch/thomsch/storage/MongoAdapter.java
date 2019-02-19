@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.model.Metrics;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -54,16 +54,16 @@ public class MongoAdapter implements Database{
     }
 
     @Override
-    public void setRaw(ClassStore classStore) {
-        setsClassMeasurement(classStore, FIELD_METRICS);
+    public void setRaw(MeasureStore measureStore) {
+        setsClassMeasurement(measureStore, FIELD_METRICS);
     }
 
     @Override
-    public void setDiff(ClassStore data) {
+    public void setDiff(MeasureStore data) {
         setsClassMeasurement(data, FIELD_DIFF);
     }
 
-    private void setsClassMeasurement(ClassStore data, String measurementName) {
+    private void setsClassMeasurement(MeasureStore data, String measurementName) {
         logger.info("Loading collection...");
         final MongoCollection<Document> collection = database.getCollection(COLLECTION_CLASS);
 
@@ -74,18 +74,18 @@ public class MongoAdapter implements Database{
 
         final List<Document> pendingDocuments = new ArrayList<>();
 
-        for (String revision : data.getVersions()) {
-            for (String className : data.getClasses(revision)) {
+        for (String revision : data.versions()) {
+            for (String className : data.artifacts(revision)) {
                 final Bson documentFilter = Filters.and(eq(FIELD_REVISION, revision), eq(FIELD_CLASS_NAME, className));
 
                 Document document = collection.find(documentFilter).first();
                 if (document == null) {
-                    document = createDocument(revision, className, data.getMetric(revision, className),
+                    document = createDocument(revision, className, data.get(revision, className),
                             measurementName);
                     pendingDocuments.add(document);
                 } else {
                     collection.updateOne(document, new Document("$set",
-                            new Document(measurementName, createDocument(data.getMetric(revision, className)))));
+                            new Document(measurementName, createDocument(data.get(revision, className)))));
                 }
             }
         }

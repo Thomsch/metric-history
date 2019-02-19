@@ -1,6 +1,6 @@
 package ch.thomsch.storage;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 
 /**
  * Exports metrics.
@@ -11,5 +11,5 @@ public interface StoreOutput {
      * Exports the metrics of a list of revisions.
      * @param data the pair of revision/metric to export
      */
-    void export(ClassStore data);
+    void export(MeasureStore data);
 }

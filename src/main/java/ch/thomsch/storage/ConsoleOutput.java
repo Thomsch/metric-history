@@ -2,7 +2,7 @@ package ch.thomsch.storage;
 
 import java.util.Arrays;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 
 /**
  * Prints the results on the standard output.
@@ -10,11 +10,11 @@ import ch.thomsch.model.ClassStore;
 public class ConsoleOutput implements StoreOutput {
 
     @Override
-    public void export(ClassStore data) {
+    public void export(MeasureStore data) {
 
         System.out.println("ClassStore:");
-        for (String version : data.getVersions()) {
-            System.out.println(version + " -> " + Arrays.toString(data.getClasses(version).toArray()));
+        for (String version : data.versions()) {
+            System.out.println(version + " -> " + Arrays.toString(data.artifacts(version).toArray()));
         }
     }
 }

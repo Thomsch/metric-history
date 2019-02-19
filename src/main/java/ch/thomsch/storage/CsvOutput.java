@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 
 /**
  * Exports results to a CSV file.
@@ -20,7 +20,7 @@ public class CsvOutput implements StoreOutput {
     }
 
     @Override
-    public void export(ClassStore data) {
+    public void export(MeasureStore data) {
         final FileTarget output = new FileTarget(new File(file));
         output.export(data);
     }

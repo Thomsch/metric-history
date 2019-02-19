@@ -11,7 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.model.Metrics;
 
 /**
@@ -30,10 +30,10 @@ public class FileTarget extends SaveTarget {
     }
 
     @Override
-    public void export(ClassStore classStore) {
+    public void export(MeasureStore measureStore) {
         try(CSVPrinter printer = buildPrinter()) {
-            for (String version : classStore.getVersions()) {
-                exportVersion(version, classStore, printer);
+            for (String version : measureStore.versions()) {
+                exportVersion(version, measureStore, printer);
             }
 
             if(!append) append = true; // Only overwrite the first time.
@@ -47,9 +47,9 @@ public class FileTarget extends SaveTarget {
         return new CSVPrinter(new BufferedWriter(new FileWriter(file, append)), format);
     }
 
-    private void exportVersion(String version, ClassStore classStore, CSVPrinter printer) throws IOException {
-        for (String artifact : classStore.getClasses(version)) {
-            final Metrics metrics = classStore.getMetric(version, artifact);
+    private void exportVersion(String version, MeasureStore measureStore, CSVPrinter printer) throws IOException {
+        for (String artifact : measureStore.artifacts(version)) {
+            final Metrics metrics = measureStore.get(version, artifact);
 
             if(metrics == null) {
                 logger.warn("There is no metric for class {} at revision {}", artifact, version);

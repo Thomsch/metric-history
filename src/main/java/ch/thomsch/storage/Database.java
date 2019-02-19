@@ -2,7 +2,7 @@ package ch.thomsch.storage;
 
 import java.util.HashMap;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 
 public interface Database {
     void persist(HashMap<String, String> ancestry);
@@ -12,12 +12,12 @@ public interface Database {
      *
      * @param data the data to import
      */
-    void setRaw(ClassStore data);
+    void setRaw(MeasureStore data);
 
     /**
      * Imports metric fluctuation data into the storage. Replaces previous metric fluctuations.
      *
      * @param data the data to import.
      */
-    void setDiff(ClassStore data);
+    void setDiff(MeasureStore data);
 }

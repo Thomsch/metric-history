@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 import ch.thomsch.model.Metrics;
 import ch.thomsch.storage.OutputBuilder;
 import ch.thomsch.storage.RefactoringDetail;
@@ -47,11 +47,11 @@ public class Filter extends Command {
         changesFile = normalizePath(changesFile);
 
         try {
-            final ClassStore model = Stores.loadClasses(changesFile);
+            final MeasureStore model = Stores.loadClasses(changesFile);
             final HashMap<String, RefactoringDetail> detailedRefactorings = loadRefactorings(refactoringsFile);
 
             final HashMap<String, List<String>> changeSet = aggregateClassesForEachRevision(detailedRefactorings);
-            final ClassStore results = filter(model, changeSet);
+            final MeasureStore results = filter(model, changeSet);
 
             final StoreOutput output = OutputBuilder.create(outputFile);
             output.export(results);
@@ -78,21 +78,21 @@ public class Filter extends Command {
      * @param revisions the list of classes per revision to keep
      * @return the new instance of class store that has been filtered
      */
-    private ClassStore filter(ClassStore changes, HashMap<String, List<String>> revisions) {
+    private MeasureStore filter(MeasureStore changes, HashMap<String, List<String>> revisions) {
 
-        final ClassStore filteredChanges = new ClassStore();
+        final MeasureStore filteredChanges = new MeasureStore();
 
         revisions.forEach((revision, classes) -> {
             final ArrayList<String> missingClasses = new ArrayList<>();
 
             for (String className : classes) {
-                final Metrics revisionMetrics = changes.getMetric(revision, className);
+                final Metrics revisionMetrics = changes.get(revision, className);
 
                 if (revisionMetrics == null) {
                     missingClasses.add(className);
                 }
 
-                filteredChanges.addMetric(revision, className, revisionMetrics);
+                filteredChanges.add(revision, className, revisionMetrics);
             }
 
             if (missingClasses.size() > 0) {

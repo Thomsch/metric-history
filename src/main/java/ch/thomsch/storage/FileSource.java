@@ -1,19 +1,19 @@
 package ch.thomsch.storage;
 
-import ch.thomsch.model.ClassStore;
+import ch.thomsch.model.MeasureStore;
 
 /**
  * The repository is located in the memory.
  */
 public class FileSource extends MeasureRepository {
-    private final ClassStore model;
+    private final MeasureStore model;
 
-    FileSource(ClassStore model) {
+    FileSource(MeasureStore model) {
         this.model = model;
     }
 
     @Override
-    public ClassStore get(String ... versions) {
+    public MeasureStore get(String ... versions) {
         return model;
     }
 }
