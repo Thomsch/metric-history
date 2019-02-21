@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.thomsch.mining.Analyzer;
@@ -45,6 +46,9 @@ public class Collect extends Command {
     @CommandLine.Option(names = {"-r", "--repository"}, arity = "0..1", description = "Path to the folder containing .git folder. If omitted, will be searched in the project path.")
     private String repository;
 
+    @CommandLine.Option(names = {"-p", "--include-parents"}, arity = "0..1", description = "Collects the measures for the parents of the versions also.", defaultValue = "true", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
+    private boolean includeParents;
+
     @Override
     public void run() {
         revisionFile = normalizePath(revisionFile);
@@ -65,10 +69,14 @@ public class Collect extends Command {
             final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
             final Collector collector = new Collector(analyzer, vcs);
 
-            final Genealogy genealogy = new Genealogy(vcs);
-            genealogy.addRevisions(revisions);
-
-            final List<String> analysisTargets = genealogy.getUniqueRevisions();
+            final List<String> analysisTargets = new ArrayList<>();
+            if(includeParents) {
+                final Genealogy genealogy = new Genealogy(vcs);
+                genealogy.addRevisions(revisions);
+                analysisTargets.addAll(genealogy.getUniqueRevisions());
+            } else {
+                analysisTargets.addAll(revisions);
+            }
 
             logger.info("Read {} distinct revisions", revisions.size());
 
