@@ -12,7 +12,7 @@ import picocli.CommandLine;
 /**
  * Entry point for the application.
  */
-@CommandLine.Command(name = "metric-history", version = "Metric History 0.3", mixinStandardHelpOptions = true)
+@CommandLine.Command(name = "metric-history", version = "Metric History 0.5", mixinStandardHelpOptions = true)
 public final class Application implements Runnable {
 
     private CommandLine commandLine;
