@@ -50,8 +50,12 @@ public final class Stores {
 
         final CSVParser parser = new CSVParser(new FileReader(filePath), getFormat().withSkipHeaderRecord());
 
-        for (CSVRecord record : parser) {
-            model.add(record.get(0), record.get(1), convertMetrics(record));
+        try {
+            for (CSVRecord record : parser) {
+                model.add(record.get(0), record.get(1), convertMetrics(record));
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new IOException("Corrupted data in " + filePath + ". Please verify the file.");
         }
 
         return model;

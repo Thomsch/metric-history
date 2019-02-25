@@ -39,6 +39,7 @@ public abstract class MeasureRepository {
      * Returns a {@link MeasureStore} populated with the artifacts of the given versions.
      * @param versions the versions to load into the class store
      * @return the new instance of {@link MeasureStore}
+     * @throws IOException when the underlying data container fails
      */
-    public abstract MeasureStore get(String ... versions);
+    public abstract MeasureStore get(String ... versions) throws IOException;
 }

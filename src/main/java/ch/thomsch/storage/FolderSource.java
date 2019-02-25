@@ -21,17 +21,12 @@ public class FolderSource extends MeasureRepository {
     }
 
     @Override
-    public MeasureStore get(String ... versions) {
+    public MeasureStore get(String ... versions) throws IOException{
         final MeasureStore model = new MeasureStore();
 
         for (String version : versions) {
             final File file = new File(directory, version + ".csv");
-
-            try {
-                Stores.loadClasses(file.getPath(), model);
-            } catch (IOException e) {
-                logger.error("Unable to read {}", file.getPath());
-            }
+            Stores.loadClasses(file.getPath(), model);
         }
         return model;
     }
