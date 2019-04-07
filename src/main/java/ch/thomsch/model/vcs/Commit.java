@@ -69,6 +69,20 @@ public class Commit extends Revision {
         return postReleaseSequence;
     }
 
+    public void setPostReleaseSequence(int postReleaseSequence) {
+        this.postReleaseSequence = postReleaseSequence;
+    }
+
+    public int getPostReleaseDays() {
+        if (latestRelease == null){
+            throw new IllegalStateException("Latest release not set");
+        }
+        long latestReleaseEpochDays = latestRelease.getDate().toLocalDate().toEpochDay();
+        long commitEpochDays = date.toLocalDate().toEpochDay();
+        long days = commitEpochDays - latestReleaseEpochDays;
+        return (int)days;
+    }
+
     public static Commit createCommitBeforeTag(String commitId, OffsetDateTime commitDate, Tag tag){
 
         if (commitId == null || commitDate == null || tag == null){
@@ -81,9 +95,11 @@ public class Commit extends Revision {
         if (commitId.equals(tag.getId())){
             commit.setNextRelease(tag.getNextTag());
             commit.setLatestRelease(tag);
+            commit.setPostReleaseSequence(tag.nextCommitSequence());
         } else { // any other commit
             commit.setNextRelease(tag);
             commit.setLatestRelease(tag.getPreviousTag());
+            commit.setPostReleaseSequence(tag.getPreviousTag().nextCommitSequence());
         }
 
         return commit;

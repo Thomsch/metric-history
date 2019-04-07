@@ -31,6 +31,11 @@ public class Tag extends Revision {
      */
     private Tag previousTag;
 
+    /**
+     * Sequence number of commits following this tag (zero based)
+     */
+    private int commitSequence = 0;
+
     public Tag(String id, OffsetDateTime date, String tagName, int sequence) {
         super(id, date);
         this.tagRef = TAG_REF_PREFIX + tagName;
@@ -45,6 +50,10 @@ public class Tag extends Revision {
     @Override
     public boolean isTag() {
         return true;
+    }
+
+    public int nextCommitSequence(){
+        return commitSequence++;
     }
 
     public int getTagSequence() {
@@ -77,8 +86,13 @@ public class Tag extends Revision {
 
     public static Tag firstTag(String commitId, OffsetDateTime commitDate, String tagName){
         Tag tag = new Tag(commitId, commitDate, tagName, 1);
-        // FIXME: use null object
-        tag.setPreviousTag(null);
+
+        Tag nullTag = new Tag("", commitDate, "null", 0);
+        nullTag.setPreviousTag(nullTag);
+        nullTag.setNextTag(tag);
+
+        tag.setPreviousTag(nullTag);
+
         return tag;
     }
 

@@ -15,19 +15,23 @@ import static org.junit.Assert.*;
 public class CommitTest {
 
     RevisionHistoryHelper helper;
+    private List<Tag> tagList;
+    private List<Commit> commits;
 
     @Before
     public void setup(){
         helper = new RevisionHistoryHelper();
         helper.prepareData();
+        tagList = helper.getTagList();
+        commits = helper.getRevisionHistory();
     }
 
     @Test
     public void testFixtureSetup(){
-        List<Tag> tagList = helper.getTagList();
+
         Tag firstTag = tagList.get(0);
         assertNotNull(firstTag.getNextTag());
-        assertNull(firstTag.getPreviousTag());
+        assertNotNull(firstTag.getPreviousTag());
 
         Tag secondTag = tagList.get(1);
         assertNotNull(secondTag.getPreviousTag());
@@ -44,9 +48,8 @@ public class CommitTest {
         assertNull(masterTag.getNextTag());
         assertEquals(masterTag.getPreviousTag(), tagList.get(tagList.size() - 2));
 
-        List<Commit> commits = helper.getRevisionHistory();
         Commit firstCommit = commits.get(0);
-        assertNull(firstCommit.getLatestRelease());
+        assertNotNull(firstCommit.getLatestRelease());
         assertEquals(firstCommit.getNextRelease(), firstTag);
 
         Commit firstTagCommit = commits.get(3);
@@ -63,5 +66,44 @@ public class CommitTest {
         assertEquals(postSecondVersionCommit.getNextRelease(), thirdTag);
 
     }
-    
+
+    @Test
+    public void testCommitInfo_inFirstRelease(){
+
+        for(int i = 0; i < 3; i++){
+            Commit commit = commits.get(i);
+            assertEquals(i, commit.getPostReleaseSequence());
+        }
+        Commit firstReleaseCommit = commits.get(3);
+        assertEquals(0, firstReleaseCommit.getPostReleaseSequence()); // sequence is reset
+
+        assertEquals(0, commits.get(0).getPostReleaseDays());
+
+    }
+
+
+    @Test
+    public void testCommitInfo_inSecondRelease(){
+
+        for(int i = 4; i < 9; i++){
+            Commit commit = commits.get(i);
+            assertEquals(i - 3, commit.getPostReleaseSequence());
+        }
+        Commit secondReleaseCommit = commits.get(9);
+        assertEquals(0, secondReleaseCommit.getPostReleaseSequence()); // sequence is reset
+
+    }
+
+    @Test
+    public void testCommitInfo_inAfterLastRelease(){
+
+        for(int i = 16; i < 21; i++){
+            Commit commit = commits.get(i);
+            assertEquals(i - 15, commit.getPostReleaseSequence());
+        }
+        Commit secondReleaseCommit = commits.get(21);
+        assertEquals(0, secondReleaseCommit.getPostReleaseSequence()); // sequence is reset
+
+    }
+
 }
