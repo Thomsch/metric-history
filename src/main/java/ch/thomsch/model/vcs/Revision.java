@@ -1,8 +1,13 @@
 package ch.thomsch.model.vcs;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public abstract class Revision {
+
+    public Revision(String id, OffsetDateTime date) {
+        this.id = id;
+        this.date = date;
+    }
     /**
      * The commit SHA-1
      */
@@ -10,7 +15,7 @@ public abstract class Revision {
     /**
      * The author commit date
      */
-    protected Date date;
+    protected OffsetDateTime date;
 
     public abstract boolean isTag();
 
@@ -22,11 +27,11 @@ public abstract class Revision {
         this.id = id;
     }
 
-    public Date getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(OffsetDateTime date) {
         this.date = date;
     }
 }

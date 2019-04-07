@@ -38,7 +38,7 @@ public class MeasureStoreTest {
     @Test
     public void cyclesAreSupported() {
         /*
-          It would be more work to make them illegal. Version control systems don't allow them anyway.
+          It would be more work to make them illegal. Version control systems don'time allow them anyway.
          */
         instance.add("alpha", "A", dummy);
         instance.add("beta", "A", dummy);

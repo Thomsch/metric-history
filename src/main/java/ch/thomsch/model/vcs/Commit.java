@@ -1,5 +1,7 @@
 package ch.thomsch.model.vcs;
 
+import java.time.OffsetDateTime;
+
 public class Commit extends Revision {
 
     /**
@@ -38,9 +40,63 @@ public class Commit extends Revision {
      */
     protected Tag latestRelease;
 
+    public Commit(String id, OffsetDateTime date) {
+        super(id, date);
+    }
+
     @Override
     public boolean isTag(){
         return false;
     }
 
+    public void setNextRelease(Tag nextRelease) {
+        this.nextRelease = nextRelease;
+    }
+
+    public void setLatestRelease(Tag latestRelease) {
+        this.latestRelease = latestRelease;
+    }
+
+    public Tag getNextRelease() {
+        return nextRelease;
+    }
+
+    public Tag getLatestRelease() {
+        return latestRelease;
+    }
+
+    public int getPostReleaseSequence() {
+        return postReleaseSequence;
+    }
+
+    public static Commit createCommitBeforeTag(String commitId, OffsetDateTime commitDate, Tag tag){
+
+        if (commitId == null || commitDate == null || tag == null){
+            return null;
+        }
+
+        Commit commit = new Commit(commitId, commitDate);
+
+        // a tag commit
+        if (commitId.equals(tag.getId())){
+            commit.setNextRelease(tag.getNextTag());
+            commit.setLatestRelease(tag);
+        } else { // any other commit
+            commit.setNextRelease(tag);
+            commit.setLatestRelease(tag.getPreviousTag());
+        }
+
+        return commit;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        return buffer.append("Commit\t")
+                .append(id + "\t")
+                .append(nextRelease.getTagName() + "\t")
+                .append(date)
+                .toString();
+
+    }
 }
