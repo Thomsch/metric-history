@@ -91,7 +91,13 @@ public class Commit extends Revision {
      * The next tag is assumed for a tag commit
      */
     public int getDaysToNextRelease() {
-        return -1;
+        if (nextRelease == null){
+            throw new IllegalStateException(("Next release is not available"));
+        }
+        long nextReleaseEpochDays = nextRelease.getDate().toLocalDate().toEpochDay();
+        long commitEpochDays = date.toLocalDate().toEpochDay();
+        long days = nextReleaseEpochDays - commitEpochDays;
+        return (int) days;
     }
 
     @Override

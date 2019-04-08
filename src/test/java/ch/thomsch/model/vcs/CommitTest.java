@@ -87,17 +87,21 @@ public class CommitTest {
 
         assertEquals(0, commits.get(0).getPostReleaseDays());
         assertEquals(3, commits.get(0).getCommitsToNextRelease());
+        assertEquals(52, commits.get(0).getDaysToNextRelease());
 
         assertEquals(35, commits.get(1).getPostReleaseDays());
         assertEquals(2, commits.get(1).getCommitsToNextRelease());
+        assertEquals(17, commits.get(1).getDaysToNextRelease());
 
         assertEquals(49, commits.get(2).getPostReleaseDays());
         assertEquals(1, commits.get(2).getCommitsToNextRelease());
+        assertEquals(3, commits.get(2).getDaysToNextRelease());
 
         Commit tagV1Commit = commits.get(3);
         assertEquals(0, tagV1Commit.getPostReleaseSequence()); // sequence is reset
         assertEquals(0, tagV1Commit.getPostReleaseDays());
         assertEquals(6, tagV1Commit.getCommitsToNextRelease());
+        assertEquals(45, tagV1Commit.getDaysToNextRelease());
     }
 
 
@@ -111,12 +115,15 @@ public class CommitTest {
 
         assertEquals(0, commits.get(4).getPostReleaseDays());
         assertEquals(5, commits.get(4).getCommitsToNextRelease());
+        assertEquals(45, commits.get(4).getDaysToNextRelease());
 
         assertEquals(7, commits.get(5).getPostReleaseDays());
         assertEquals(4, commits.get(5).getCommitsToNextRelease());
+        assertEquals(38, commits.get(5).getDaysToNextRelease());
 
         assertEquals(11, commits.get(6).getPostReleaseDays());
         assertEquals(3, commits.get(6).getCommitsToNextRelease());
+        assertEquals(34, commits.get(6).getDaysToNextRelease());
 
         Commit tagV2Commit = commits.get(9);
         assertEquals(0, tagV2Commit.getPostReleaseSequence()); // sequence is reset
@@ -131,6 +138,7 @@ public class CommitTest {
         assertEquals(0, tagV3Commit.getPostReleaseSequence());
         assertEquals(0, tagV3Commit.getPostReleaseDays());
         assertEquals(6, tagV3Commit.getCommitsToNextRelease());
+        assertEquals(120, tagV3Commit.getDaysToNextRelease());
 
         for(int i = 16; i < 21; i++){
             Commit commit = commits.get(i);
@@ -139,13 +147,23 @@ public class CommitTest {
 
         assertEquals(7, commits.get(16).getPostReleaseDays());
         assertEquals(5, commits.get(16).getCommitsToNextRelease());
+        assertEquals(113, commits.get(16).getDaysToNextRelease());
 
         assertEquals(47, commits.get(17).getPostReleaseDays());
         assertEquals(4, commits.get(17).getCommitsToNextRelease());
+        assertEquals(73, commits.get(17).getDaysToNextRelease());
 
         Commit lastCommit = commits.get(21);
         assertEquals(0, lastCommit.getPostReleaseSequence());
+        // the next release requires at least 1 more commit (not yet available)
         assertEquals(1, lastCommit.getCommitsToNextRelease());
+
+        try {
+            assertEquals(53, lastCommit.getDaysToNextRelease());
+            fail();
+        } catch (IllegalStateException e){
+
+        }
     }
 
 }
