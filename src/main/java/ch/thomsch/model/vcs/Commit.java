@@ -83,28 +83,6 @@ public class Commit extends Revision {
         return (int)days;
     }
 
-    public static Commit createCommitBeforeTag(String commitId, OffsetDateTime commitDate, Tag tag){
-
-        if (commitId == null || commitDate == null || tag == null){
-            return null;
-        }
-
-        Commit commit = new Commit(commitId, commitDate);
-
-        // a tag commit
-        if (commitId.equals(tag.getId())){
-            commit.setNextRelease(tag.getNextTag());
-            commit.setLatestRelease(tag);
-            commit.setPostReleaseSequence(tag.nextCommitSequence());
-        } else { // any other commit
-            commit.setNextRelease(tag);
-            commit.setLatestRelease(tag.getPreviousTag());
-            commit.setPostReleaseSequence(tag.getPreviousTag().nextCommitSequence());
-        }
-
-        return commit;
-    }
-
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();

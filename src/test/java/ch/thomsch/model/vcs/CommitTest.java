@@ -29,24 +29,29 @@ public class CommitTest {
     @Test
     public void testFixtureSetup(){
 
-        Tag firstTag = tagList.get(0);
+        Tag projectStart = tagList.get(0);
+        assertNotNull(projectStart.getNextTag());
+        assertEquals(tagList.get(1), projectStart.getNextTag());
+        assertEquals(projectStart, projectStart.getPreviousTag());
+
+        Tag firstTag = tagList.get(1);
         assertNotNull(firstTag.getNextTag());
         assertNotNull(firstTag.getPreviousTag());
 
-        Tag secondTag = tagList.get(1);
+        Tag secondTag = tagList.get(2);
         assertNotNull(secondTag.getPreviousTag());
         assertNotNull(secondTag.getNextTag());
-        assertEquals(secondTag.getPreviousTag(), firstTag);
-        assertEquals(secondTag.getNextTag(), tagList.get(2));
+        assertEquals(firstTag, secondTag.getPreviousTag());
+        assertEquals(tagList.get(3), secondTag.getNextTag());
 
-        Tag thirdTag = tagList.get(2);
-        assertEquals(thirdTag.getPreviousTag(), secondTag);
-        assertEquals(thirdTag.getNextTag(), tagList.get(3));
+        Tag thirdTag = tagList.get(3);
+        assertEquals(secondTag, thirdTag.getPreviousTag());
+        assertEquals(tagList.get(4), thirdTag.getNextTag());
 
         Tag masterTag = tagList.get(tagList.size() - 1);
         assertNotNull(masterTag.getPreviousTag());
         assertNull(masterTag.getNextTag());
-        assertEquals(masterTag.getPreviousTag(), tagList.get(tagList.size() - 2));
+        assertEquals(tagList.get(tagList.size() - 2), masterTag.getPreviousTag());
 
         Commit firstCommit = commits.get(0);
         assertNotNull(firstCommit.getLatestRelease());
@@ -68,7 +73,7 @@ public class CommitTest {
     }
 
     @Test
-    public void testCommitInfo_inFirstRelease(){
+    public void testCommitInfo_toFirstRelease(){
 
         for(int i = 0; i < 3; i++){
             Commit commit = commits.get(i);
@@ -76,14 +81,12 @@ public class CommitTest {
         }
         Commit firstReleaseCommit = commits.get(3);
         assertEquals(0, firstReleaseCommit.getPostReleaseSequence()); // sequence is reset
-
         assertEquals(0, commits.get(0).getPostReleaseDays());
-
     }
 
 
     @Test
-    public void testCommitInfo_inSecondRelease(){
+    public void testCommitInfo_toSecondRelease(){
 
         for(int i = 4; i < 9; i++){
             Commit commit = commits.get(i);
@@ -95,14 +98,14 @@ public class CommitTest {
     }
 
     @Test
-    public void testCommitInfo_inAfterLastRelease(){
+    public void testCommitInfo_afterLastRelease(){
 
         for(int i = 16; i < 21; i++){
             Commit commit = commits.get(i);
             assertEquals(i - 15, commit.getPostReleaseSequence());
         }
         Commit secondReleaseCommit = commits.get(21);
-        assertEquals(0, secondReleaseCommit.getPostReleaseSequence()); // sequence is reset
+        assertEquals(6, secondReleaseCommit.getPostReleaseSequence());
 
     }
 

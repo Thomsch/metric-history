@@ -11,30 +11,26 @@ public class Tag extends Revision {
     /**
      * Tag name, for tagged revisions (just the label, not the full reference)
      */
-    private String tagName = "";
+    protected String tagName = "";
 
-    private String tagRef;
+    protected String tagRef;
+
     /**
      * The sequence of the tag in the revision history
      */
-    private int tagSequence = 0;
+    protected int tagSequence = 0;
 
     /**
      * The tag that follows the current tag
      * It points to the latest commit of the master branch (name = master) for the last tag
      */
-    private Tag nextTag;
+    protected Tag nextTag;
 
     /**
      * The tag that precedes the current tag.
      * It has a null value for the first tag (FIXME)
      */
-    private Tag previousTag;
-
-    /**
-     * Sequence number of commits following this tag (zero based)
-     */
-    private int commitSequence = 0;
+    protected Tag previousTag;
 
     public Tag(String id, OffsetDateTime date, String tagName, int sequence) {
         super(id, date);
@@ -50,10 +46,6 @@ public class Tag extends Revision {
     @Override
     public boolean isTag() {
         return true;
-    }
-
-    public int nextCommitSequence(){
-        return commitSequence++;
     }
 
     public int getTagSequence() {
@@ -84,25 +76,13 @@ public class Tag extends Revision {
         this.tagName = tagName;
     }
 
-    public static Tag firstTag(String commitId, OffsetDateTime commitDate, String tagName){
-        Tag tag = new Tag(commitId, commitDate, tagName, 1);
-
-        Tag nullTag = new Tag("", commitDate, "null", 0);
-        nullTag.setPreviousTag(nullTag);
-        nullTag.setNextTag(tag);
-
-        tag.setPreviousTag(nullTag);
-
-        return tag;
-    }
-
     public static Tag masterRef(String commitId, OffsetDateTime commitDate, Tag previousTag){
         Tag tag = new Tag(commitId, commitDate, "master", previousTag.tagSequence + 1);
         tag.setPreviousTag(previousTag);
         return tag;
     }
 
-    public static Tag intermediateTag(String commitId, OffsetDateTime commitDate, String tagName, Tag previousTag){
+    public static Tag tag(String commitId, OffsetDateTime commitDate, String tagName, Tag previousTag){
         Tag tag = new Tag(commitId, commitDate, tagName, previousTag.tagSequence + 1);
         tag.setPreviousTag(previousTag);
         return tag;
@@ -114,6 +94,10 @@ public class Tag extends Revision {
         if (o == null || getClass() != o.getClass()) return false;
         Tag tag = (Tag) o;
         return tagRef.equals(tag.tagRef);
+    }
+
+    public boolean isNull(){
+        return false;
     }
 
     @Override
