@@ -1,10 +1,13 @@
 package ch.thomsch.versioncontrol;
 
+import ch.thomsch.model.vcs.Commit;
+import ch.thomsch.model.vcs.Tag;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represent a generic Version Control System.
@@ -44,6 +47,16 @@ public interface VCS extends AutoCloseable {
             String revision,
             Collection<File> beforeFiles,
             Collection<File> afterFiles) throws IOException;
+
+    List<Tag> listReleases();
+
+    /**
+     * List all commits between two releases
+     * @param fromTag The starting release
+     * @param toTag The next release
+     * @return List of commits including the starting release commit and excluding the next release
+     */
+    List<Commit> listCommitsBetweenReleases(Tag fromTag, Tag toTag);
 
     /**
      * Return the location of this repository on the file system.

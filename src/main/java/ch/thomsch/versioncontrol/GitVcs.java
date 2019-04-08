@@ -1,5 +1,7 @@
 package ch.thomsch.versioncontrol;
 
+import ch.thomsch.model.vcs.Commit;
+import ch.thomsch.model.vcs.Tag;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.Git;
@@ -122,6 +124,16 @@ public class GitVcs implements VCS {
         } catch (GitAPIException e) {
             logger.error("Unable to retrieve changed files for revision {}", revision, e);
         }
+    }
+
+    @Override
+    public List<Tag> listReleases() {
+        return null;
+    }
+
+    @Override
+    public List<Commit> listCommitsBetweenReleases(Tag fromTag, Tag toTag) {
+        return null;
     }
 
     /**
