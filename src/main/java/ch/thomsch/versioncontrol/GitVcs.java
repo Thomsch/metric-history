@@ -1,6 +1,7 @@
 package ch.thomsch.versioncontrol;
 
 import ch.thomsch.model.vcs.Commit;
+import ch.thomsch.model.vcs.NullTag;
 import ch.thomsch.model.vcs.Tag;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.api.CheckoutCommand;
@@ -12,6 +13,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -21,7 +23,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public class GitVcs implements VCS {
@@ -128,7 +135,39 @@ public class GitVcs implements VCS {
 
     @Override
     public List<Tag> listReleases() {
-        return null;
+        Git git = new Git(repository);
+        List<Tag> tagList = new ArrayList<>();
+        try {
+
+
+            NullTag projectStart = new NullTag();
+            tagList.add(projectStart);
+
+            List<Ref> tagRefs = git.tagList().call();
+            Tag previousTag = projectStart;
+            for(Ref ref: tagRefs){
+                RevCommit commit = repository.parseCommit(ref.getPeeledObjectId());
+                // FIXME: test this conversion first and then move to a utility class
+                Date commitDate = commit.getAuthorIdent().getWhen();
+                OffsetDateTime commitOffsetDateTime = OffsetDateTime.ofInstant(commitDate.toInstant(), ZoneOffset.ofHoursMinutes(0, commitDate.getTimezoneOffset()));
+                // creates a tag domain object
+                Tag tag = Tag.tag(ref.getPeeledObjectId().getName(), commitOffsetDateTime, ref.getName(), previousTag);
+                previousTag = tag;
+                tagList.add(tag);
+                System.out.println(ref.getName());
+            }
+
+            // find and add the master ref
+
+            // establish next tag association to all but the last one
+            for(int i = 0; i < tagList.size() - 1; i++){
+                Tag tag = tagList.get(i);
+                tag.setNextTag(tagList.get(i+1));
+            }
+        } catch (GitAPIException | IOException e) {
+            e.printStackTrace();
+        }
+        return tagList;
     }
 
     @Override
