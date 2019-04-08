@@ -1,6 +1,8 @@
 package ch.thomsch.model.vcs;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Tag extends Revision {
@@ -32,6 +34,8 @@ public class Tag extends Revision {
      */
     protected Tag previousTag;
 
+    protected List<Commit> postReleaseCommits = new ArrayList<>();
+
     public Tag(String id, OffsetDateTime date, String tagName, int sequence) {
         super(id, date);
         this.tagRef = TAG_REF_PREFIX + tagName;
@@ -41,6 +45,15 @@ public class Tag extends Revision {
 
     public boolean isMasterRef(){
         return tagRef.equals(MASTER_REF);
+    }
+
+    /**
+     * Commit count starting from the current release and extending (without including)
+     * the next release
+     * @return
+     */
+    public int getPostReleaseCommitCount(){
+        return postReleaseCommits.size();
     }
 
     @Override

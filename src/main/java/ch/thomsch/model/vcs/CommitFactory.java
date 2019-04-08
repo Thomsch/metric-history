@@ -15,37 +15,33 @@ public class CommitFactory {
      * @param startingRelease
      * @return
      */
-    public static CommitFactory fromRelease(Tag startingRelease){
+    public static CommitFactory fromRelease(Tag startingRelease) {
         return new CommitFactory(startingRelease);
     }
 
     /**
      * Create a commit that is either the startingRelease or follows it
+     *
      * @param commitId
      * @param commitDate
      * @return
      */
-    public Commit nextCommit(String commitId, OffsetDateTime commitDate){
+    public Commit nextCommit(String commitId, OffsetDateTime commitDate) {
 
-        if (commitId == null || commitDate == null){
+        if (commitId == null || commitDate == null) {
             return null;
         }
 
         Commit commit = new Commit(commitId, commitDate);
 
         // project start
-        if (startingRelease.isNull() && commitSequence == 0){
+        if (startingRelease.isNull() && commitSequence == 0) {
             // update release date from first commit
             startingRelease.setDate(commitDate);
         }
-        // a tag commit
-        if (commitId.equals(startingRelease.getId())){
-            commit.setNextRelease(startingRelease.getNextTag());
-            commit.setLatestRelease(startingRelease);
-        } else { // any other commit
-            commit.setNextRelease(startingRelease.getNextTag());
-            commit.setLatestRelease(startingRelease);
-        }
+
+        commit.setLatestRelease(startingRelease);
+        commit.setNextRelease(startingRelease.getNextTag());
         commit.setPostReleaseSequence(commitSequence++);
         return commit;
     }

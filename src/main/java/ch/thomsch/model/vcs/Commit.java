@@ -4,57 +4,43 @@ import java.time.OffsetDateTime;
 
 public class Commit extends Revision {
 
-    /**
-     * Sequence of the commit after the latest release (tag)
-     * A tag commit has postReleaseSequence = 0
-     */
-    protected int postReleaseSequence;
-    /**
-     * Number of days since the latest release (tag)
-     * A tag commit has postReleaseDays = 0
-     */
-    protected int postReleaseDays;
-
-    /**
-     * Number of commits till the next release (tag)
-     * The next tag is assumed for a tag commit
-     */
-    protected int commitsToNextRelease;
-
-    /**
-     * Number of days till the next release (tag)
-     * The next tag is assumed for a tag commit
-     */
-    protected int daysToNextRelease;
+    private int postReleaseSequence;
 
     /**
      * The tag corresponding the forthcoming release for the current commit.
      */
-    protected Tag nextRelease;
+    private Tag nextRelease;
 
     /**
      * The tag corresponding to the latest release for the current commit.
      * The latestRelease of a tag commit is the current tag.
-     *
+     * <p>
      * The first commits of the project have a null value in this field
      */
-    protected Tag latestRelease;
+    private Tag latestRelease;
 
     public Commit(String id, OffsetDateTime date) {
         super(id, date);
     }
 
     @Override
-    public boolean isTag(){
+    public boolean isTag() {
         return false;
     }
 
-    public void setNextRelease(Tag nextRelease) {
+    protected void setNextRelease(Tag nextRelease) {
         this.nextRelease = nextRelease;
     }
 
-    public void setLatestRelease(Tag latestRelease) {
+    protected void setLatestRelease(Tag latestRelease) {
+        if (latestRelease == null) {
+            throw new IllegalArgumentException("latest release should not be null");
+        }
+        if (this.latestRelease != null) {
+            this.latestRelease.postReleaseCommits.remove(this);
+        }
         this.latestRelease = latestRelease;
+        this.latestRelease.postReleaseCommits.add(this);
     }
 
     public Tag getNextRelease() {
@@ -65,22 +51,47 @@ public class Commit extends Revision {
         return latestRelease;
     }
 
+    protected void setPostReleaseSequence(int postReleaseSequence) {
+        this.postReleaseSequence = postReleaseSequence;
+    }
+
+    /**
+     * Sequence of the commit after the latest release (tag)
+     * A tag commit has postReleaseSequence = 0
+     */
     public int getPostReleaseSequence() {
         return postReleaseSequence;
     }
 
-    public void setPostReleaseSequence(int postReleaseSequence) {
-        this.postReleaseSequence = postReleaseSequence;
+    /**
+     * Number of commits till the next release (tag)
+     * The next tag is assumed for a tag commit
+     */
+    public int getCommitsToNextRelease() {
+        int postReleaseCommits = latestRelease.getPostReleaseCommitCount();
+        return postReleaseCommits - postReleaseSequence;
     }
 
+    /**
+     * Number of days since the latest release (tag)
+     * A tag commit has postReleaseDays = 0
+     */
     public int getPostReleaseDays() {
-        if (latestRelease == null){
+        if (latestRelease == null) {
             throw new IllegalStateException("Latest release not set");
         }
         long latestReleaseEpochDays = latestRelease.getDate().toLocalDate().toEpochDay();
         long commitEpochDays = date.toLocalDate().toEpochDay();
         long days = commitEpochDays - latestReleaseEpochDays;
-        return (int)days;
+        return (int) days;
+    }
+
+    /**
+     * Number of days till the next release (tag)
+     * The next tag is assumed for a tag commit
+     */
+    public int getDaysToNextRelease() {
+        return -1;
     }
 
     @Override
