@@ -90,8 +90,12 @@ public class Tag extends Revision {
         return tagName;
     }
 
-    public void setTagName(String tagName) {
+    protected void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+    public String getTagRef() {
+        return tagRef;
     }
 
     public static Tag masterRef(String commitId, OffsetDateTime commitDate, Tag previousTag){

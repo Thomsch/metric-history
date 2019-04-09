@@ -143,8 +143,9 @@ public class GitVcs implements VCS {
             NullTag projectStart = new NullTag();
             tagList.add(projectStart);
             // find tag references
-            List<Ref> tagRefs = git.tagList().call();
-
+            ListTagCommand listTagCommand = git.tagList();
+            List<Ref> tagRefs = listTagCommand.call();
+            // fixme sort tags by date !
             Tag previousTag = projectStart;
             for(Ref ref: tagRefs){
                 RevCommit commit = repository.parseCommit(ref.getPeeledObjectId());
@@ -185,8 +186,6 @@ public class GitVcs implements VCS {
             ObjectId toTagId = repository.resolve(toTag.getId());
             if (fromTag.isNull()){
                 logCommand.add(toTagId);
-            } else if (toTag.isMasterRef()) {
-
             } else {
                 ObjectId fromTagId = repository.resolve(fromTag.getId());
                 logCommand.addRange(fromTagId, toTagId);
