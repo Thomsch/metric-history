@@ -3,6 +3,7 @@ package ch.thomsch.versioncontrol;
 import ch.thomsch.model.vcs.Commit;
 import ch.thomsch.model.vcs.NullTag;
 import ch.thomsch.model.vcs.Tag;
+import ch.thomsch.util.DateUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.Git;
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import static ch.thomsch.util.DateUtils.*;
 
 public class GitVcs implements VCS {
 
@@ -138,32 +141,35 @@ public class GitVcs implements VCS {
         Git git = new Git(repository);
         List<Tag> tagList = new ArrayList<>();
         try {
-
-
+            // project start pseudo-tag
             NullTag projectStart = new NullTag();
             tagList.add(projectStart);
-
+            // find tag references
             List<Ref> tagRefs = git.tagList().call();
+
             Tag previousTag = projectStart;
             for(Ref ref: tagRefs){
                 RevCommit commit = repository.parseCommit(ref.getPeeledObjectId());
-                // FIXME: test this conversion first and then move to a utility class
-                Date commitDate = commit.getAuthorIdent().getWhen();
-                OffsetDateTime commitOffsetDateTime = OffsetDateTime.ofInstant(commitDate.toInstant(), ZoneOffset.ofHoursMinutes(0, commitDate.getTimezoneOffset()));
+                OffsetDateTime commitOffsetDateTime = offsetDateTimeOf(commit.getAuthorIdent().getWhen());
                 // creates a tag domain object
                 Tag tag = Tag.tag(ref.getPeeledObjectId().getName(), commitOffsetDateTime, ref.getName(), previousTag);
                 previousTag = tag;
                 tagList.add(tag);
-                System.out.println(ref.getName());
             }
 
             // find and add the master ref
+            Ref masterRef = repository.findRef(Tag.MASTER_REF);
+            RevCommit lastCommit = repository.parseCommit(masterRef.getObjectId());
+            OffsetDateTime commitDateTime = offsetDateTimeOf(lastCommit.getAuthorIdent().getWhen());
+            Tag masterRefTag = Tag.masterRef(masterRef.getObjectId().getName(), commitDateTime, previousTag);
+            tagList.add(masterRefTag);
 
             // establish next tag association to all but the last one
             for(int i = 0; i < tagList.size() - 1; i++){
                 Tag tag = tagList.get(i);
                 tag.setNextTag(tagList.get(i+1));
             }
+
         } catch (GitAPIException | IOException e) {
             e.printStackTrace();
         }

@@ -117,4 +117,20 @@ public class Tag extends Revision {
     public int hashCode() {
         return Objects.hash(tagRef);
     }
+
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("[Tag ");
+        buffer.append(tagName);
+        buffer.append(" commitId: ");
+        buffer.append(id);
+        buffer.append(" date: ");
+        buffer.append(date != null ? date : "-");
+        buffer.append(" previous: ");
+        buffer.append(getPreviousTag().isNull() ? "-" : previousTag.getTagName());
+        buffer.append(" next: ");
+        buffer.append(nextTag != null ? nextTag.getTagName() : "-");
+        return buffer.toString();
+    }
 }
