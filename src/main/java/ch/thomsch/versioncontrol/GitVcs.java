@@ -1,23 +1,24 @@
 package ch.thomsch.versioncontrol;
 
 import ch.thomsch.model.vcs.Commit;
+import ch.thomsch.model.vcs.CommitFactory;
 import ch.thomsch.model.vcs.NullTag;
 import ch.thomsch.model.vcs.Tag;
 import ch.thomsch.util.DateUtils;
+import ch.thomsch.util.GitUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.eclipse.jgit.api.CheckoutCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ResetCommand;
-import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.errors.StopWalkException;
+import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static ch.thomsch.util.DateUtils.*;
 
@@ -178,7 +176,42 @@ public class GitVcs implements VCS {
 
     @Override
     public List<Commit> listCommitsBetweenReleases(Tag fromTag, Tag toTag) {
-        return null;
+
+        List<Commit> commits = new ArrayList<>();
+        Git git = new Git(repository);
+        LogCommand logCommand = git.log();
+        try {
+            ObjectId toTagId = repository.resolve(toTag.getId());
+            if (fromTag.isNull()){
+                logCommand.add(toTagId);
+            } else {
+                ObjectId fromTagId = repository.resolve(fromTag.getId());
+                logCommand.addRange(fromTagId, toTagId);
+            }
+            logCommand.setRevFilter(GitUtils.noMergeFilter());
+            Iterable<RevCommit> revCommitIterable = logCommand.call();
+
+            List<RevCommit> revCommits = new ArrayList<>();
+            for(RevCommit commit: revCommitIterable){
+                revCommits.add(commit);
+            }
+            // process in commit creation order
+            Collections.reverse(revCommits);
+            CommitFactory commitFactory = CommitFactory.fromRelease(fromTag);
+            for(RevCommit revCommit: revCommits){
+                OffsetDateTime dateTime = offsetDateTimeOf(revCommit.getAuthorIdent().getWhen());
+                Commit commit = commitFactory.nextCommit(revCommit.getName(), dateTime);
+                commits.add(commit);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoHeadException e) {
+            e.printStackTrace();
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+        }
+
+        return commits;
     }
 
     /**

@@ -1,6 +1,7 @@
 package ch.thomsch.cmd;
 
 import ch.thomsch.model.Genealogy;
+import ch.thomsch.model.vcs.Commit;
 import ch.thomsch.model.vcs.Tag;
 import ch.thomsch.storage.GenealogyRepo;
 import ch.thomsch.storage.RevisionRepo;
@@ -51,5 +52,9 @@ public class RevisionHistory extends Command {
             System.out.println(tag);
         }
 
+        List<Commit> commits = repository.listCommitsBetweenReleases(releases.get(0), releases.get(1));
+        for(Commit commit: commits){
+            System.out.println(commit);
+        }
     }
 }
