@@ -4,21 +4,16 @@ import ch.thomsch.model.vcs.Commit;
 import ch.thomsch.model.vcs.CommitFactory;
 import ch.thomsch.model.vcs.NullTag;
 import ch.thomsch.model.vcs.Tag;
-import ch.thomsch.util.DateUtils;
 import ch.thomsch.util.GitUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.errors.IncorrectObjectTypeException;
-import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
-import org.eclipse.jgit.errors.StopWalkException;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.*;
 
 import static ch.thomsch.util.DateUtils.*;
@@ -134,21 +127,34 @@ public class GitVcs implements VCS {
         }
     }
 
+    private List<TagCommitPair> listTagsSortedByCommitDate() throws GitAPIException, IOException {
+        List<TagCommitPair> tagList = new ArrayList<>();
+        Git git = new Git(repository);
+        ListTagCommand listTagCommand = git.tagList();
+        List<Ref> tagRefs = listTagCommand.call();
+        for(Ref ref: tagRefs) {
+            RevCommit commit = repository.parseCommit(ref.getPeeledObjectId());
+            tagList.add(new TagCommitPair(ref, commit));
+        }
+        Collections.sort(tagList);
+        return tagList;
+    }
+
     @Override
     public List<Tag> listReleases() {
-        Git git = new Git(repository);
+
         List<Tag> tagList = new ArrayList<>();
         try {
             // project start pseudo-tag
             NullTag projectStart = new NullTag();
             tagList.add(projectStart);
-            // find tag references
-            ListTagCommand listTagCommand = git.tagList();
-            List<Ref> tagRefs = listTagCommand.call();
-            // fixme sort tags by date !
+
+            List<TagCommitPair> tagCommitPairs = listTagsSortedByCommitDate();
+
             Tag previousTag = projectStart;
-            for(Ref ref: tagRefs){
-                RevCommit commit = repository.parseCommit(ref.getPeeledObjectId());
+            for(TagCommitPair pair: tagCommitPairs){
+                Ref ref = pair.tag;
+                RevCommit commit = pair.commit;
                 OffsetDateTime commitOffsetDateTime = offsetDateTimeOf(commit.getAuthorIdent().getWhen());
                 // creates a tag domain object
                 Tag tag = Tag.tag(ref.getPeeledObjectId().getName(), commitOffsetDateTime, ref.getName(), previousTag);
@@ -246,6 +252,26 @@ public class GitVcs implements VCS {
             return parentRevision.getName();
         }
     }
+
+    public static final class TagCommitPair implements Comparable<TagCommitPair> {
+        public Ref tag;
+        public RevCommit commit;
+
+        public TagCommitPair(Ref tag, RevCommit commit) {
+            this.tag = tag;
+            this.commit = commit;
+        }
+
+        @Override
+        public int compareTo(TagCommitPair otherPair) {
+
+            Date date1 = commit.getAuthorIdent().getWhen();
+            Date date2 = otherPair.commit.getAuthorIdent().getWhen();
+            return date1.compareTo(date2);
+        }
+    }
+
+
 
     @Override
     public void close() {
