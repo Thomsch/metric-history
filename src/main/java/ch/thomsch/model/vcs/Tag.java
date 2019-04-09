@@ -38,7 +38,12 @@ public class Tag extends Revision {
 
     public Tag(String id, OffsetDateTime date, String tagName, int sequence) {
         super(id, date);
-        this.tagRef = TAG_REF_PREFIX + tagName;
+        if (tagName.contains(TAG_REF_PREFIX)){
+            tagRef = tagName;
+            tagName = tagName.replace(TAG_REF_PREFIX, "");
+        } else {
+            this.tagRef = tagName.equals("master") ? MASTER_REF : TAG_REF_PREFIX + tagName;
+        }
         this.tagSequence = sequence;
         this.tagName = tagName;
     }
@@ -123,6 +128,8 @@ public class Tag extends Revision {
         StringBuffer buffer = new StringBuffer();
         buffer.append("[Tag ");
         buffer.append(tagName);
+        buffer.append(" ref: ");
+        buffer.append(tagRef);
         buffer.append(" commitId: ");
         buffer.append(id);
         buffer.append(" date: ");

@@ -13,7 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Generates a CSV file containing the list of pairs "version, parent". The version in the first column corresponds
@@ -52,9 +56,19 @@ public class RevisionHistory extends Command {
             System.out.println(tag);
         }
 
-        List<Commit> commits = repository.listCommitsBetweenReleases(releases.get(0), releases.get(1));
-        for(Commit commit: commits){
-            System.out.println(commit);
-        }
+        int releaseCount = releases.size();
+
+        List<Commit> commits = releases.stream().flatMap(new Function<Tag, Stream<Commit>>() {
+            @Override
+            public Stream<Commit> apply(Tag tag) {
+
+                if (tag.isMasterRef()){
+                    return Stream.empty();
+                }
+                return repository.listCommitsBetweenReleases(tag, tag.getNextTag())
+                        .stream();
+            }
+        }).collect(Collectors.toList());
+
     }
 }

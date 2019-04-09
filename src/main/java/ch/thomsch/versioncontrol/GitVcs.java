@@ -181,9 +181,12 @@ public class GitVcs implements VCS {
         Git git = new Git(repository);
         LogCommand logCommand = git.log();
         try {
+
             ObjectId toTagId = repository.resolve(toTag.getId());
             if (fromTag.isNull()){
                 logCommand.add(toTagId);
+            } else if (toTag.isMasterRef()) {
+
             } else {
                 ObjectId fromTagId = repository.resolve(fromTag.getId());
                 logCommand.addRange(fromTagId, toTagId);
