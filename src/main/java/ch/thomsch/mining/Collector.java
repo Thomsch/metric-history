@@ -21,7 +21,7 @@ public class Collector {
         this.analyzer = analyzer;
         this.vcs = vcs;
 
-        filter = FileFilter.production();
+        filter = FileFilter.noFilter();
     }
 
     public void analyzeRevision(String version, String projectDir) {
