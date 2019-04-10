@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Tag extends Revision {
 
-    public static final String MASTER_REF = "refs/heads/master";
+    public static String masterBranchRef = "refs/heads/master";
 
     public static final String TAG_REF_PREFIX = "refs/tags/";
     /**
@@ -48,14 +48,14 @@ public class Tag extends Revision {
             tagRef = tagName;
             tagName = tagName.replace(TAG_REF_PREFIX, "");
         } else {
-            this.tagRef = tagName.equals("master") ? MASTER_REF : TAG_REF_PREFIX + tagName;
+            this.tagRef = tagName.equals("master") ? masterBranchRef : TAG_REF_PREFIX + tagName;
         }
         this.tagSequence = sequence;
         this.tagName = tagName;
     }
 
     public boolean isMasterRef(){
-        return tagRef.equals(MASTER_REF);
+        return tagRef.equals(masterBranchRef);
     }
 
     /**
@@ -113,6 +113,14 @@ public class Tag extends Revision {
         Tag tag = new Tag(commitId, commitDate, tagName, previousTag.tagSequence + 1);
         tag.setPreviousTag(previousTag);
         return tag;
+    }
+
+    /**
+     * Set master branch name (default master)
+     * @param masterBranchName
+     */
+    public static void setMasterBranch(String masterBranchName) {
+        Tag.masterBranchRef = "refs/heads/" + masterBranchName;
     }
 
     @Override

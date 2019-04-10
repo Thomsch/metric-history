@@ -31,7 +31,10 @@ public class RevisionHistory extends Command {
     @CommandLine.Parameters(index = "0", description = "Path to the root folder of the version controlled project.")
     private String repositoryPath;
 
-    @CommandLine.Parameters(index = "1", description = "Path of the file where the results will be stored.")
+    @CommandLine.Parameters(index = "1", description = "Master branch name.")
+    private String masterBranchName = "master";
+
+    @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored.")
     private String outputFile;
 
     private VCS repository;
@@ -45,6 +48,8 @@ public class RevisionHistory extends Command {
         } catch (VcsNotFound e) {
             logger.error("Cannot find version information in {}", repositoryPath);
         }
+
+        Tag.setMasterBranch(masterBranchName);
 
         List<Tag> releases = repository.listReleases();
 

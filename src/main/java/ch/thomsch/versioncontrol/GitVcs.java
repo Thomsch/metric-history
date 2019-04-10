@@ -169,7 +169,7 @@ public class GitVcs implements VCS {
             }
 
             // find and add the master ref
-            Ref masterRef = repository.findRef(Tag.MASTER_REF);
+            Ref masterRef = repository.findRef(Tag.masterBranchRef);
             RevCommit lastCommit = repository.parseCommit(masterRef.getObjectId());
             OffsetDateTime commitDateTime = offsetDateTimeOf(lastCommit.getAuthorIdent().getWhen());
             Tag masterRefTag = Tag.masterRef(masterRef.getObjectId().getName(), commitDateTime, previousTag);
