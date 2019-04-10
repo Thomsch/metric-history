@@ -30,11 +30,17 @@ public class Tag extends Revision {
 
     /**
      * The tag that precedes the current tag.
-     * It has a null value for the first tag (FIXME)
      */
     protected Tag previousTag;
 
-    protected List<Commit> postReleaseCommits = new ArrayList<>();
+    /**
+     * The part of revision history that contributed to the current release.
+     * It excludes commits from previous releases.
+     *
+     * Thus, if current release is v2 and previous release is v1, then the field
+     * contains the result of <code>git log v1..v2 --no-merges</code>
+     */
+    protected List<Commit> commits = new ArrayList<>();
 
     public Tag(String id, OffsetDateTime date, String tagName, int sequence) {
         super(id, date);
@@ -53,12 +59,11 @@ public class Tag extends Revision {
     }
 
     /**
-     * Commit count starting from the current release and extending (without including)
-     * the next release
+     * Commit count
      * @return
      */
-    public int getPostReleaseCommitCount(){
-        return postReleaseCommits.size();
+    public int getCommitCount(){
+        return commits.size();
     }
 
     @Override

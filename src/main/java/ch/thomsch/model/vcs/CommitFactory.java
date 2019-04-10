@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 public class CommitFactory {
 
     private Tag startingRelease;
-    private int commitSequence = 0;
+    private int commitSequence = 1;
 
     public CommitFactory(Tag tag) {
         this.startingRelease = tag;
@@ -15,13 +15,13 @@ public class CommitFactory {
      * @param startingRelease
      * @return
      */
-    public static CommitFactory fromRelease(Tag startingRelease) {
+    public static CommitFactory towardsRelease(Tag startingRelease) {
         return new CommitFactory(startingRelease);
     }
 
     /**
-     * Create a commit that is either the startingRelease or follows it
-     *
+     * Create the next commit starting from the first commit
+     * till the commit that is tagged as a release
      * @param commitId
      * @param commitDate
      * @return
@@ -40,9 +40,9 @@ public class CommitFactory {
             startingRelease.setDate(commitDate);
         }
 
-        commit.setLatestRelease(startingRelease);
-        commit.setNextRelease(startingRelease.getNextTag());
-        commit.setPostReleaseSequence(commitSequence++);
+        commit.setPreviousRelease(startingRelease.getPreviousTag());
+        commit.setNextRelease(startingRelease);
+        commit.setCommitSequence(commitSequence++);
         return commit;
     }
 }

@@ -1,12 +1,8 @@
 package ch.thomsch.cmd;
 
-import ch.thomsch.model.Genealogy;
 import ch.thomsch.model.vcs.Commit;
 import ch.thomsch.model.vcs.Tag;
-import ch.thomsch.storage.GenealogyRepo;
-import ch.thomsch.storage.RevisionRepo;
 import ch.thomsch.storage.export.Reporter;
-import ch.thomsch.storage.loader.SimpleCommitReader;
 import ch.thomsch.versioncontrol.VCS;
 import ch.thomsch.versioncontrol.VcsBuilder;
 import ch.thomsch.versioncontrol.VcsNotFound;
@@ -15,11 +11,8 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -63,8 +56,8 @@ public class RevisionHistory extends Command {
         try {
             reporter.initialize(outputFile);
 
-            reporter.report(new Object[]{"revision", "postReleaseSequence", "postReleaseDays",
-            "commitsToNextRelease", "daysToNextRelease", "latestRelease"});
+            reporter.report(new Object[]{"revision", "commitDate", "commitSequence",
+                    "commitsToNextRelease", "daysToNextRelease", "latestRelease"});
 
             releases.stream()
                     .flatMap((Function<Tag, Stream<Commit>>) tag -> {
@@ -77,11 +70,11 @@ public class RevisionHistory extends Command {
                     .map(commit -> {
                         Object[] lineItems = new Object[]{
                                 commit.getId(),
-                                commit.getPostReleaseSequence(),
-                                commit.getPostReleaseDays(),
+                                commit.getDate().toLocalDate(),
+                                commit.getCommitSequence(),
                                 commit.getCommitsToNextRelease(),
                                 commit.getDaysToNextRelease(),
-                                commit.getLatestRelease().getTagRef()
+                                commit.getPreviousRelease().getTagRef()
                         };
                         return lineItems;
                     })
