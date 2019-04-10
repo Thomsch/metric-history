@@ -133,8 +133,16 @@ public class GitVcs implements VCS {
         ListTagCommand listTagCommand = git.tagList();
         List<Ref> tagRefs = listTagCommand.call();
         for(Ref ref: tagRefs) {
-            RevCommit commit = repository.parseCommit(ref.getPeeledObjectId());
-            tagList.add(new TagCommitPair(ref, commit));
+            ObjectId objectId = ref.getPeeledObjectId();
+            if (objectId == null){
+                logger.error("Null PeeledObjectId for " + ref.getName());
+                objectId = ref.getObjectId();
+            }
+            RevCommit commit = repository.parseCommit(objectId);
+            TagCommitPair tagCommitPair = new TagCommitPair(ref, commit, objectId);
+            if (!tagList.contains(tagCommitPair)) {
+                tagList.add(tagCommitPair);
+            }
         }
         Collections.sort(tagList);
         return tagList;
@@ -152,12 +160,10 @@ public class GitVcs implements VCS {
             List<TagCommitPair> tagCommitPairs = listTagsSortedByCommitDate();
 
             Tag previousTag = projectStart;
-            for(TagCommitPair pair: tagCommitPairs){
-                Ref ref = pair.tag;
-                RevCommit commit = pair.commit;
-                OffsetDateTime commitOffsetDateTime = offsetDateTimeOf(commit.getAuthorIdent().getWhen());
+            for(TagCommitPair tagCommit: tagCommitPairs){
                 // creates a tag domain object
-                Tag tag = Tag.tag(ref.getPeeledObjectId().getName(), commitOffsetDateTime, ref.getName(), previousTag);
+                Tag tag = Tag.tag(tagCommit.getTargetCommitId(), tagCommit.getCommitDateTime(),
+                        tagCommit.getTagName(), previousTag);
                 previousTag = tag;
                 tagList.add(tag);
             }
@@ -254,20 +260,45 @@ public class GitVcs implements VCS {
     }
 
     public static final class TagCommitPair implements Comparable<TagCommitPair> {
-        public Ref tag;
-        public RevCommit commit;
+        private Ref tag;
+        private RevCommit commit;
+        private ObjectId targetObjectId;
 
-        public TagCommitPair(Ref tag, RevCommit commit) {
+        public TagCommitPair(Ref tag, RevCommit commit, ObjectId targetObjectId) {
             this.tag = tag;
             this.commit = commit;
+            this.targetObjectId = targetObjectId;
         }
 
         @Override
         public int compareTo(TagCommitPair otherPair) {
-
             Date date1 = commit.getAuthorIdent().getWhen();
             Date date2 = otherPair.commit.getAuthorIdent().getWhen();
             return date1.compareTo(date2);
+        }
+
+        public OffsetDateTime getCommitDateTime(){
+            return offsetDateTimeOf(commit.getAuthorIdent().getWhen());
+        }
+
+        public String getTagName(){
+            return tag.getName();
+        }
+
+        public String getTargetCommitId(){
+            return targetObjectId.getName();
+        }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TagCommitPair that = (TagCommitPair) o;
+            return targetObjectId.getName().equals(that.targetObjectId.getName());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(targetObjectId.getName());
         }
     }
 
