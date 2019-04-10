@@ -205,7 +205,7 @@ public class GitVcs implements VCS {
             }
             // process in commit creation order
             Collections.reverse(revCommits);
-            CommitFactory commitFactory = CommitFactory.towardsRelease(fromTag);
+            CommitFactory commitFactory = CommitFactory.towardsRelease(toTag);
             for(RevCommit revCommit: revCommits){
                 OffsetDateTime dateTime = offsetDateTimeOf(revCommit.getAuthorIdent().getWhen());
                 Commit commit = commitFactory.nextCommit(revCommit.getName(), dateTime);
