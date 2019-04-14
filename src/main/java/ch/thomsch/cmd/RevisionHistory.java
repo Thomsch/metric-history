@@ -10,9 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -31,10 +35,14 @@ public class RevisionHistory extends Command {
     @CommandLine.Parameters(index = "0", description = "Path to the root folder of the version controlled project.")
     private String repositoryPath;
 
-    @CommandLine.Parameters(index = "1", description = "Master branch name.")
+    @CommandLine.Parameters(index = "1", description = "File with an ordered list of tags to process")
+    private String tagListFile;
+
+    @CommandLine.Parameters(index = "2", description = "Master branch name.")
     private String masterBranchName = "master";
 
-    @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored.")
+
+    @CommandLine.Parameters(index = "3", description = "Path of the file where the results will be stored.")
     private String outputFile;
 
     private VCS repository;
@@ -51,14 +59,24 @@ public class RevisionHistory extends Command {
 
         Tag.setMasterBranch(masterBranchName);
 
-        List<Tag> releases = repository.listReleases();
+        tagListFile = normalizePath(tagListFile);
 
-        for(Tag tag: releases){
-            System.out.println(tag);
-        }
+
 
         Reporter reporter = new Reporter();
         try {
+
+            // get tag list from files
+            List<String> tagList;
+            try (Stream<String> lines = Files.lines(Paths.get(tagListFile))) {
+                tagList = lines.collect(Collectors.toList());
+            }
+
+            List<Tag> releases = repository.listSelectedReleases(tagList);
+
+            // exclude first release
+            releases.remove(0);
+
             reporter.initialize(outputFile);
 
             reporter.report(new Object[]{"revision", "commitDate", "commitSequence",
@@ -92,6 +110,10 @@ public class RevisionHistory extends Command {
                     });
 
             reporter.finish();
+
+            for(Tag tag: releases){
+                System.out.println(tag);
+            }
         } catch (IOException e) {
             logger.error("Output file error", e);
             return;

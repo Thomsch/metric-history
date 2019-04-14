@@ -127,6 +127,7 @@ public class GitVcs implements VCS {
         }
     }
 
+    @Deprecated
     private List<TagCommitPair> listTagsSortedByCommitDate() throws GitAPIException, IOException {
         List<TagCommitPair> tagList = new ArrayList<>();
         Git git = new Git(repository);
@@ -148,6 +149,69 @@ public class GitVcs implements VCS {
         return tagList;
     }
 
+    private List<TagCommitPair> extractTagInfo(List<String> tagNames) throws GitAPIException, IOException {
+        List<TagCommitPair> tagList = new ArrayList<>();
+
+        for(String tagName: tagNames) {
+            Ref ref = repository.findRef(tagName);
+            if (ref == null){
+                continue;
+            }
+            ObjectId objectId = ref.getPeeledObjectId();
+            if (objectId == null){
+                logger.error("Null PeeledObjectId for " + ref.getName());
+                objectId = ref.getObjectId();
+            }
+            RevCommit commit = repository.parseCommit(objectId);
+            TagCommitPair tagCommitPair = new TagCommitPair(ref, commit, objectId);
+            if (!tagList.contains(tagCommitPair)) {
+                tagList.add(tagCommitPair);
+            }
+        }
+        return tagList;
+    }
+
+    @Override
+    public List<Tag> listSelectedReleases(List<String> tagNamesList){
+
+        List<Tag> tagList = new ArrayList<>();
+        try {
+            // project start pseudo-tag
+            NullTag projectStart = new NullTag();
+            tagList.add(projectStart);
+
+            List<TagCommitPair> tagCommitPairs = extractTagInfo(tagNamesList);
+
+            Tag previousTag = projectStart;
+            for(TagCommitPair tagCommit: tagCommitPairs){
+                // creates a tag domain object
+                Tag tag = Tag.tag(tagCommit.getTargetCommitId(), tagCommit.getCommitDateTime(),
+                        tagCommit.getTagName(), previousTag);
+                previousTag = tag;
+                tagList.add(tag);
+            }
+
+            // find and add the master ref
+            Ref masterRef = repository.findRef(Tag.masterBranchRef);
+            RevCommit lastCommit = repository.parseCommit(masterRef.getObjectId());
+            OffsetDateTime commitDateTime = offsetDateTimeOf(lastCommit.getAuthorIdent().getWhen());
+            Tag masterRefTag = Tag.masterRef(masterRef.getObjectId().getName(), commitDateTime, previousTag);
+            tagList.add(masterRefTag);
+
+            // establish next tag association to all but the last one
+            for(int i = 0; i < tagList.size() - 1; i++){
+                Tag tag = tagList.get(i);
+                tag.setNextTag(tagList.get(i+1));
+            }
+
+        } catch (GitAPIException | IOException e) {
+            e.printStackTrace();
+        }
+        return tagList;
+
+    }
+
+    @Deprecated
     @Override
     public List<Tag> listReleases() {
 

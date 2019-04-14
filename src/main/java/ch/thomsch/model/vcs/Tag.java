@@ -145,6 +145,8 @@ public class Tag extends Revision {
         StringBuffer buffer = new StringBuffer();
         buffer.append("[Tag ");
         buffer.append(tagName);
+        buffer.append(" commitCount: ");
+        buffer.append(commits.size());
         buffer.append(" ref: ");
         buffer.append(tagRef);
         buffer.append(" commitId: ");

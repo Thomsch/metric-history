@@ -48,6 +48,8 @@ public interface VCS extends AutoCloseable {
             Collection<File> beforeFiles,
             Collection<File> afterFiles) throws IOException;
 
+    List<Tag> listSelectedReleases(List<String> tagList);
+
     List<Tag> listReleases();
 
     /**
