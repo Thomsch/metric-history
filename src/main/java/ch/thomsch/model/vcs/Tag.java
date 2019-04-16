@@ -159,4 +159,11 @@ public class Tag extends Revision {
         buffer.append(nextTag != null ? nextTag.getTagName() : "-");
         return buffer.toString();
     }
+
+    public int getDuration() {
+        if (commits.size() == 0) {
+            return -1;
+        }
+        return commits.get(0).getDaysToNextRelease();
+    }
 }

@@ -80,7 +80,9 @@ public class RevisionHistory extends Command {
             reporter.initialize(outputFile);
 
             reporter.report(new Object[]{"revision", "commitDate", "commitSequence",
-                    "commitsToNextRelease", "daysToNextRelease", "nextRelease"});
+                    "commitsToRelease", "commitCount",
+                    "daysToRelease", "releaseDuration",
+                    "release"});
 
             releases.stream()
                     .flatMap((Function<Tag, Stream<Commit>>) tag -> {
@@ -96,7 +98,9 @@ public class RevisionHistory extends Command {
                                 commit.getDate().toLocalDate(),
                                 commit.getCommitSequence(),
                                 commit.getCommitsToNextRelease(),
+                                commit.getCommitSequence() + commit.getCommitsToNextRelease(),
                                 commit.getDaysToNextRelease(),
+                                commit.getNextReleaseDuration(),
                                 commit.getNextRelease().getTagRef()
                         };
                         return lineItems;

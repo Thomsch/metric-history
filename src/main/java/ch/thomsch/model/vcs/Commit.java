@@ -108,4 +108,8 @@ public class Commit extends Revision {
                 .toString();
 
     }
+
+    public int getNextReleaseDuration() {
+        return nextRelease.getDuration();
+    }
 }
