@@ -1,12 +1,6 @@
 package ch.thomsch;
 
-import ch.thomsch.cmd.Ancestry;
-import ch.thomsch.cmd.Collect;
-import ch.thomsch.cmd.Convert;
-import ch.thomsch.cmd.Difference;
-import ch.thomsch.cmd.Filter;
-import ch.thomsch.cmd.Mongo;
-import ch.thomsch.cmd.Snapshot;
+import ch.thomsch.cmd.*;
 import picocli.CommandLine;
 
 /**
@@ -31,6 +25,7 @@ public final class Application implements Runnable {
         commandLine.addSubcommand("filter", new Filter());
         commandLine.addSubcommand("mongo", new Mongo());
         commandLine.addSubcommand("snapshot", new Snapshot());
+        commandLine.addSubcommand("revision-history", new RevisionHistory());
 
         application.setCmd(commandLine);
 
