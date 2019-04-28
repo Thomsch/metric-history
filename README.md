@@ -22,7 +22,7 @@ commit ids for a GIT based project and store the results in the specified folder
 the name of the project (_myproject_).
 
 ## Using the API
-Inspire yourself from the commands in `ch.thomsch.cmd.*`, they all use the public API!
+Inspire yourself from the commands in `org.metrichistory.cmd.*`, they all use the public API!
 
 ## Building
 This projects uses Gradle to get all the dependencies and build itself. You're also free to use the native

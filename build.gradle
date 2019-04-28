@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'maven'
 
-group 'ch.thomsch'
+group 'org.metrichistory'
 version '0.5.1'
 
 sourceCompatibility=1.8
@@ -32,7 +32,7 @@ dependencies {
 }
 
 applicationName = rootProject.name
-mainClassName = "ch.thomsch.Application"
+mainClassName = "org.metrichistory.Application"
 applicationDefaultJvmArgs = ["-Xmx8G"]
 
 test {

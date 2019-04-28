@@ -1,0 +1,100 @@
+package org.metrichistory.cmd;
+
+import org.metrichistory.mining.Analyzer;
+import org.metrichistory.mining.Collector;
+import org.metrichistory.mining.SourceMeter;
+import org.metrichistory.model.Genealogy;
+import org.metrichistory.versioncontrol.VcsBuilder;
+import org.metrichistory.versioncontrol.VcsNotFound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.metrichistory.storage.RevisionRepo;
+import org.metrichistory.storage.loader.SimpleCommitReader;
+import org.metrichistory.versioncontrol.VCS;
+
+import picocli.CommandLine;
+
+/**
+ * Execute a code analyzer for multiple versions and their parents. The results are written on disk.
+ */
+@CommandLine.Command(
+        name = "collect",
+        description = "Execute a code analyzer for multiple versions and their parents.")
+public class Collect extends Command {
+    private static final Logger logger = LoggerFactory.getLogger(Collect.class);
+
+    @CommandLine.Parameters(index = "0", description = "Path to the file containing the revision to analyse. DO NOT " +
+            "include the parents of the revisions of interest. This will be retrieved automatically.")
+    private String revisionFile;
+
+    @CommandLine.Parameters(index = "1", description = "Path to the executable to collect metrics.")
+    private String executable;
+
+    @CommandLine.Parameters(index = "2", description = "Path to the folder containing the source code or the project.")
+    private String projectPath;
+
+    @CommandLine.Parameters(index = "3", description = "Path to the folder where the results should be extracted.")
+    private String outputPath;
+
+    @CommandLine.Parameters(index = "4", description = "Name of the project.")
+    private String projectName;
+
+    @CommandLine.Option(names = {"-r", "--repository"}, arity = "0..1", description = "Path to the folder containing .git folder. If omitted, will be searched in the project path.")
+    private String repository;
+
+    @CommandLine.Option(names = {"-p", "--include-parents"}, arity = "0..1", description = "Collects the measures for the parents of the versions also.", defaultValue = "true", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
+    private boolean includeParents;
+
+    @Override
+    public void run() {
+        revisionFile = normalizePath(revisionFile);
+        executable = normalizePath(executable);
+        projectPath = normalizePath(projectPath);
+
+        if (repository == null) {
+            repository = projectPath;
+        } else {
+            repository = normalizePath(repository);
+        }
+        outputPath = normalizePath(outputPath);
+
+        final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
+        final List<String> revisions = revisionRepo.load(revisionFile);
+
+        try(VCS vcs = VcsBuilder.create(repository)) {
+            final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName, projectPath);
+            final Collector collector = new Collector(analyzer, vcs);
+
+            final List<String> analysisTargets = new ArrayList<>();
+            if(includeParents) {
+                final Genealogy genealogy = new Genealogy(vcs);
+                genealogy.addRevisions(revisions);
+                analysisTargets.addAll(genealogy.getUniqueRevisions());
+            } else {
+                analysisTargets.addAll(revisions);
+            }
+
+            logger.info("Read {} distinct revisions", revisions.size());
+
+            final long beginning = System.nanoTime();
+            int i = 0;
+            for (String revision : analysisTargets) {
+                logger.info("Processing {} ({})", revision, ++i);
+                collector.analyzeRevision(revision, projectPath);
+            }
+            final long elapsed = System.nanoTime() - beginning;
+            logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
+
+            vcs.restoreVersion();
+        } catch (VcsNotFound e) {
+            logger.error("Failed to access repository {}", repository);
+        } catch (Exception e) {
+            logger.error("Failed to dispose the repository.");
+        }
+    }
+}

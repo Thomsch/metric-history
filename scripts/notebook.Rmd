@@ -54,9 +54,9 @@ refactorings_tp <- refactorings_tp %>% mutate(Rename = apply(X=.[,3:10], MARGIN=
 # Remove NA values
 refactorings_tp[is.na(refactorings_tp)] <- 0
 # Set presence of design decisions to 1
-#refactorings_tp$dd_vassilis[refactorings_tp$dd_vassilis %in% c('N', 'P', 'Ν')] <- 1
-#refactorings_tp$dd_thomas[refactorings_tp$dd_thomas %in% c('N', 'P', 'Ν')] <- 1
-#refactorings_tp <- transform(refactorings_tp, dd_vassilis = as.integer(dd_vassilis), dd_thomas = as.integer(dd_thomas))
+#refactorings_tp$dd_v[refactorings_tp$dd_v %in% c('N', 'P', 'Ν')] <- 1
+#refactorings_tp$dd_t[refactorings_tp$dd_t %in% c('N', 'P', 'Ν')] <- 1
+#refactorings_tp <- transform(refactorings_tp, dd_v = as.integer(dd_v), dd_t = as.integer(dd_t))
 
 ```
 
@@ -214,7 +214,7 @@ Revisions and metric fluctuation patterns
 ```{r}
 total_revisions <- nrow(refactorings_tp)
 total_decisions_v <- refactorings_tp %>% filter(dd > 0) %>% nrow
-#total_decisions_t <- refactorings_tp %>% filter(dd_thomas > 0) %>% nrow
+#total_decisions_t <- refactorings_tp %>% filter(dd_t > 0) %>% nrow
 rev_pct <- function(df) {
   paste(nrow(df), round(100 * nrow(df)/total_revisions, digits = 1), sep = " - ")
 }
@@ -275,7 +275,7 @@ arules_input$dd <- as.factor(arules_input$dd)
 #rules <- apriori(arules_input)
 
 rules_dd <- apriori(arules_input, parameter=list (supp=0.05,conf = 0.8),appearance = list (rhs="dd=Yes", rhs="dd=No"), control = list (verbose=F))
-#rules_nodd <- apriori(arules_input, parameter=list (supp=0.01,conf = 0.8), appearance = list (rhs="dd_vassilis=No"), control = list (verbose=F))
+#rules_nodd <- apriori(arules_input, parameter=list (supp=0.01,conf = 0.8), appearance = list (rhs="dd_v=No"), control = list (verbose=F))
 
 
 inspect(rules_dd)

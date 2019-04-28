@@ -8,5 +8,3 @@ git clone https://github.com/apache/jena.git
 git clone https://github.com/hibernate/hibernate-orm.git
 git clone https://github.com/apache/ant.git
 git clone https://github.com/apache/jmeter
-git clone https://thomsch@bitbucket.org/thomsch/jedit.git
-git clone https://thomsch@bitbucket.org/thomsch/argouml.git
