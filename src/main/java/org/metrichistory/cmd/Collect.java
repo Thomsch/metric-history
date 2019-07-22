@@ -4,6 +4,9 @@ import org.metrichistory.mining.Analyzer;
 import org.metrichistory.mining.Collector;
 import org.metrichistory.mining.SourceMeter;
 import org.metrichistory.model.Genealogy;
+import org.metrichistory.storage.RevisionRepo;
+import org.metrichistory.storage.loader.SimpleCommitReader;
+import org.metrichistory.versioncontrol.VCS;
 import org.metrichistory.versioncontrol.VcsBuilder;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
@@ -12,10 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.metrichistory.storage.RevisionRepo;
-import org.metrichistory.storage.loader.SimpleCommitReader;
-import org.metrichistory.versioncontrol.VCS;
 
 import picocli.CommandLine;
 
@@ -94,7 +93,7 @@ public class Collect extends Command {
         } catch (VcsNotFound e) {
             logger.error("Failed to access repository {}", repository);
         } catch (Exception e) {
-            logger.error("Failed to dispose the repository.");
+            logger.error("An error occurred while accessing the repository", e);
         }
     }
 }
