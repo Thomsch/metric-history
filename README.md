@@ -21,11 +21,10 @@ MetricHistory comes with a rich command line interface. Every command is
 explained in the `help` command (`./metric-history help`).
 
 ### Example: Collecting the metrics of a list of versions with SourceMeter
-`./metric-history collect versions.txt path/to/sourcemeter/executable myproject/ results/ myproject`
-This command will analyse all the versions (and their parents) of _myproject_ using the 
-analysis software specified (_analysis-software.exe_) specified in _versions.txt_ which contains simply a list of
-commit ids for a GIT based project and store the results in the specified folder (_results/_) under a directory with
-the name of the project (_myproject_).
+`./metric-history collect versions.txt path/to/repository/ output/folder/ path/to/sourcemeter/executable`
+This command analyzes the versions given in _versions.txt_ of the project located in _repository_ using the analyzer 
+'Sourcemeter'. _versions.txt_ contains a list of commit ids (in case of a git project). The results are stored in
+`output/folder`.
 
 ## Using the API
 Inspire yourself from the example in `org.metrichistory.cmd.*`, they all use the public API!
