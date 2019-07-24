@@ -7,7 +7,6 @@ import org.metrichistory.cmd.Difference;
 import org.metrichistory.cmd.Filter;
 import org.metrichistory.cmd.Mongo;
 import org.metrichistory.cmd.RevisionHistory;
-import org.metrichistory.cmd.Snapshot;
 
 import picocli.CommandLine;
 
@@ -26,13 +25,12 @@ public final class Application implements Runnable {
         final Application application = new Application();
 
         final CommandLine commandLine = new CommandLine(application);
-        commandLine.addSubcommand("ancestry", new Ancestry());
         commandLine.addSubcommand("collect", new Collect());
-        commandLine.addSubcommand("convert", new Convert());
         commandLine.addSubcommand("diff", new Difference());
+        commandLine.addSubcommand("ancestry", new Ancestry());
+        commandLine.addSubcommand("convert", new Convert());
         commandLine.addSubcommand("filter", new Filter());
         commandLine.addSubcommand("mongo", new Mongo());
-        commandLine.addSubcommand("snapshot", new Snapshot());
         commandLine.addSubcommand("revision-history", new RevisionHistory());
 
         application.setCmd(commandLine);
