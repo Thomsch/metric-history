@@ -32,7 +32,7 @@ import picocli.CommandLine;
 public class Collect extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Collect.class);
 
-    @CommandLine.Parameters(index = "0", paramLabel = "VERSIONS", description = "The path to the file containing the versions to analyse or if the SHA of a commit is specified, a snapshot will be performed instead")
+    @CommandLine.Parameters(index = "0", paramLabel = "VERSIONS", description = "The path to the file containing the versions to analyse or if the SHA of a commit is specified, a snapshot will be performed instead.")
     private String versionsParam;
 
     @CommandLine.Parameters(index = "1", paramLabel = "REPOSITORY", description = "Path to the project's repository.")
@@ -44,10 +44,10 @@ public class Collect extends Command {
     @CommandLine.Parameters(index = "3", paramLabel = "EXECUTABLE", description = "Path to the third-party analyzer.")
     private String executable;
 
-    @CommandLine.Option(names = {"-p", "--include-parents"}, arity = "0..1", description = "Specifies whether the parent version of each version is also analyzed", defaultValue = "false", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
+    @CommandLine.Option(names = {"-p", "--include-parents"}, arity = "0..1", description = "Specifies whether the parent version of each version is also analyzed.", defaultValue = "false", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
     private boolean includeParents;
 
-    @CommandLine.Option(names = {"-n", "--project-name"}, paramLabel = "projectName", arity = "0..1", description = "Specifies the project's name (resolved by default from <repositoryPath>")
+    @CommandLine.Option(names = {"-n", "--project-name"}, paramLabel = "projectName", arity = "0..1", description = "Specifies the project's name (resolved by default from <repositoryPath>.")
     private String projectNameOption;
 
     @CommandLine.Option(names = {"-f", "--folder"}, arity = "0..1", description = "Specifies the folder on which the analyzer will run (by default, it will run in <repositoryPath>).")
