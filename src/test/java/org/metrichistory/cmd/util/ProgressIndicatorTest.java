@@ -1,8 +1,7 @@
-package org.metrichistory.cmd;
+package org.metrichistory.cmd.util;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.metrichistory.cmd.util.ProgressIndicator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
