@@ -1,7 +1,9 @@
 package org.metrichistory.cmd;
 
+import org.metrichistory.cmd.util.ProgressIndicator;
 import org.metrichistory.mining.VersionComparator;
 import org.metrichistory.model.MeasureStore;
+import org.metrichistory.storage.GenealogyRepo;
 import org.metrichistory.storage.MeasureRepository;
 import org.metrichistory.storage.SaveTarget;
 import org.slf4j.Logger;
@@ -11,8 +13,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import org.metrichistory.storage.GenealogyRepo;
 
 import picocli.CommandLine;
 
