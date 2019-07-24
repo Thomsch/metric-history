@@ -1,6 +1,6 @@
 package org.metrichistory.cmd;
 
-import org.metrichistory.mining.SourceMeterConverter;
+import org.metrichistory.analyzer.SourceMeterConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

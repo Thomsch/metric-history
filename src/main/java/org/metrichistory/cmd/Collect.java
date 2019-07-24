@@ -1,10 +1,10 @@
 package org.metrichistory.cmd;
 
 import org.metrichistory.cmd.util.ProjectName;
-import org.metrichistory.mining.Analyzer;
+import org.metrichistory.analyzer.Analyzer;
 import org.metrichistory.mining.Collector;
-import org.metrichistory.mining.SourceMeter;
-import org.metrichistory.mining.SourceMeterConverter;
+import org.metrichistory.analyzer.SourceMeter;
+import org.metrichistory.analyzer.SourceMeterConverter;
 import org.metrichistory.model.Genealogy;
 import org.metrichistory.storage.RevisionRepo;
 import org.metrichistory.storage.loader.SimpleCommitReader;

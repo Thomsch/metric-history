@@ -1,10 +1,11 @@
-package org.metrichistory.mining;
+package org.metrichistory.analyzer;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.metrichistory.mining.FileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.metrichistory.mining;
+package org.metrichistory.analyzer;
 
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FileUtils;
@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.metrichistory.analyzer.SourceMeterConverter;
 import org.metrichistory.model.FormatException;
 
 import static org.junit.Assert.assertEquals;

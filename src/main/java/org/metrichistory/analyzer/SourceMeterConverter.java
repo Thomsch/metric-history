@@ -1,4 +1,4 @@
-package org.metrichistory.mining;
+package org.metrichistory.analyzer;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;

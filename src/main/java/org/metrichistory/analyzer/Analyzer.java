@@ -1,4 +1,7 @@
-package org.metrichistory.mining;
+package org.metrichistory.analyzer;
+
+import org.metrichistory.mining.Collector;
+import org.metrichistory.mining.FileFilter;
 
 /**
  * Abstraction for a third party static code analyzer.

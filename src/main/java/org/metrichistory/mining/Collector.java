@@ -1,6 +1,7 @@
 package org.metrichistory.mining;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.metrichistory.analyzer.Analyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
