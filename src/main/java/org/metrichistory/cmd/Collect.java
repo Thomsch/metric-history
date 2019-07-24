@@ -68,8 +68,8 @@ public class Collect extends Command {
         final RevisionRepo repository = new RevisionRepo(new SimpleCommitReader());
         final List<String> revisions = repository.load(versionFile);
 
-        try(VCS vcs = VcsBuilder.create(folder)) {
-            final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName.toString(), repositoryPath);
+        try(VCS vcs = VcsBuilder.create(repositoryPath)) {
+            final Analyzer analyzer = new SourceMeter(executable, outputPath, projectName.toString(), folder);
             final Collector collector = new Collector(analyzer, vcs);
 
             final List<String> analysisTargets = new ArrayList<>();
