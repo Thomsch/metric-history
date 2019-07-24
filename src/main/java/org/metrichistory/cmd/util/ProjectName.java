@@ -1,5 +1,7 @@
 package org.metrichistory.cmd.util;
 
+import org.metrichistory.storage.DiskUtils;
+
 import java.io.File;
 
 /**
@@ -37,10 +39,11 @@ public class ProjectName {
             return;
         }
 
-        if(repositoryPath == null) {
+        if(repositoryPath == null || repositoryPath.isEmpty()) {
             resolveFailed(repositoryPath);
         }
 
+        repositoryPath = DiskUtils.normalizePath(repositoryPath);
         final String result = new File(repositoryPath).getName();
 
         if(result.isEmpty()) {
