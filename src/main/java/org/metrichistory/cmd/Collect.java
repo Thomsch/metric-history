@@ -35,13 +35,13 @@ public class Collect extends Command {
     @CommandLine.Parameters(index = "0", paramLabel = "VERSIONS", description = "The path to the file containing the versions to analyse or if the SHA of a commit is specified, a snapshot will be performed instead")
     private String versionsParam;
 
-    @CommandLine.Parameters(index = "1", description = "Path to the project's folder.")
+    @CommandLine.Parameters(index = "1", paramLabel = "REPOSITORY", description = "Path to the project's repository.")
     private String repositoryPath;
 
-    @CommandLine.Parameters(index = "2", description = "Path of the folder that will contain the results.")
+    @CommandLine.Parameters(index = "2", paramLabel = "OUTPUT", description = "Path of the folder that will contain the results.")
     private String outputPath;
 
-    @CommandLine.Parameters(index = "3", description = "Path to the third-party analyzer.")
+    @CommandLine.Parameters(index = "3", paramLabel = "EXECUTABLE", description = "Path to the third-party analyzer.")
     private String executable;
 
     @CommandLine.Option(names = {"-p", "--include-parents"}, arity = "0..1", description = "Specifies whether the parent version of each version is also analyzed", defaultValue = "false", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
