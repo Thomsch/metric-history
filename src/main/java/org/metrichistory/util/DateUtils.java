@@ -12,7 +12,4 @@ public class DateUtils {
         OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(date.toInstant(), zoneId);
         return offsetDateTime;
     }
-
-
-
 }
