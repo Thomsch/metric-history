@@ -28,7 +28,7 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(
         name = "collect",
-        description = "Execute a code analyzer for multiple versions and their parents.")
+        description = "Analyzes one or more version from a project.")
 public class Collect extends Command {
     private static final Logger logger = LoggerFactory.getLogger(Collect.class);
 
