@@ -1,29 +1,41 @@
 package org.metrichistory.versioncontrol;
 
-import org.metrichistory.model.vcs.Commit;
-import org.metrichistory.model.vcs.CommitFactory;
-import org.metrichistory.model.vcs.NullTag;
-import org.metrichistory.model.vcs.Tag;
-import org.metrichistory.util.GitUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.CheckoutCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListTagCommand;
+import org.eclipse.jgit.api.LogCommand;
+import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.errors.NoWorkTreeException;
-import org.eclipse.jgit.lib.*;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.metrichistory.model.vcs.Commit;
+import org.metrichistory.model.vcs.CommitFactory;
+import org.metrichistory.model.vcs.NullTag;
+import org.metrichistory.model.vcs.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
-import static org.metrichistory.util.DateUtils.*;
+import static org.metrichistory.util.DateUtils.offsetDateTimeOf;
 
 public class GitVcs implements VCS {
 

@@ -1,4 +1,4 @@
-package org.metrichistory.util;
+package org.metrichistory.versioncontrol;
 
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
