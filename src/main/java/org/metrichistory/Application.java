@@ -32,9 +32,9 @@ public final class Application implements Runnable {
         commandLine.addSubcommand("filter", new Filter());
         commandLine.addSubcommand("mongo", new Mongo());
         commandLine.addSubcommand("revision-history", new RevisionHistory());
+        commandLine.setCaseInsensitiveEnumValuesAllowed(true);
 
         application.setCmd(commandLine);
-
         commandLine.parseWithHandler(new CommandLine.RunLast(), args);
     }
 
