@@ -6,7 +6,6 @@ import org.metrichistory.analyzer.SourceMeterConverter;
 import org.metrichistory.cmd.util.ProjectName;
 import org.metrichistory.mining.Collector;
 import org.metrichistory.model.Genealogy;
-import org.metrichistory.storage.RevisionSource;
 import org.metrichistory.storage.loader.CommitReader;
 import org.metrichistory.storage.loader.SimpleCommitReader;
 import org.metrichistory.versioncontrol.VCS;
@@ -21,7 +20,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import picocli.CommandLine;
@@ -61,7 +62,7 @@ public class Collect extends Command {
 
     @Override
     public void run() {
-        final RevisionSource revisionSource = initializeRevisionSource(versionsParam);
+        final Set<String> versions = loadRevisions(versionsParam);
 
         repositoryPath = normalizePath(repositoryPath);
         outputPath = normalizePath(outputPath);
@@ -83,13 +84,13 @@ public class Collect extends Command {
             final List<String> analysisTargets = new ArrayList<>();
             if(includeParents) {
                 final Genealogy genealogy = new Genealogy(vcs);
-                genealogy.addRevisions(revisionSource.getVersions());
+                genealogy.addRevisions(new ArrayList<>(versions));
                 analysisTargets.addAll(genealogy.getUniqueRevisions());
             } else {
-                analysisTargets.addAll(revisionSource.getVersions());
+                analysisTargets.addAll(versions);
             }
 
-            logger.info("Read {} distinct revisions", revisionSource.getVersions().size());
+            logger.info("Read {} distinct revisions", versions.size());
 
             final long beginning = System.nanoTime();
             int i = 0;
@@ -108,14 +109,13 @@ public class Collect extends Command {
         }
     }
 
-    private RevisionSource initializeRevisionSource(String versionsParam) {
+    private Set<String> loadRevisions(String versionsParam) {
         if (isSingleVersion(versionsParam)) {
-            final String copy = versionsParam;
-            return () -> Collections.singletonList(copy);
+            return Collections.singleton(versionsParam);
         } else {
             versionsParam = normalizePath(versionsParam);
             logger.info("Loading {}", versionsParam);
-            final ArrayList<String> versions = new ArrayList<>();
+            final Set<String> versions = new HashSet<>();
             try {
                 final CommitReader reader = new SimpleCommitReader();
                 versions.addAll(reader.make(versionsParam));
@@ -126,7 +126,7 @@ public class Collect extends Command {
                 System.err.println(String.format("File '%s' cannot be parsed", versionsParam));
                 System.exit(0);
             }
-            return () -> versions;
+            return versions;
         }
     }
 
