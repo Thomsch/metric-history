@@ -63,6 +63,7 @@ public class Collect extends Command {
     @Override
     public void run() {
         final Set<String> versions = loadRevisions(versionsParam);
+        logger.info("Read {} distinct revisions", versions.size());
 
         repositoryPath = normalizePath(repositoryPath);
         outputPath = normalizePath(outputPath);
@@ -89,8 +90,6 @@ public class Collect extends Command {
             } else {
                 analysisTargets.addAll(versions);
             }
-
-            logger.info("Read {} distinct revisions", versions.size());
 
             final long beginning = System.nanoTime();
             int i = 0;
