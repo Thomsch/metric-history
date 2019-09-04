@@ -1,17 +1,19 @@
 package org.metrichistory.cmd;
 
 import org.metrichistory.model.Genealogy;
+import org.metrichistory.storage.GenealogyRepo;
+import org.metrichistory.storage.RevisionFile;
+import org.metrichistory.storage.loader.SimpleCommitReader;
+import org.metrichistory.versioncontrol.VCS;
 import org.metrichistory.versioncontrol.VcsBuilder;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-
-import org.metrichistory.storage.GenealogyRepo;
-import org.metrichistory.storage.RevisionRepo;
-import org.metrichistory.storage.loader.SimpleCommitReader;
-import org.metrichistory.versioncontrol.VCS;
 
 import picocli.CommandLine;
 
@@ -44,17 +46,28 @@ public class Ancestry extends Command {
         revisionsFile = normalizePath(revisionsFile);
         outputFile = normalizePath(outputFile);
 
+
+        final RevisionFile revisionSource = new RevisionFile(new SimpleCommitReader());
+        final List<String> revisions = new ArrayList<>();
+        try {
+            revisions.addAll(revisionSource.load(revisionsFile));
+        } catch (FileNotFoundException e) {
+            System.err.println(String.format("File '%s' cannot be found.", revisionsFile));
+            System.exit(0);
+        } catch (IOException e) {
+            System.err.println(String.format("File '%s' cannot be parsed", revisionsFile));
+            System.exit(0);
+        }
+
         try {
             repository = VcsBuilder.create(normalizePath(repositoryPath));
         } catch (VcsNotFound e) {
             logger.error("Cannot find version information in {}", repositoryPath);
         }
 
-        final RevisionRepo revisionRepo = new RevisionRepo(new SimpleCommitReader());
         final Genealogy genealogy = new Genealogy(repository);
         final GenealogyRepo genealogyRepo = new GenealogyRepo();
 
-        final List<String> revisions = revisionRepo.load(revisionsFile);
         genealogy.addRevisions(revisions);
         genealogyRepo.export(genealogy, outputFile);
     }

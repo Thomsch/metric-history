@@ -2,6 +2,7 @@ package org.metrichistory.storage.loader;
 
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class VanillaRefactoringMinerTest {
     }
 
     @Test
-    public void loadFile() {
+    public void loadFile() throws IOException {
         final CommitReader commitReader = new VanillaRefactoringMiner();
         final List<String> revisions = commitReader.make(TEST_FILE);
 
