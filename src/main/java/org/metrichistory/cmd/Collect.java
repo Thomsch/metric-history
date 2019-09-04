@@ -45,7 +45,7 @@ public class Collect extends Command {
     @CommandLine.Parameters(index = "2", paramLabel = "OUTPUT", description = "Path of the folder that will contain the results.")
     private String outputPath;
 
-    @CommandLine.Parameters(index = "3", paramLabel = "EXECUTABLE", description = "Analyzer to use. Valid values: ${COMPLETION-CANDIDATES}")
+    @CommandLine.Parameters(index = "3", paramLabel = "ANALYZER", description = "Analyzer to use. Valid values: ${COMPLETION-CANDIDATES}")
     private AnalyzerBuilder.Census analyzer;
 
     @CommandLine.Option(names = {"-e", "--exec-path"}, paramLabel = "EXECUTABLE PATH", description = "Path to the third-party analyzer.")
