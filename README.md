@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/Thomsch/metric-history.svg?token=kEZ3SvFYosMEzwAWUkVz&branch=master)](https://travis-ci.com/Thomsch/metric-history)
+[![Maintainability](https://api.codeclimate.com/v1/badges/f54676e2d0e9d7a5f871/maintainability)](https://codeclimate.com/github/Thomsch/metric-history/maintainability)
 # MetricHistory
 MetricHistory is an extensible tool designed to collect and process software
 measurements across mutiple versions of a code base. The measurement itself is
