@@ -3,6 +3,8 @@ package org.metrichistory.analyzer;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.LogOutputStream;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.metrichistory.mining.FileFilter;
@@ -56,6 +58,12 @@ public class SourceMeter implements Analyzer {
     @Override
     public void execute(String revision, String folder, FileFilter filter) {
         final DefaultExecutor executor = new DefaultExecutor();
+        executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
+            @Override
+            protected void processLine(String line, int logLevel) {
+                logger.info(line);
+            }
+        }));
         final DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
         map.put("currentDate", "-currentDate=" + revision);
 
