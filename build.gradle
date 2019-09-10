@@ -10,8 +10,6 @@ targetCompatibility=1.8
 
 repositories {
     mavenCentral()
-    // install locally for debugging purposes
-    mavenLocal()
 }
 
 dependencies {
