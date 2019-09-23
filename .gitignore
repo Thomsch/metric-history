@@ -57,3 +57,4 @@ fabric.properties
 metrics.iml
 /*.csv
 build/
+/logs/
