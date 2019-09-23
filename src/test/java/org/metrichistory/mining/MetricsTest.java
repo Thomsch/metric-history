@@ -1,17 +1,13 @@
 package org.metrichistory.mining;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.metrichistory.model.Metrics;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.metrichistory.model.Metrics;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MetricsTest {
 
@@ -71,20 +67,18 @@ public class MetricsTest {
         assertTrue(metrics.get().isEmpty());
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void get_ShouldThrowException_WhenEmpty() {
         Metrics metrics = new Metrics();
-
-        metrics.get(0);
+        assertThrows(IndexOutOfBoundsException.class, () -> metrics.get(0));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void get_ShouldThrowException_WhenNoMetricAtIndex() {
         Metrics metrics = new Metrics(2.0);
 
         assertEquals(2.0, metrics.get(0), 0);
-
-        metrics.get(1);
+        assertThrows(IndexOutOfBoundsException.class, () -> metrics.get(1));
     }
 
     @Test

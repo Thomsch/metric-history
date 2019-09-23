@@ -1,20 +1,19 @@
 package org.metrichistory.mining;
 
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.metrichistory.model.MeasureStore;
 import org.metrichistory.model.Metrics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class VersionComparatorTest {
 
     private MeasureStore model;
     private VersionComparator versionComparator;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         model = setupModel();
         versionComparator = new VersionComparator();

@@ -1,11 +1,11 @@
 package org.metrichistory.model.vcs;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommitTest {
 
@@ -13,7 +13,7 @@ public class CommitTest {
     private List<Tag> tagList;
     private List<Commit> commits;
 
-    @Before
+    @BeforeEach
     public void setup(){
         helper = new RevisionHistoryHelper();
         helper.prepareData();

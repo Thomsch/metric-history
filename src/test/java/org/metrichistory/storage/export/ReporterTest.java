@@ -1,20 +1,20 @@
 package org.metrichistory.storage.export;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReporterTest {
 
     private File expectedFile;
     private Reporter reporter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         expectedFile = new File("src/test/resources/test.csv");
 
@@ -25,7 +25,7 @@ public class ReporterTest {
         reporter = new Reporter();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         reporter.finish();
         final boolean delete = expectedFile.delete();

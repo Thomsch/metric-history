@@ -1,16 +1,16 @@
 package org.metrichistory.cmd.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProjectNameTest {
 
     private ProjectName projectName;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         projectName = new ProjectName();
     }
@@ -68,18 +68,14 @@ public class ProjectNameTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void resolve_ShouldThrowAnException_WhenParameterIsNull() {
-        projectName.resolve(null);
-
-        fail();
+        assertThrows(IllegalArgumentException.class, () -> projectName.resolve(null));
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void resolve_ShouldThrowAnException_WhenParameterIsEmpty() {
-        projectName.resolve("");
-
-        fail();
+        assertThrows(IllegalArgumentException.class, () -> projectName.resolve(""));
     }
 }

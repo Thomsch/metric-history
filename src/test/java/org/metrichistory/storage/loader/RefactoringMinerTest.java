@@ -1,20 +1,18 @@
 package org.metrichistory.storage.loader;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RefactoringMinerTest {
 
     private RefactoringMiner reader;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         reader = new RefactoringMiner();
     }
@@ -28,12 +26,12 @@ public class RefactoringMinerTest {
                 "9a5c33b16d07d62651ea80552e8782974c96bb8a",
                 "0bb0526b70870d57cbac9fcc8c4a7346a4ce5879");
 
-        assertEquals(3, revisions.size());
-        assertThat(revisions, is(expected));
+        assertEquals(revisions, expected);
+        assertNotSame(revisions, expected);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void make_ShouldThrowException_WhenFileContainsQuoteImmediatelyAfterSeparator() {
-        reader.make("src/test/resources/invalid-refactorings.csv");
+        assertThrows(IllegalStateException.class, () -> reader.make("src/test/resources/invalid-refactorings.csv"));
     }
 }

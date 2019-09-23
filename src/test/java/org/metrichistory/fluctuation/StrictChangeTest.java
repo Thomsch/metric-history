@@ -1,16 +1,16 @@
 package org.metrichistory.fluctuation;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.metrichistory.model.Metrics;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StrictChangeTest {
 
     private StrictChange changes;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         changes = new StrictChange();
     }

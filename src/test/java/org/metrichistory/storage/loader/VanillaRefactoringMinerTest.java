@@ -1,14 +1,13 @@
 package org.metrichistory.storage.loader;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class VanillaRefactoringMinerTest {
 
@@ -35,7 +34,7 @@ public class VanillaRefactoringMinerTest {
                 "627b85abfd9c1f6c69b14f9d33fb292868fe6826",
                 "347eb809e653d8fb601b9751f7b7971341e1f5ec");
 
-        assertEquals(3, revisions.size());
-        assertThat(revisions, is(expected));
+        assertEquals(revisions, expected);
+        assertNotSame(revisions, expected);
     }
 }
