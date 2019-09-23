@@ -38,7 +38,18 @@ This command analyzes the versions given in _versions.txt_ of the project locate
 Inspire yourself from the example in `org.metrichistory.cmd.*`, they all use the public API!
 
 ## Building
-We use Gradle to build the project and resolve dependencies automatically.
+
+We use [Gradle](https://gradle.org/) to manage dependencies and compile the project the project.
+
+Run `./gradlew build` (or `./gradlew.bat ...` if you're on Windows) to build the project. Dependencies will be download automatically.
+
+Run `./gradlew installDist` to install the application locally.
+
+Run `./gradlew distZip` to create a full distribution ZIP archive including runtime libraries and OS specific scripts.
+
+## Testing
+
+Run `./gradlew test` to execute the tests.
 
 ## Contributing
 
