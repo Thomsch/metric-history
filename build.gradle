@@ -24,8 +24,7 @@ dependencies {
     implementation group: 'info.picocli', name: 'picocli', version: '3.9.2'
     implementation files('lib/ck-0.2.1.jar')
 
-
-    testImplementation 'junit:junit:4.12'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.5.2'
     testImplementation 'org.mockito:mockito-core:2.18.3'
 }
 
@@ -34,6 +33,7 @@ mainClassName = "org.metrichistory.Application"
 applicationDefaultJvmArgs = ["-Xmx8G"]
 
 test {
+    test.useJUnitPlatform()
     testLogging {
         events "failed"
         exceptionFormat "full"

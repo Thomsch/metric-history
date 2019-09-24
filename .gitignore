@@ -21,9 +21,6 @@
 .idea/**/gradle.xml
 .idea/**/libraries
 .gradle/
-gradle/
-gradlew
-gradlew.bat
 
 # CMake
 cmake-build-debug/
@@ -60,3 +57,4 @@ fabric.properties
 metrics.iml
 /*.csv
 build/
+/logs/

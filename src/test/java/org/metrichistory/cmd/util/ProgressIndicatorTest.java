@@ -1,18 +1,18 @@
 package org.metrichistory.cmd.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProgressIndicatorTest {
 
     private ByteArrayOutputStream stream;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         stream = new ByteArrayOutputStream();
     }

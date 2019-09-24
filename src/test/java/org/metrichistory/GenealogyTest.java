@@ -1,18 +1,17 @@
 package org.metrichistory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.metrichistory.model.Genealogy;
+import org.metrichistory.versioncontrol.VCS;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.metrichistory.model.Genealogy;
-import org.metrichistory.versioncontrol.VCS;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -20,7 +19,7 @@ public class GenealogyTest {
 
     private Genealogy genealogy;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final VCS vcs = mock(VCS.class);
         when(vcs.getParent("a")).thenReturn("b");

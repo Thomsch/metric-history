@@ -2,8 +2,8 @@ package org.metrichistory.fluctuation;
 
 import org.metrichistory.model.Metrics;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests common behaviours between implementations of {@link Computer}.

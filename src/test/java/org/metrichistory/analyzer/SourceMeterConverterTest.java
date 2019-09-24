@@ -3,8 +3,6 @@ package org.metrichistory.analyzer;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,17 +10,19 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.metrichistory.analyzer.SourceMeterConverter;
 import org.metrichistory.model.FormatException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class SourceMeterConverterTest {
 
     private SourceMeterConverter converter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         converter = new SourceMeterConverter();
     }
@@ -31,7 +31,7 @@ public class SourceMeterConverterTest {
     public void convertSingleClass() throws IOException {
         File reference = new File("src/test/resources/conversion/ref.csv");
         File actual = new File("src/test/resources/conversion/classes.csv");
-        actual.deleteOnExit();
+//        actual.deleteOnExit();
 
         CSVPrinter parser = converter.getPrinter(new File(actual.getAbsolutePath()));
         converter.convertClassResult(new File("src/test/resources/conversion/source-meter-classes.csv"), "mock",
@@ -68,8 +68,8 @@ public class SourceMeterConverterTest {
         assertEquals(expected, new HashSet<>(Arrays.asList(actual)));
     }
 
-    @Test(expected = FormatException.class)
-    public void strictDirectoryStructure() throws Exception {
-        converter.getRevisionFolders("src/test/resources/conversion/project/java");
+    @Test
+    public void strictDirectoryStructure() {
+        assertThrows(FormatException.class, () -> converter.getRevisionFolders("src/test/resources/conversion/project/java"));
     }
 }

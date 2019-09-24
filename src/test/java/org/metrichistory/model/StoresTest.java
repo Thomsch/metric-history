@@ -1,24 +1,18 @@
 package org.metrichistory.model;
 
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import org.junit.jupiter.api.Test;
 import org.metrichistory.storage.Stores;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StoresTest {
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void convertToSourceMeterFormat_ShouldThrowIllegalStateException_WhenTheMetricsAreFromOtherProvider() {
         final Metrics metrics = new Metrics(1.0, 2.0, 3.0);
 
-        Stores.convertToSourceMeterFormat(metrics);
+        assertThrows(IllegalStateException.class, () -> Stores.convertToSourceMeterFormat(metrics));
     }
 
     @Test
