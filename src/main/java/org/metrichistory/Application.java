@@ -4,7 +4,7 @@ import org.metrichistory.cmd.Ancestry;
 import org.metrichistory.cmd.Collect;
 import org.metrichistory.cmd.Convert;
 import org.metrichistory.cmd.Difference;
-import org.metrichistory.cmd.Filter;
+import org.metrichistory.cmd.FilterRefactoring;
 import org.metrichistory.cmd.Mongo;
 import org.metrichistory.cmd.RevisionHistory;
 
@@ -29,7 +29,7 @@ public final class Application implements Runnable {
         commandLine.addSubcommand("diff", new Difference());
         commandLine.addSubcommand("ancestry", new Ancestry());
         commandLine.addSubcommand("convert", new Convert());
-        commandLine.addSubcommand("filter", new Filter());
+        commandLine.addSubcommand("filter", new FilterRefactoring());
         commandLine.addSubcommand("mongo", new Mongo());
         commandLine.addSubcommand("revision-history", new RevisionHistory());
         commandLine.setCaseInsensitiveEnumValuesAllowed(true);

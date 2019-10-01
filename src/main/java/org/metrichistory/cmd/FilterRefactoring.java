@@ -21,15 +21,13 @@ import java.util.List;
 import picocli.CommandLine;
 
 /**
- * Filters out metric fluctuations for all given versions of a project that are not desired.
- * The filtered metric fluctuations are stored in a new file.
+ * Filters metric fluctuations that are associated with a refactorings.
  */
-
 @CommandLine.Command(
-        name = "filter",
-        description = "Filters out metric fluctuations for all given versions of a project that are not desired.")
-public class Filter extends Command {
-    private static final Logger logger = LoggerFactory.getLogger(Filter.class);
+        name = "filter-refactoring",
+        description = "Filters metric fluctuations that are associated with a refactorings.")
+public class FilterRefactoring extends Command {
+    private static final Logger logger = LoggerFactory.getLogger(FilterRefactoring.class);
 
     @CommandLine.Parameters(index = "0", description = "Path of the file produced by 'diff' command.")
     private String changesFile;
