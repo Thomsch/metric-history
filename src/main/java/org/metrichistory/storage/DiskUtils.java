@@ -30,13 +30,13 @@ public final class DiskUtils {
      * @return a new instance of {@link File} representing the path of the directory
      * @throws IOException when the directory cannot be created
      */
-    public static File createDirectory(String output) throws IOException {
+    public static File createDirectory(String output) throws DirectoryCreationException {
         final File outputDir = new File(output);
         if (!outputDir.exists()) {
             logger.info("Creating folder {}", outputDir);
             final boolean success = outputDir.mkdir();
             if (!success) {
-                throw new IOException("Cannot create directory " + outputDir);
+                throw new DirectoryCreationException(outputDir.toString());
             }
         }
         return outputDir;

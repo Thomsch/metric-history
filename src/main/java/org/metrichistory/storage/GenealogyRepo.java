@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.metrichistory.model.Genealogy;
+import org.metrichistory.storage.loader.CommitReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-
-import org.metrichistory.storage.loader.CommitReader;
 
 public class GenealogyRepo {
     private static final Logger logger = LoggerFactory.getLogger(GenealogyRepo.class);
@@ -33,11 +32,9 @@ public class GenealogyRepo {
         return ancestry;
     }
 
-    public void export(Genealogy genealogy, String outputFile) {
+    public void export(Genealogy genealogy, String outputFile) throws IOException {
         try (CSVPrinter writer = getPrinter(outputFile)) {
             export(genealogy, writer);
-        } catch (IOException e) {
-            logger.error("I/O error with file {}", outputFile, e);
         }
     }
 

@@ -42,8 +42,10 @@ public class Difference extends Command {
 
         try {
             execute();
-        } catch (Exception e) {
-            logger.error("An error occurred:", e);
+        } catch (IOException e) {
+            final String errorMessage = String.format("The ancestry file (%s) cannot be read", ancestryFile);
+            System.err.println(errorMessage);
+            logger.error(errorMessage, e);
         }
     }
 
@@ -83,12 +85,13 @@ public class Difference extends Command {
         });
 
         if(errors.size() > 0) {
+            System.err.println(String.format("The command terminated with %d error%s, see the logs for more details.", errors.size(), errors.size() > 1 ? "s" : ""));
             logger.error("{} errors occurred during processing:", errors.size());
             errors.forEach(Error::display);
         }
     }
 
-    private class Error {
+    private static class Error {
         final String version;
         final String parent;
         final Exception e;

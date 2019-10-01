@@ -1,6 +1,8 @@
 package org.metrichistory.cmd;
 
 import org.metrichistory.analyzer.SourceMeterConverter;
+import org.metrichistory.model.FormatException;
+import org.metrichistory.storage.DirectoryCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +32,15 @@ public class Convert extends Command {
 
         try {
             SourceMeterConverter.convert(inputPath, output);
+        } catch (DirectoryCreationException e) {
+            System.err.println(String.format("The output directory '%s' cannot be created", output));
+            logger.error(e.getMessage(), e);
+        } catch (FormatException e) {
+            System.err.println(String.format("'%s' is not a valid Source Meter directory", inputPath));
+            logger.error(e.getMessage(), e);
         } catch (IOException e) {
-            logger.error("An error occurred", e);
+            System.err.println(String.format("An writing or reading error on a file occurred: %s", e.getMessage()));
+            logger.error(e.getMessage(), e);
         }
     }
 }

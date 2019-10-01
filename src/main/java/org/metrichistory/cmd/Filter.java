@@ -5,6 +5,10 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.metrichistory.model.MeasureStore;
 import org.metrichistory.model.Metrics;
+import org.metrichistory.storage.OutputBuilder;
+import org.metrichistory.storage.RefactoringDetail;
+import org.metrichistory.storage.StoreOutput;
+import org.metrichistory.storage.Stores;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.metrichistory.storage.OutputBuilder;
-import org.metrichistory.storage.RefactoringDetail;
-import org.metrichistory.storage.StoreOutput;
-import org.metrichistory.storage.Stores;
 import picocli.CommandLine;
 
 /**
@@ -55,8 +55,10 @@ public class Filter extends Command {
 
             final StoreOutput output = OutputBuilder.create(outputFile);
             output.export(results);
-        } catch (Exception e) {
-            logger.error("An error occurred:", e);
+        } catch (IOException e) {
+            String message = String.format("Metrics fluctuations (%s) cannot be read", changesFile);
+            System.err.println(message);
+            logger.error(message, e);
         }
     }
 

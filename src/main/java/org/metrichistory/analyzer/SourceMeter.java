@@ -61,7 +61,7 @@ public class SourceMeter implements Analyzer {
         executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
             @Override
             protected void processLine(String line, int logLevel) {
-                logger.info(line);
+                System.out.println(line);
             }
         }));
         final DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();

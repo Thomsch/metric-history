@@ -10,6 +10,7 @@ import org.metrichistory.storage.loader.CommitReader;
 import org.metrichistory.storage.loader.SimpleCommitReader;
 import org.metrichistory.versioncontrol.VCS;
 import org.metrichistory.versioncontrol.VcsBuilder;
+import org.metrichistory.versioncontrol.VcsCleanupException;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,9 +103,14 @@ public class Collect extends Command {
 
             vcs.restoreVersion();
         } catch (VcsNotFound e) {
+            System.err.println(String.format("The repository at '%s' cannot be found", repositoryPath));
             logger.error("Failed to access the repository {}", repositoryPath);
+        } catch (VcsCleanupException e) {
+            e.printStackTrace();
+            logger.error("Failed to cleanup the repository", e);
         } catch (Exception e) {
-            logger.error("An error occurred while accessing the repository", e);
+            e.printStackTrace();
+            logger.error("An unknown error occurred while accessing the repository", e);
         }
     }
 

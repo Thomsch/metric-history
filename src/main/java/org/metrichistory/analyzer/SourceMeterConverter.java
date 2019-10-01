@@ -8,6 +8,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.metrichistory.model.FormatException;
+import org.metrichistory.storage.DirectoryCreationException;
+import org.metrichistory.storage.DiskUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,31 +23,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.metrichistory.model.FormatException;
-import org.metrichistory.storage.DiskUtils;
-
 public class SourceMeterConverter {
 
     private static final Logger logger = LoggerFactory.getLogger(SourceMeterConverter.class);
 
-    public static void convert(String inputPath, String output) throws IOException{
+    /**
+     * Converts sourcemeter results to the RAW format.
+     * @param inputPath The folder containing the results from an execution of a sourcemeter analysis.
+     * @param output The file or folder where to write the results.
+     * @throws FormatException when the <code>inputPath</code> isnt a valid sourcemeter path.
+     * @throws DirectoryCreationException when a directory cannot be created.
+     * @throws IOException when an read or write error occurred.
+     */
+    public static void convert(String inputPath, String output) throws FormatException, DirectoryCreationException, IOException {
         final SourceMeterConverter converter = new SourceMeterConverter();
 
-        final String[] folders;
-        try {
-            logger.info("Scanning {}", inputPath);
-            folders = converter.getRevisionFolders(inputPath);
-        } catch (FormatException e) {
-            logger.error("{} is not a valid SourceMeter result directory", inputPath);
-            return;
-        }
+        logger.info("Scanning {}", inputPath);
+        final String[] folders = converter.getRevisionFolders(inputPath);
 
         if(DiskUtils.isFile(output)) {
             try (CSVPrinter printer = converter.getPrinter(new File(output))) {
                 logger.info("Saving contents in {}", output);
                 converter.convertProject(folders, printer);
-            } catch (IOException e) {
-                logger.error("Failed to open or write file {}", output, e);
             }
         } else {
             final File outputDirectory = DiskUtils.createDirectory(output);
@@ -54,8 +54,6 @@ public class SourceMeterConverter {
                 final String revision = FilenameUtils.getBaseName(folder);
                 try (CSVPrinter printer = converter.getPrinter(new File(outputDirectory, revision + ".csv"))) {
                     converter.convertClassResult(classResults, revision, printer);
-                } catch (IOException e) {
-                    logger.error("Failed to open or write file {}", output, e);
                 }
             }
         }
@@ -67,16 +65,10 @@ public class SourceMeterConverter {
      * @param revisionFolders the folders containing the results
      * @param printer         the instance responsible to write the results
      */
-    void convertProject(String[] revisionFolders, CSVPrinter printer) {
+    void convertProject(String[] revisionFolders, CSVPrinter printer) throws IOException {
         for (String folder : revisionFolders) {
-            try {
-                final File classResults = getClassResultsFile(folder);
-                convertClassResult(classResults, FilenameUtils.getBaseName(folder), printer);
-            } catch (FileNotFoundException e) {
-                logger.error(e.getMessage());
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
+            final File classResults = getClassResultsFile(folder);
+            convertClassResult(classResults, FilenameUtils.getBaseName(folder), printer);
         }
     }
 

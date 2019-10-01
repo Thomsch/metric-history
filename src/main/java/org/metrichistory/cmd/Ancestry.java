@@ -39,8 +39,6 @@ public class Ancestry extends Command {
     @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored.")
     private String outputFile;
 
-    private VCS repository;
-
     @Override
     public void run() {
         revisionsFile = normalizePath(revisionsFile);
@@ -53,22 +51,27 @@ public class Ancestry extends Command {
             revisions.addAll(revisionSource.load(revisionsFile));
         } catch (FileNotFoundException e) {
             System.err.println(String.format("File '%s' cannot be found.", revisionsFile));
-            System.exit(0);
+            System.exit(-1);
         } catch (IOException e) {
             System.err.println(String.format("File '%s' cannot be parsed", revisionsFile));
-            System.exit(0);
+            System.exit(-1);
         }
 
         try {
-            repository = VcsBuilder.create(normalizePath(repositoryPath));
+            final VCS repository = VcsBuilder.create(normalizePath(repositoryPath));
+
+            final Genealogy genealogy = new Genealogy(repository);
+            final GenealogyRepo genealogyRepo = new GenealogyRepo();
+            genealogy.addRevisions(revisions);
+            genealogyRepo.export(genealogy, outputFile);
         } catch (VcsNotFound e) {
-            logger.error("Cannot find version information in {}", repositoryPath);
+            final String message = String.format("Cannot find repository at '%s'.", repositoryPath);
+            System.err.println(message);
+            logger.error(message, e);
+        } catch (IOException e) {
+            final String message = String.format("Couldn't write results on file (%s)", outputFile);
+            System.err.println(message);
+            logger.error(message, e);
         }
-
-        final Genealogy genealogy = new Genealogy(repository);
-        final GenealogyRepo genealogyRepo = new GenealogyRepo();
-
-        genealogy.addRevisions(revisions);
-        genealogyRepo.export(genealogy, outputFile);
     }
 }

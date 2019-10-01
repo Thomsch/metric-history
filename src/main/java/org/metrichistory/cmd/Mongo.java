@@ -3,14 +3,14 @@ package org.metrichistory.cmd;
 import org.metrichistory.model.MeasureStore;
 import org.metrichistory.storage.Database;
 import org.metrichistory.storage.DatabaseBuilder;
+import org.metrichistory.storage.GenealogyRepo;
+import org.metrichistory.storage.Stores;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.metrichistory.storage.GenealogyRepo;
-import org.metrichistory.storage.Stores;
 import picocli.CommandLine;
 
 /**
@@ -67,7 +67,9 @@ public class Mongo extends Command {
                     break;
             }
         } catch (IOException e) {
-            logger.error("I/O error with file {}", file, e);
+            final String message = String.format("Failed to read data file '%s'", file);
+            System.err.println(message);
+            logger.error(message, e);
         }
     }
 }

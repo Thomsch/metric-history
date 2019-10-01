@@ -379,10 +379,17 @@ public class GitVcs implements VCS {
     }
 
 
-
+    /**
+     * {@inheritDoc}
+     * @throws VcsCleanupException when the resources cannot be liberated from the process.
+     */
     @Override
-    public void close() {
-        repository.close();
+    public void close() throws VcsCleanupException {
+        try {
+            repository.close();
+        } catch (Exception e) {
+            throw new VcsCleanupException("Failure to free the resources used by the repository", e);
+        }
     }
 
     private void unexpectedGitError(GitAPIException e) {

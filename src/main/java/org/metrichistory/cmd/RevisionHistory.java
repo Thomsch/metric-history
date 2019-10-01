@@ -8,7 +8,6 @@ import org.metrichistory.versioncontrol.VcsBuilder;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import picocli.CommandLine;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +16,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import picocli.CommandLine;
 
 /**
  * Generates a CSV file containing the list of pairs "version, parent". The version in the first column corresponds
@@ -44,40 +45,32 @@ public class RevisionHistory extends Command {
     @CommandLine.Parameters(index = "3", description = "Path of the file where the results will be stored.")
     private String outputFile;
 
-    private VCS repository;
-
     @Override
     public void run() {
-
         outputFile = normalizePath(outputFile);
-        try {
-            repository = VcsBuilder.create(normalizePath(repositoryPath));
-        } catch (VcsNotFound e) {
-            logger.error("Cannot find version information in {}", repositoryPath);
-        }
-
-        Tag.setMasterBranch(masterBranchName);
-
         tagListFile = normalizePath(tagListFile);
 
 
-
-        Reporter reporter = new Reporter();
+        final List<String> tagList;
         try {
+            tagList = getTags(tagListFile);
+        } catch (IOException e) {
+            final String message = String.format("Failed to read tags in file '%s'", tagListFile);
+            System.err.println(message);
+            logger.error(message, e);
+            return;
+        }
 
-            // get tag list from files
-            List<String> tagList;
-            try (Stream<String> lines = Files.lines(Paths.get(tagListFile))) {
-                tagList = lines.collect(Collectors.toList());
-            }
+        try(VCS repository = VcsBuilder.create(normalizePath(repositoryPath))) {
+            Tag.setMasterBranch(masterBranchName);
 
-            List<Tag> releases = repository.listSelectedReleases(tagList);
+            final List<Tag> releases = repository.listSelectedReleases(tagList);
 
             // exclude first release
             releases.remove(0);
 
+            final Reporter reporter = new Reporter();
             reporter.initialize(outputFile);
-
             reporter.report(new Object[]{"revision", "commitDate", "commitSequence",
                     "commitsToRelease", "commitCount",
                     "daysToRelease", "releaseDuration",
@@ -117,9 +110,26 @@ public class RevisionHistory extends Command {
             for(Tag tag: releases){
                 System.out.println(tag);
             }
+
+        } catch (VcsNotFound e) {
+            final String message = String.format("Directory '%s' cannot be interpreted as a version control project", repositoryPath);
+            System.err.println(message);
+            logger.error(message, repositoryPath);
         } catch (IOException e) {
-            logger.error("Output file error", e);
-            return;
+            final String message = String.format("Couldn't write on output file (%s)", outputFile);
+            System.err.println(message);
+            logger.error(message, e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("An unknown error occurred while accessing the repository", e);
         }
+    }
+
+    private List<String> getTags(String tagListFile) throws IOException {
+        List<String> tagList;
+        try (Stream<String> lines = Files.lines(Paths.get(tagListFile))) {
+            tagList = lines.collect(Collectors.toList());
+        }
+        return tagList;
     }
 }
