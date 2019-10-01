@@ -20,17 +20,15 @@ import java.util.stream.Stream;
 import picocli.CommandLine;
 
 /**
- * Generates a CSV file containing the list of pairs "version, parent". The version in the first column corresponds
- * to the versions we provide in argument.
- * If a parent version cannot be found for a version, this version will NOT appear in the final file.
+ * Generates a detailed description of the project's versions, quantifying it's duration and number of commits.
  */
 
 @CommandLine.Command(
-        name = "revision-history",
+        name = "release-history",
         description = "Exports information on the entire revision history of the repository")
-public class RevisionHistory extends Command {
+public class ReleaseHistory extends Command {
 
-    private static final Logger logger = LoggerFactory.getLogger(RevisionHistory.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReleaseHistory.class);
 
     @CommandLine.Parameters(index = "0", description = "Path to the root folder of the version controlled project.")
     private String repositoryPath;

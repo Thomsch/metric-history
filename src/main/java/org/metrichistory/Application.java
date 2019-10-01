@@ -6,7 +6,7 @@ import org.metrichistory.cmd.Convert;
 import org.metrichistory.cmd.Difference;
 import org.metrichistory.cmd.FilterRefactoring;
 import org.metrichistory.cmd.Mongo;
-import org.metrichistory.cmd.RevisionHistory;
+import org.metrichistory.cmd.ReleaseHistory;
 
 import picocli.CommandLine;
 
@@ -31,7 +31,7 @@ public final class Application implements Runnable {
         commandLine.addSubcommand("convert", new Convert());
         commandLine.addSubcommand("filter", new FilterRefactoring());
         commandLine.addSubcommand("mongo", new Mongo());
-        commandLine.addSubcommand("revision-history", new RevisionHistory());
+        commandLine.addSubcommand("revision-history", new ReleaseHistory());
         commandLine.setCaseInsensitiveEnumValuesAllowed(true);
 
         application.setCmd(commandLine);
