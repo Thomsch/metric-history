@@ -48,7 +48,6 @@ public class ReleaseHistory extends Command {
         outputFile = normalizePath(outputFile);
         tagListFile = normalizePath(tagListFile);
 
-
         final List<String> tagList;
         try {
             tagList = getTags(tagListFile);
