@@ -1,13 +1,8 @@
 package org.metrichistory;
 
-import org.metrichistory.cmd.Ancestry;
-import org.metrichistory.cmd.Collect;
-import org.metrichistory.cmd.Convert;
-import org.metrichistory.cmd.Difference;
-import org.metrichistory.cmd.FilterRefactoring;
-import org.metrichistory.cmd.Mongo;
-import org.metrichistory.cmd.ReleaseHistory;
-
+import org.metrichistory.cmd.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 /**
@@ -15,6 +10,7 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "metric-history", version = "Metric History 0.6", mixinStandardHelpOptions = true)
 public final class Application implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     private CommandLine commandLine;
 
@@ -35,7 +31,14 @@ public final class Application implements Runnable {
         commandLine.setCaseInsensitiveEnumValuesAllowed(true);
 
         application.setCmd(commandLine);
-        commandLine.parseWithHandler(new CommandLine.RunLast(), args);
+
+        try {
+            commandLine.parseWithHandler(new CommandLine.RunLast(), args);
+        } catch (Exception e) {
+            final String message = String.format("An unexpected error occurred: '%s'\nSee the logs (./logs/) for more details.", e.getMessage());
+            System.err.println(message);
+            logger.error(message, e);
+        }
     }
 
     private void setCmd(CommandLine commandLine) {
