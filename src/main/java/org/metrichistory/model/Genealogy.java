@@ -1,18 +1,11 @@
 package org.metrichistory.model;
 
+import org.metrichistory.versioncontrol.VCS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.metrichistory.versioncontrol.VCS;
+import java.util.*;
 
 /**
  * Contains the revisions and their respective parents.
@@ -37,7 +30,9 @@ public class Genealogy {
      * @param revisions the revisions to add to the genealogy
      */
     public void addRevisions(List<String> revisions) {
-        logger.info("Retrieving parents...");
+        Objects.requireNonNull(revisions);
+        logger.info("Retrieving parents of {} versions", revisions.size());
+
         for (String revision : revisions) {
             try {
                 final String parent = vcs.getParent(revision);
@@ -53,7 +48,7 @@ public class Genealogy {
         }
 
         if(ignored.size() > 0) {
-            logger.info("Ignored {} revision(s)", ignored.size());
+            logger.info("{} version{} were ignored because they have no parents", ignored.size(), ignored.size() > 1 ? "s" : "");
         }
     }
 
