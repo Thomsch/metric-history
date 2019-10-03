@@ -3,19 +3,18 @@ package org.metrichistory.cmd;
 import org.metrichistory.model.Genealogy;
 import org.metrichistory.storage.GenealogyRepo;
 import org.metrichistory.storage.RevisionFile;
-import org.metrichistory.storage.loader.SimpleCommitReader;
+import org.metrichistory.storage.SimpleCommitReader;
 import org.metrichistory.versioncontrol.VCS;
 import org.metrichistory.versioncontrol.VcsBuilder;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import picocli.CommandLine;
 
 /**
  * Generates a CSV file containing the list of pairs "version, parent". The version in the first column corresponds

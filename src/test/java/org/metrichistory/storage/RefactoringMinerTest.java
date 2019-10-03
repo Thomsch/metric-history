@@ -1,4 +1,4 @@
-package org.metrichistory.storage.loader;
+package org.metrichistory.storage;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

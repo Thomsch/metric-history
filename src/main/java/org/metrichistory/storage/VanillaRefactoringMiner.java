@@ -1,4 +1,4 @@
-package org.metrichistory.storage.loader;
+package org.metrichistory.storage;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;

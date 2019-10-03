@@ -1,6 +1,5 @@
 package org.metrichistory.storage;
 
-import org.metrichistory.storage.loader.CommitReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

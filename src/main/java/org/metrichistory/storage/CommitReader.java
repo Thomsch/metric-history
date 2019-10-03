@@ -1,4 +1,4 @@
-package org.metrichistory.storage.loader;
+package org.metrichistory.storage;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

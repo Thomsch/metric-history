@@ -2,12 +2,13 @@ package org.metrichistory.cmd;
 
 import org.metrichistory.model.vcs.Commit;
 import org.metrichistory.model.vcs.Tag;
-import org.metrichistory.storage.export.Reporter;
+import org.metrichistory.storage.Reporter;
 import org.metrichistory.versioncontrol.VCS;
 import org.metrichistory.versioncontrol.VcsBuilder;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,8 +17,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import picocli.CommandLine;
 
 /**
  * Generates a detailed description of the project's versions, quantifying it's duration and number of commits.

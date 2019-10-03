@@ -6,27 +6,22 @@ import org.metrichistory.analyzer.SourceMeterConverter;
 import org.metrichistory.cmd.util.ProjectName;
 import org.metrichistory.mining.Collector;
 import org.metrichistory.model.Genealogy;
-import org.metrichistory.storage.loader.CommitReader;
-import org.metrichistory.storage.loader.SimpleCommitReader;
+import org.metrichistory.storage.CommitReader;
+import org.metrichistory.storage.SimpleCommitReader;
 import org.metrichistory.versioncontrol.VCS;
 import org.metrichistory.versioncontrol.VcsBuilder;
 import org.metrichistory.versioncontrol.VcsCleanupException;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
-
-import picocli.CommandLine;
 
 /**
  * Execute a code analyzer for multiple versions and their parents. The results are written on disk.

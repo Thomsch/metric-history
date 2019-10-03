@@ -5,7 +5,6 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.metrichistory.model.Genealogy;
-import org.metrichistory.storage.loader.CommitReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
