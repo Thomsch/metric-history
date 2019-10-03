@@ -1,5 +1,7 @@
 package org.metrichistory.analyzer;
 
+import org.metrichistory.analyzer.ck.CKMetrics;
+
 import java.util.Objects;
 
 /**

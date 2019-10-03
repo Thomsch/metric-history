@@ -1,18 +1,16 @@
-package org.metrichistory.analyzer;
+package org.metrichistory.analyzer.ck;
 
 import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNumber;
 import com.github.mauricioaniche.ck.CKReport;
-
 import org.apache.commons.io.FilenameUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.metrichistory.analyzer.Analyzer;
 import org.metrichistory.mining.FileFilter;
 import org.metrichistory.model.MetricDump;
 import org.metrichistory.model.Metrics;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
