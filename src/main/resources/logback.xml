@@ -1,21 +1,16 @@
 <configuration>
-    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/log.txt</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- rollover daily -->
-            <fileNamePattern>logs/log-%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
-            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
-            <maxFileSize>100MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>10GB</totalSizeCap>
-        </rollingPolicy>
+
+    <timestamp key="byTimestamp" datePattern="yyyy-MM-dd-HHmm"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/log-${byTimestamp}.txt</file>
         <encoder>
             <pattern>%d{HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
         </encoder>
     </appender>
 
     <root level="debug">
-        <appender-ref ref="ROLLING" />
+        <appender-ref ref="FILE" />
     </root>
 
     <logger name="org.eclipse.jgit.util" level="info"/>
