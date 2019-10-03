@@ -29,7 +29,7 @@ public class SourceMeterConverterTest {
     public void convertSingleClass() throws IOException {
         File reference = new File("src/test/resources/conversion/ref.csv");
         File actual = new File("src/test/resources/conversion/classes.csv");
-//        actual.deleteOnExit();
+        actual.deleteOnExit();
 
         CSVPrinter parser = converter.getPrinter(new File(actual.getAbsolutePath()));
         converter.convertClassResult(new File("src/test/resources/conversion/source-meter-classes.csv"), "mock",
