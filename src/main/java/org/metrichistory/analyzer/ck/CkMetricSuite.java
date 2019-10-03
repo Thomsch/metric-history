@@ -1,4 +1,4 @@
-package org.metrichistory.storage.export;
+package org.metrichistory.analyzer.ck;
 
 import org.metrichistory.model.Metrics;
 

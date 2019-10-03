@@ -2,6 +2,7 @@ package org.metrichistory.storage.export;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.metrichistory.analyzer.ck.DefaultFormatter;
 import org.metrichistory.model.MetricDump;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +32,6 @@ public class Reporter {
     public void initialize(String outputFile) throws IOException {
         fileWriter = new FileWriter(outputFile);
         printer = new CSVPrinter(fileWriter, CSVFormat.EXCEL.withDelimiter(DELIMITER));
-    }
-
-    public void printMetaInformation() throws IOException {
-        printer.printRecord(DefaultFormatter.getMetaData());
     }
 
     /**
