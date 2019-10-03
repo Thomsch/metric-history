@@ -1,14 +1,13 @@
 package org.metrichistory.cmd;
 
-import org.metrichistory.analyzer.SourceMeterConverter;
+import org.metrichistory.analyzer.sourcemeter.SourceMeterConverter;
 import org.metrichistory.model.FormatException;
 import org.metrichistory.storage.DirectoryCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
 import java.io.IOException;
-
-import picocli.CommandLine;
 
 /**
  * Converts the results from an analyser to the RAW format.

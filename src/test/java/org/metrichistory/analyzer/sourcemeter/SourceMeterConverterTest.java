@@ -1,19 +1,17 @@
-package org.metrichistory.analyzer;
+package org.metrichistory.analyzer.sourcemeter;
 
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.metrichistory.model.FormatException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.metrichistory.analyzer.SourceMeterConverter;
-import org.metrichistory.model.FormatException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

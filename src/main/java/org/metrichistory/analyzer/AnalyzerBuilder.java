@@ -1,6 +1,7 @@
 package org.metrichistory.analyzer;
 
 import org.metrichistory.analyzer.ck.CKMetrics;
+import org.metrichistory.analyzer.sourcemeter.SourceMeter;
 
 import java.util.Objects;
 

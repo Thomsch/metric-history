@@ -2,7 +2,7 @@ package org.metrichistory.cmd;
 
 import org.metrichistory.analyzer.Analyzer;
 import org.metrichistory.analyzer.AnalyzerBuilder;
-import org.metrichistory.analyzer.SourceMeterConverter;
+import org.metrichistory.analyzer.sourcemeter.SourceMeterConverter;
 import org.metrichistory.cmd.util.ProjectName;
 import org.metrichistory.mining.Collector;
 import org.metrichistory.model.Genealogy;

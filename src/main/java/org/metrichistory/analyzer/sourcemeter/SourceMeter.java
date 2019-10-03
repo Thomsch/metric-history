@@ -1,12 +1,9 @@
-package org.metrichistory.analyzer;
+package org.metrichistory.analyzer.sourcemeter;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecuteResultHandler;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.LogOutputStream;
-import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.metrichistory.analyzer.Analyzer;
 import org.metrichistory.mining.FileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
