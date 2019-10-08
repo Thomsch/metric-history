@@ -7,8 +7,7 @@ import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.NoHeadException;
+import org.eclipse.jgit.api.errors.*;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.ObjectId;
@@ -49,9 +48,14 @@ public class GitVcs implements VCS {
     }
 
     @Override
-    public void checkout(String revision) throws GitAPIException {
-        final CheckoutCommand command = new Git(repository).checkout().setName(revision).setForce(true);
-        command.call();
+    public void checkout(String version) throws VcsOperationException {
+        final CheckoutCommand command = new Git(repository).checkout().setName(version).setForce(true);
+
+        try {
+            command.call();
+        } catch (GitAPIException e) {
+            throw new VcsOperationException("Git encountered an error while loading version" + version, e);
+        }
     }
 
     @Override
@@ -97,7 +101,7 @@ public class GitVcs implements VCS {
         try {
             clean();
             checkout(saved);
-        } catch (GitAPIException e) {
+        } catch (VcsOperationException e) {
             unexpectedGitError(e);
         }
     }
@@ -392,7 +396,7 @@ public class GitVcs implements VCS {
         }
     }
 
-    private void unexpectedGitError(GitAPIException e) {
+    private void unexpectedGitError(Exception e) {
         logger.error("An unexpected error occurred in git:", e);
     }
 }

@@ -15,11 +15,12 @@ import java.util.List;
 public interface VCS extends AutoCloseable {
 
     /**
-     * Checkout the repository to the revision.
+     * Checkout the repository to the version.
      *
-     * @param revision the full SHA of the revision
+     * @param version the full SHA of the version
+     * @throws VcsOperationException when the version cannot be loaded.
      */
-    void checkout(String revision) throws GitAPIException;
+    void checkout(String version) throws VcsOperationException;
 
     /**
      * Discard any modification made to tracked or un-tracked files and reset any conflicts.
@@ -72,4 +73,7 @@ public interface VCS extends AutoCloseable {
      * @return the parent of the revision
      */
     String getParent(String revision) throws IOException;
+
+    @Override
+    void close() throws VcsCleanupException;
 }

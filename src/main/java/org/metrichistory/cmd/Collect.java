@@ -3,15 +3,12 @@ package org.metrichistory.cmd;
 import org.metrichistory.analyzer.Analyzer;
 import org.metrichistory.analyzer.AnalyzerBuilder;
 import org.metrichistory.analyzer.sourcemeter.SourceMeterConverter;
-import org.metrichistory.cmd.util.ProjectName;
+import org.metrichistory.cmd.util.ProjectNameResolver;
 import org.metrichistory.mining.Collector;
 import org.metrichistory.model.Genealogy;
 import org.metrichistory.storage.CommitReader;
 import org.metrichistory.storage.SimpleCommitReader;
-import org.metrichistory.versioncontrol.VCS;
-import org.metrichistory.versioncontrol.VcsBuilder;
-import org.metrichistory.versioncontrol.VcsCleanupException;
-import org.metrichistory.versioncontrol.VcsNotFound;
+import org.metrichistory.versioncontrol.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -54,62 +51,60 @@ public class Collect extends Command {
     private String projectNameOption;
 
     @CommandLine.Option(names = {"-f", "--folder"}, arity = "0..1", description = "Specifies the folder on which the analyzer will run (by default, it will run in <repositoryPath>).")
-    private String folder;
+    private String folderOption;
 
     @Override
     public void run() {
-        final Set<String> versions = loadRevisions(versionsParam);
+        final Set<String> versions = retrieveVersions(versionsParam);
+        if(versions.size() == 0) {
+            return;
+        }
         logger.info("Read {} distinct revisions", versions.size());
 
         repositoryPath = normalizePath(repositoryPath);
         outputPath = normalizePath(outputPath);
         executable = normalizePath(executable);
-        folder = resolveInputFolder();
+        final String folder = Optional.ofNullable(folderOption).orElse(repositoryPath);
+        final String projectName = Optional.ofNullable(projectNameOption).orElseGet(new ProjectNameResolver(repositoryPath));
 
-        final ProjectName projectName = new ProjectName(projectNameOption);
-        projectName.resolve(repositoryPath);
-
+        // Snapshot mode is only activated by specifying one version inline.
         if(isSingleVersion(versionsParam)) {
-            doASnapshot(projectName);
+            doASnapshot(projectName, folder);
             return;
         }
 
-        try(VCS vcs = VcsBuilder.create(repositoryPath)) {
-            final Analyzer analyzer = initializeAnalyzer(projectName);
-            final Collector collector = new Collector(analyzer, vcs);
+        try {
+            final List<String> versionsToAnalyze = retrieveVersionsToAnalyze(versions, repositoryPath, includeParents);
+            final Analyzer analyzer = buildAnalyzer(projectName, folder);
+            final Collector collector = new Collector(analyzer);
 
-            final List<String> analysisTargets = new ArrayList<>();
-            if(includeParents) {
-                final Genealogy genealogy = new Genealogy(vcs);
-                genealogy.addRevisions(new ArrayList<>(versions));
-                analysisTargets.addAll(genealogy.getUniqueRevisions());
-            } else {
-                analysisTargets.addAll(versions);
-            }
-
-            final long beginning = System.nanoTime();
-            int i = 0;
-            for (String revision : analysisTargets) {
-                logger.info("Processing {} ({})", revision, ++i);
-                collector.analyzeRevision(revision, repositoryPath);
-            }
-            final long elapsed = System.nanoTime() - beginning;
-            logger.info("Analysis completed in {}", Duration.ofNanos(elapsed));
-
-            vcs.restoreVersion();
+            collector.analyzeVersions(versionsToAnalyze, repositoryPath);
         } catch (VcsNotFound e) {
             System.err.println(String.format("The repository at '%s' cannot be found", repositoryPath));
             logger.error("Failed to access the repository {}", repositoryPath);
         } catch (VcsCleanupException e) {
             e.printStackTrace();
             logger.error("Failed to cleanup the repository", e);
-        } catch (Exception e) {
+        } catch (VcsOperationException e) {
             e.printStackTrace();
-            logger.error("An unknown error occurred while accessing the repository", e);
+            logger.error("The version control system encountered an error {}", e.getMessage());
         }
     }
 
-    private Set<String> loadRevisions(String versionsParam) {
+    private List<String> retrieveVersionsToAnalyze(Set<String> versions, String repositoryPath, boolean includeParents) throws VcsNotFound {
+        final List<String> result = new ArrayList<>();
+
+        if(includeParents) {
+            final Genealogy genealogy = new Genealogy(VcsBuilder.create(repositoryPath));
+            genealogy.addRevisions(new ArrayList<>(versions));
+            result.addAll(genealogy.getUniqueRevisions());
+        } else {
+            result.addAll(versions);
+        }
+        return result;
+    }
+
+    private Set<String> retrieveVersions(String versionsParam) {
         if (isSingleVersion(versionsParam)) {
             return Collections.singleton(versionsParam);
         } else {
@@ -130,27 +125,19 @@ public class Collect extends Command {
         }
     }
 
-    private String resolveInputFolder() {
-        if (folder == null) {
-            return repositoryPath;
-        } else {
-            return normalizePath(folder);
-        }
-    }
-
-    private Analyzer initializeAnalyzer(ProjectName projectName) {
+    private Analyzer buildAnalyzer(String projectName, String folder) {
         final AnalyzerBuilder analyzerBuilder = new AnalyzerBuilder();
-        analyzerBuilder.setProjectName(projectName.toString());
+        analyzerBuilder.setProjectName(projectName);
         analyzerBuilder.setInputDirectory(folder);
         analyzerBuilder.setOutputDirectory(outputPath);
         analyzerBuilder.setExecutable(executable);
         return analyzerBuilder.build(analyzer);
     }
 
-    private void doASnapshot(ProjectName projectName) {
+    private void doASnapshot(String projectName, String folder) {
         try (VCS vcs = VcsBuilder.create(repositoryPath)){
-            final Analyzer analyzer = initializeAnalyzer(projectName);
-            final Collector collector = new Collector(analyzer, vcs);
+            final Analyzer analyzer = buildAnalyzer(projectName, folder);
+            final Collector collector = new Collector(analyzer);
 
             final String outputFilePath = outputPath + File.separator + versionsParam + ".csv";
             final String collectorOutputDirectory = outputPath + File.separator + projectName;
@@ -160,11 +147,11 @@ public class Collect extends Command {
 
             final long beginning = System.nanoTime();
             try {
-                collector.analyzeRevision(versionsParam, folder);
-                SourceMeterConverter.convert(collectorOutputDirectory, outputFilePath);
-
+                collector.analyzeVersion(versionsParam, folder);
                 vcs.clean();
                 vcs.close();
+
+                SourceMeterConverter.convert(collectorOutputDirectory, outputFilePath);
             } catch (IOException e) {
                 logger.error("Resource access problem", e);
             } finally {
