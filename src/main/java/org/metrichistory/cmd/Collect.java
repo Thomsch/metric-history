@@ -5,6 +5,8 @@ import org.metrichistory.analyzer.AnalyzerBuilder;
 import org.metrichistory.analyzer.sourcemeter.SourceMeterConverter;
 import org.metrichistory.cmd.util.ProjectNameResolver;
 import org.metrichistory.mining.Collector;
+import org.metrichistory.mining.Snapshot;
+import org.metrichistory.model.FormatException;
 import org.metrichistory.model.Genealogy;
 import org.metrichistory.storage.CommitReader;
 import org.metrichistory.storage.SimpleCommitReader;
@@ -135,33 +137,30 @@ public class Collect extends Command {
     }
 
     private void doASnapshot(String projectName, String folder) {
-        try (Vcs vcs = VcsBuilder.create(repositoryPath)){
-            final Analyzer analyzer = buildAnalyzer(projectName, folder);
-            final Collector collector = new Collector(analyzer);
+        final Analyzer analyzer = buildAnalyzer(projectName, folder);
+        final Collector collector = new Collector(analyzer);
+        final String outputFilePath = outputPath + File.separator + versionsParam + ".csv";
 
-            final String outputFilePath = outputPath + File.separator + versionsParam + ".csv";
-            final String collectorOutputDirectory = outputPath + File.separator + projectName;
+        logger.info("Output file: {}", outputFilePath);
+        logger.info("Processing single revision {}", versionsParam);
 
-            logger.info("Output file: {}", outputFilePath);
-            logger.info("Processing single revision {}", versionsParam);
+        final Snapshot snapshot = new Snapshot(collector, repositoryPath);
 
-            final long beginning = System.nanoTime();
-            try {
-                collector.analyzeVersion(versionsParam, folder);
-                vcs.clean();
-                vcs.close();
-
-                SourceMeterConverter.convert(collectorOutputDirectory, outputFilePath);
-            } catch (IOException e) {
-                logger.error("Resource access problem", e);
-            } finally {
-                final long elapsed = System.nanoTime() - beginning;
-                logger.info("Snapshot completed in {}", Duration.ofNanos(elapsed));
-            }
-        } catch (VcsNotFound vcsNotFound) {
+        final long beginning = System.nanoTime();
+        try {
+            snapshot.execute(versionsParam, folder, outputFilePath);
+        } catch (VcsCleanupException e) {
+            e.printStackTrace();
+            logger.error("Failed to cleanup the repository", e);
+        } catch (VcsNotFound e) {
+            System.err.println(String.format("The repository at '%s' cannot be found", repositoryPath));
             logger.error("Failed to access the repository {}", repositoryPath);
-        } catch (Exception e) {
-            logger.error("An error occurred while accessing the repository", e);
+        } catch (FormatException | IOException e) {
+            e.printStackTrace();
+            logger.error("A disk error occurred while converting the results", e);
+        } finally {
+            final long elapsed = System.nanoTime() - beginning;
+            logger.info("Snapshot completed in {}", Duration.ofNanos(elapsed));
         }
     }
 

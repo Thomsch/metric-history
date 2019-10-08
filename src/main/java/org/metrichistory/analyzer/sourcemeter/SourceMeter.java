@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Collects metrics from the command line.
@@ -89,6 +90,11 @@ public class SourceMeter implements Analyzer {
     public boolean hasInCache(String version) {
         final File output = new File(rootOutputDirectory, version);
         return output.exists();
+    }
+
+    @Override
+    public Optional<String> getOutputPath(String version) {
+        return Optional.of(FileUtils.getFile(rootOutputDirectory, version).getAbsolutePath());
     }
 
     private void deleteFile(File baseDir, String file) throws IOException {

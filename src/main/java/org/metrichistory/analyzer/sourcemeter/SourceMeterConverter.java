@@ -17,10 +17,12 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 public class SourceMeterConverter {
 
     private static final Logger logger = LoggerFactory.getLogger(SourceMeterConverter.class);
+    private static final Pattern pattern = Pattern.compile("^.+/[a-f|0-9]{40}$");
 
     /**
      * Converts sourcemeter results to the RAW format.
@@ -33,8 +35,7 @@ public class SourceMeterConverter {
     public static void convert(String inputPath, String output) throws FormatException, DirectoryCreationException, IOException {
         final SourceMeterConverter converter = new SourceMeterConverter();
 
-        logger.info("Scanning {}", inputPath);
-        final String[] folders = converter.getRevisionFolders(inputPath);
+        final String[] folders = converter.resolveInputFolders(inputPath);
 
         if(DiskUtils.isFile(output)) {
             try (CSVPrinter printer = converter.getPrinter(new File(output))) {
@@ -51,6 +52,17 @@ public class SourceMeterConverter {
                     converter.convertClassResult(classResults, revision, printer);
                 }
             }
+        }
+    }
+
+    private String[] resolveInputFolders(String inputPath) throws FormatException {
+        // If the input path contains directly the results of a version,
+        // we analyze only this folder. Otherwise, all the versions inside
+        // the root folder are resolved.
+        if(pattern.matcher(inputPath).matches()) {
+            return new String[]{inputPath};
+        } else {
+            return getRevisionFolders(inputPath);
         }
     }
 
@@ -87,6 +99,8 @@ public class SourceMeterConverter {
      * @throws FormatException if the project is not using SourceMeter format
      */
     String[] getRevisionFolders(String project) throws FormatException {
+        logger.info("Scanning {}", project);
+
         final File file = new File(project, "java");
 
         if (!file.exists()) {

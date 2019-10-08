@@ -11,6 +11,7 @@ import org.metrichistory.model.Metrics;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -46,6 +47,11 @@ public class CKMetrics implements Analyzer {
     @Override
     public boolean hasInCache(String version) {
         return results.get(version) != null;
+    }
+
+    @Override
+    public Optional<String> getOutputPath(String version) {
+        return Optional.empty();
     }
 
     public MetricDump getResult(String version) {

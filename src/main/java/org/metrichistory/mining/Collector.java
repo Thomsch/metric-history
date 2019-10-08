@@ -5,8 +5,10 @@ import org.metrichistory.versioncontrol.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Uses an {@link Analyzer} to analyze a project.
@@ -63,5 +65,12 @@ public class Collector {
 
             vcs.restoreVersion();
         }
+    }
+
+    /**
+     * @see Analyzer#getOutputPath(String)
+     */
+    public Optional<String> getOutputDirectory(String version) {
+        return analyzer.getOutputPath(version);
     }
 }
