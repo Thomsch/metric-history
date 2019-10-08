@@ -9,13 +9,17 @@ import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.*;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
+import org.eclipse.jgit.errors.StopWalkException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.metrichistory.model.vcs.Commit;
 import org.metrichistory.model.vcs.CommitFactory;
@@ -398,5 +402,22 @@ public class GitVcs implements VCS {
 
     private void unexpectedGitError(Exception e) {
         logger.error("An unexpected error occurred in git:", e);
+    }
+
+    private static final class GitUtils {
+
+        static RevFilter noMergeFilter(){
+            return new RevFilter() {
+                @Override
+                public boolean include(RevWalk walker, RevCommit cmit) throws StopWalkException, MissingObjectException, IncorrectObjectTypeException, IOException {
+                    return cmit.getParentCount() <= 1;
+                }
+
+                @Override
+                public RevFilter clone() {
+                    return null;
+                }
+            };
+        }
     }
 }
