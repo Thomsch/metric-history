@@ -1,6 +1,6 @@
 package org.metrichistory.model;
 
-import org.metrichistory.versioncontrol.VCS;
+import org.metrichistory.versioncontrol.Vcs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,12 +13,12 @@ import java.util.*;
 public class Genealogy {
     private static final Logger logger = LoggerFactory.getLogger(Genealogy.class);
 
-    private final VCS vcs;
+    private final Vcs vcs;
 
     private final Map<String, String> model; // The key is the revision, the value is its first parent.
     private final Set<String> ignored;
 
-    public Genealogy(VCS vcs) {
+    public Genealogy(Vcs vcs) {
         this.vcs = vcs;
 
         model = new LinkedHashMap<>();

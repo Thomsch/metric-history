@@ -1,6 +1,5 @@
 package org.metrichistory.mining;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.metrichistory.analyzer.Analyzer;
 import org.metrichistory.versioncontrol.*;
 import org.slf4j.Logger;
@@ -50,7 +49,7 @@ public class Collector {
     public void analyzeVersions(List<String> versionsToAnalyze, String repositoryPath) throws VcsNotFound, VcsCleanupException, VcsOperationException {
         final long beginning = System.nanoTime();
 
-        try (VCS vcs = VcsBuilder.create(repositoryPath)) {
+        try (Vcs vcs = VcsBuilder.create(repositoryPath)) {
             int i = 0;
             for (String version : versionsToAnalyze) {
                 logger.info("Processing {} ({})", version, ++i);

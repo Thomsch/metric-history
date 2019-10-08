@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Represent a generic Version Control System.
  */
-public interface VCS extends AutoCloseable {
+public interface Vcs extends AutoCloseable {
 
     /**
      * Checkout the repository to the version.

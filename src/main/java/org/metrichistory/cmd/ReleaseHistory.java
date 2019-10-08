@@ -3,7 +3,7 @@ package org.metrichistory.cmd;
 import org.metrichistory.model.vcs.Commit;
 import org.metrichistory.model.vcs.Tag;
 import org.metrichistory.storage.Reporter;
-import org.metrichistory.versioncontrol.VCS;
+import org.metrichistory.versioncontrol.Vcs;
 import org.metrichistory.versioncontrol.VcsBuilder;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class ReleaseHistory extends Command {
             return;
         }
 
-        try(VCS repository = VcsBuilder.create(normalizePath(repositoryPath))) {
+        try(Vcs repository = VcsBuilder.create(normalizePath(repositoryPath))) {
             Tag.setMasterBranch(masterBranchName);
 
             final List<Tag> releases = repository.listSelectedReleases(tagList);

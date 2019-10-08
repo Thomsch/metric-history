@@ -12,11 +12,11 @@ public final class VcsBuilder {
     }
 
     /**
-     * Creates an adapter for the version control system used by the project. Automatically calls {@link VCS#saveVersion()}.
+     * Creates an adapter for the version control system used by the project. Automatically calls {@link Vcs#saveVersion()}.
      * @param path the location of the VCS on the disk
      * @return a new instance of the adapter
      */
-    public static VCS create(String path) throws VcsNotFound {
+    public static Vcs create(String path) throws VcsNotFound {
         final FileRepositoryBuilder builder = new FileRepositoryBuilder();
         final Repository repository;
         try {

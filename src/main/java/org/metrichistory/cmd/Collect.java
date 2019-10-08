@@ -135,7 +135,7 @@ public class Collect extends Command {
     }
 
     private void doASnapshot(String projectName, String folder) {
-        try (VCS vcs = VcsBuilder.create(repositoryPath)){
+        try (Vcs vcs = VcsBuilder.create(repositoryPath)){
             final Analyzer analyzer = buildAnalyzer(projectName, folder);
             final Collector collector = new Collector(analyzer);
 

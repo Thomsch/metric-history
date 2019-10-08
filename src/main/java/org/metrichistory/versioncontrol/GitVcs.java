@@ -40,7 +40,7 @@ import java.util.Objects;
 
 import static org.metrichistory.util.DateUtils.offsetDateTimeOf;
 
-public class GitVcs implements VCS {
+public class GitVcs implements Vcs {
 
     private static final Logger logger = LoggerFactory.getLogger(GitVcs.class);
 

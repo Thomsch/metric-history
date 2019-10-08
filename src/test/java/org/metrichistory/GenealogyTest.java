@@ -3,7 +3,7 @@ package org.metrichistory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.metrichistory.model.Genealogy;
-import org.metrichistory.versioncontrol.VCS;
+import org.metrichistory.versioncontrol.Vcs;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class GenealogyTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        final VCS vcs = mock(VCS.class);
+        final Vcs vcs = mock(Vcs.class);
         when(vcs.getParent("a")).thenReturn("b");
         when(vcs.getParent("b")).thenReturn("c");
         when(vcs.getParent("c")).thenReturn("d");

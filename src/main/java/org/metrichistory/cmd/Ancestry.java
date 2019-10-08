@@ -4,7 +4,7 @@ import org.metrichistory.model.Genealogy;
 import org.metrichistory.storage.GenealogyRepo;
 import org.metrichistory.storage.RevisionFile;
 import org.metrichistory.storage.SimpleCommitReader;
-import org.metrichistory.versioncontrol.VCS;
+import org.metrichistory.versioncontrol.Vcs;
 import org.metrichistory.versioncontrol.VcsBuilder;
 import org.metrichistory.versioncontrol.VcsNotFound;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class Ancestry extends Command {
         }
 
         try {
-            final VCS repository = VcsBuilder.create(normalizePath(repositoryPath));
+            final Vcs repository = VcsBuilder.create(normalizePath(repositoryPath));
 
             final Genealogy genealogy = new Genealogy(repository);
             final GenealogyRepo genealogyRepo = new GenealogyRepo();
