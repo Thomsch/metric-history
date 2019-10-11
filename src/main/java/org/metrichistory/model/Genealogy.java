@@ -43,7 +43,9 @@ public class Genealogy {
                     model.put(revision, parent);
                 }
             } catch (IOException e) {
-                logger.error("I/O error prevented retrieval {}'s parent", revision);
+                final String message = String.format("Version '%s''s parent was not retrieved: '%s'.", revision, e.getMessage());
+                System.err.println(message);
+                logger.error(message, e);
             }
         }
 
