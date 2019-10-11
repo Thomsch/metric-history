@@ -2,6 +2,8 @@ package org.metrichistory.storage;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.metrichistory.model.MeasureStore;
+import org.metrichistory.model.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,10 +11,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-
-import org.metrichistory.model.MeasureStore;
-import org.metrichistory.model.Metrics;
 
 /**
  * Exports measures to a single file.
@@ -44,6 +45,7 @@ public class FileTarget extends SaveTarget {
 
     private CSVPrinter buildPrinter() throws IOException {
         final CSVFormat format = Stores.getFormat(!append);
+        Files.createDirectories(Paths.get(file.toURI()).getParent());
         return new CSVPrinter(new BufferedWriter(new FileWriter(file, append)), format);
     }
 

@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Encapsulate the location for saving data on the file system.
@@ -21,7 +23,7 @@ public abstract class SaveTarget {
         } else {
 
             try {
-                final File outputDir = DiskUtils.createDirectory(destination);
+                final File outputDir = Files.createDirectories(Paths.get(destination)).toFile();
                 return new FolderTarget(outputDir);
             } catch (IOException e) {
                 logger.error("{} is not a valid output destination", destination, e);

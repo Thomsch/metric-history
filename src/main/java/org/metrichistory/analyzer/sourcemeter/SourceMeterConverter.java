@@ -10,11 +10,12 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.metrichistory.model.FormatException;
 import org.metrichistory.storage.DirectoryCreationException;
-import org.metrichistory.storage.DiskUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -44,7 +45,7 @@ public class SourceMeterConverter {
                 converter.convertProject(folders, printer);
             }
         } else {
-            final File outputDirectory = DiskUtils.createDirectory(outputPath);
+            final File outputDirectory = Files.createDirectories(Paths.get(outputPath)).toFile();
             logger.info("Saving contents to {}", outputDirectory);
             for (String folder : folders) {
                 final File classResults = converter.getClassResultsFile(folder);

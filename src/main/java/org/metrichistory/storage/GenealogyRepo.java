@@ -12,6 +12,8 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -32,6 +34,7 @@ public class GenealogyRepo {
     }
 
     public void export(Genealogy genealogy, String outputFile) throws IOException {
+        Files.createDirectories(Paths.get(outputFile).getParent());
         try (CSVPrinter writer = getPrinter(outputFile)) {
             export(genealogy, writer);
         }
