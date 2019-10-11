@@ -27,23 +27,24 @@ public class SourceMeterConverter {
     /**
      * Converts sourcemeter results to the RAW format.
      * @param inputPath The folder containing the results from an execution of a sourcemeter analysis.
-     * @param output The file or folder where to write the results.
+     * @param outputPath The file or folder where to write the results.
      * @throws FormatException when the <code>inputPath</code> isnt a valid sourcemeter path.
      * @throws DirectoryCreationException when a directory cannot be created.
      * @throws IOException when an read or write error occurred.
      */
-    public static void convert(String inputPath, String output) throws FormatException, DirectoryCreationException, IOException {
+    public static void convert(String inputPath, String outputPath) throws FormatException, DirectoryCreationException, IOException {
         final SourceMeterConverter converter = new SourceMeterConverter();
 
         final String[] folders = converter.resolveInputFolders(inputPath);
 
-        if(DiskUtils.isFile(output)) {
-            try (CSVPrinter printer = converter.getPrinter(new File(output))) {
-                logger.info("Saving contents in {}", output);
+        final File outputFile = new File(outputPath);
+        if(outputFile.isFile()) {
+            try (CSVPrinter printer = converter.getPrinter(outputFile)) {
+                logger.info("Saving contents in {}", outputPath);
                 converter.convertProject(folders, printer);
             }
         } else {
-            final File outputDirectory = DiskUtils.createDirectory(output);
+            final File outputDirectory = DiskUtils.createDirectory(outputPath);
             logger.info("Saving contents to {}", outputDirectory);
             for (String folder : folders) {
                 final File classResults = converter.getClassResultsFile(folder);

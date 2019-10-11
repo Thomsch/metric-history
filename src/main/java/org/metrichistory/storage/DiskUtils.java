@@ -15,16 +15,6 @@ public final class DiskUtils {
     }
 
     /**
-     * Returns if the specified output location is a file or a directory. A directory is any name not containing a '.'.
-     * Otherwise the path is considered a file.
-     * @param output the canonical location of the output
-     * @return true if the path is referring to a file
-     */
-    public static boolean isFile(String output) {
-        return new File(output).getName().contains(".");
-    }
-
-    /**
      * Creates a new directory if it doesn't exists
      * @param output the path of the directory
      * @return a new instance of {@link File} representing the path of the directory
