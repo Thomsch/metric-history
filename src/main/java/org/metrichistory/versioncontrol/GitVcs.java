@@ -1,13 +1,9 @@
 package org.metrichistory.versioncontrol;
 
 import org.apache.commons.io.FilenameUtils;
-import org.eclipse.jgit.api.CheckoutCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ListTagCommand;
-import org.eclipse.jgit.api.LogCommand;
-import org.eclipse.jgit.api.ResetCommand;
-import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.errors.*;
+import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
@@ -31,12 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.metrichistory.util.DateUtils.offsetDateTimeOf;
 
@@ -53,7 +44,7 @@ public class GitVcs implements Vcs {
 
     @Override
     public void checkout(String version) throws VcsOperationException {
-        final CheckoutCommand command = new Git(repository).checkout().setName(version).setForce(true);
+        final CheckoutCommand command = new Git(repository).checkout().setName(version).setForceRefUpdate(true);
 
         try {
             command.call();
