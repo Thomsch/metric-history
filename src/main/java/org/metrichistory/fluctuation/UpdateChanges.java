@@ -9,7 +9,7 @@ import java.util.List;
  * This put an emphasis on the changes between two version rather than the creation (old == null, current != null) or
  * the destruction (old != null, current == null).
  */
-public class StrictChange implements Computer {
+public class UpdateChanges implements Computer {
     @Override
     public Metrics compute(Metrics reference, Metrics other) {
         Metrics result = null;

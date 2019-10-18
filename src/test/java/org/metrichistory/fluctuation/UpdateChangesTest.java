@@ -6,13 +6,13 @@ import org.metrichistory.model.Metrics;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class StrictChangeTest {
+public class UpdateChangesTest {
 
-    private StrictChange changes;
+    private UpdateChanges changes;
 
     @BeforeEach
     public void setUp() {
-        changes = new StrictChange();
+        changes = new UpdateChanges();
     }
 
     @Test
