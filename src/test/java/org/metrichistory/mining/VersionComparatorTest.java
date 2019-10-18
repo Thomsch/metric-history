@@ -2,6 +2,7 @@ package org.metrichistory.mining;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.metrichistory.fluctuation.UpdateChanges;
 import org.metrichistory.model.MeasureStore;
 import org.metrichistory.model.Metrics;
 
@@ -16,7 +17,7 @@ public class VersionComparatorTest {
     @BeforeEach
     public void setUp() throws Exception {
         model = setupModel();
-        versionComparator = new VersionComparator();
+        versionComparator = new VersionComparator(new UpdateChanges());
     }
 
     @Test

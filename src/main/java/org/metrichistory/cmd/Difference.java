@@ -1,6 +1,7 @@
 package org.metrichistory.cmd;
 
 import org.metrichistory.cmd.util.ProgressIndicator;
+import org.metrichistory.fluctuation.UpdateChanges;
 import org.metrichistory.mining.VersionComparator;
 import org.metrichistory.model.MeasureStore;
 import org.metrichistory.storage.GenealogyRepo;
@@ -8,13 +9,12 @@ import org.metrichistory.storage.MeasureRepository;
 import org.metrichistory.storage.SaveTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import picocli.CommandLine;
 
 /**
  * Computes the metric fluctuations from file(s) in RAW format.
@@ -62,7 +62,7 @@ public class Difference extends Command {
         }
 
         final MeasureRepository measureRepository = MeasureRepository.build(input);
-        final VersionComparator versionComparator = new VersionComparator();
+        final VersionComparator versionComparator = new VersionComparator(new UpdateChanges());
 
 
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
