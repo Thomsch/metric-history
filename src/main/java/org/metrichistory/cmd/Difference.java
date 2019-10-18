@@ -1,6 +1,8 @@
 package org.metrichistory.cmd;
 
 import org.metrichistory.cmd.util.ProgressIndicator;
+import org.metrichistory.fluctuation.AllChange;
+import org.metrichistory.fluctuation.Computer;
 import org.metrichistory.fluctuation.UpdateChanges;
 import org.metrichistory.mining.VersionComparator;
 import org.metrichistory.model.MeasureStore;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Computes the metric fluctuations from file(s) in RAW format.
@@ -34,14 +37,18 @@ public class Difference extends Command {
     @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored or a directory that will contain one file per revision.")
     private String output;
 
+    @CommandLine.Option(names = {"-m", "--modifications"}, arity = "0..1", description = "Specifies which type of artifact modification to take into account.  Valid values: ${COMPLETION-CANDIDATES}", defaultValue = "ALL", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
+    private Modification modificationOption;
+
     @Override
     public void run() {
         ancestryFile = normalizePath(ancestryFile);
         input = normalizePath(input);
         output = normalizePath(output);
+        Computer computer = buildComputer(modificationOption);
 
         try {
-            execute();
+            execute(computer);
         } catch (IOException e) {
             final String errorMessage = String.format("The ancestry file (%s) cannot be read", ancestryFile);
             System.err.println(errorMessage);
@@ -49,7 +56,7 @@ public class Difference extends Command {
         }
     }
 
-    private void execute() throws IOException {
+    private void execute(Computer computer) throws IOException {
         final GenealogyRepo repo = new GenealogyRepo();
         final HashMap<String, String> ancestry = repo.load(ancestryFile);
         if (ancestry.isEmpty()) {
@@ -62,8 +69,7 @@ public class Difference extends Command {
         }
 
         final MeasureRepository measureRepository = MeasureRepository.build(input);
-        final VersionComparator versionComparator = new VersionComparator(new UpdateChanges());
-
+        final VersionComparator versionComparator = new VersionComparator(computer);
 
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
         final ProgressIndicator progressIndicator = new ProgressIndicator(entries.size(), 5);
@@ -91,7 +97,20 @@ public class Difference extends Command {
         }
     }
 
+    private Computer buildComputer(Modification modificationOption) {
+        Objects.requireNonNull(modificationOption);
+
+        switch (modificationOption){
+            case ALL:
+                return new AllChange();
+            case CHANGES:
+                return new UpdateChanges();
+        }
+        throw new IllegalStateException("Unable to process the given modification parameter");
+    }
+
     private static class Error {
+
         final String version;
         final String parent;
         final Exception e;
@@ -106,4 +125,6 @@ public class Difference extends Command {
             logger.error("At {} (w. parent {}):", version, parent, e);
         }
     }
+
+    private enum Modification {ALL, CHANGES}
 }
