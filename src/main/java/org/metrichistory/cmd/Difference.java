@@ -40,6 +40,11 @@ public class Difference extends Command {
     @CommandLine.Option(names = {"-m", "--modifications"}, arity = "0..1", description = "Specifies which type of artifact modification to take into account.  Valid values: ${COMPLETION-CANDIDATES}", defaultValue = "ALL", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
     private Modification modificationOption;
 
+    @CommandLine.Option(names = {"-t", "--type"}, arity = "0..1", description = "Specifies how to make the difference.  Valid values: ${COMPLETION-CANDIDATES}", defaultValue = "ABSOLUTE", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
+    private Type typeOption;
+
+
+
     @Override
     public void run() {
         ancestryFile = normalizePath(ancestryFile);
@@ -127,4 +132,5 @@ public class Difference extends Command {
     }
 
     private enum Modification {ALL, CHANGES}
+    private enum Type {RELATIVE, ABSOLUTE}
 }
