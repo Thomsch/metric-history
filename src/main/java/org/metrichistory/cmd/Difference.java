@@ -110,7 +110,7 @@ public class Difference extends Command {
 
         switch (onOption){
             case ALL:
-                return new AllChange(computeDifference);
+                return new AllChanges(computeDifference);
             case CHANGES:
                 return new UpdateChanges(computeDifference);
             default:

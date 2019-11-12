@@ -5,11 +5,11 @@ import org.metrichistory.model.Metrics;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class AllChange implements Computer {
+public class AllChanges implements Computer {
 
     private final BiFunction<Double, Double, Double> calculateDifference;
 
-    public AllChange(BiFunction<Double, Double, Double> calculateDifference) {
+    public AllChanges(BiFunction<Double, Double, Double> calculateDifference) {
         this.calculateDifference = calculateDifference;
     }
 

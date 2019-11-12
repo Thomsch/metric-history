@@ -6,13 +6,13 @@ import org.metrichistory.model.Metrics;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class AllChangeTest {
+public class AllChangesTest {
 
-    private AllChange changes;
+    private AllChanges changes;
 
     @BeforeEach
     public void setUp() {
-        changes = new AllChange(new AbsoluteChange());
+        changes = new AllChanges(new AbsoluteChange());
     }
 
     @Test
