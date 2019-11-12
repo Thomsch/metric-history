@@ -110,8 +110,9 @@ public class Difference extends Command {
                 return new AllChange();
             case CHANGES:
                 return new UpdateChanges();
+            default:
+                throw new IllegalStateException("Unable to process the class target parameter");
         }
-        throw new IllegalStateException("Unable to process the given modification parameter");
     }
 
     private static class Error {
