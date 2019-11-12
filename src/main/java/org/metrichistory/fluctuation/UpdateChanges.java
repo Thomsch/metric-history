@@ -3,6 +3,7 @@ package org.metrichistory.fluctuation;
 import org.metrichistory.model.Metrics;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * Specifies a computation between two suites of metrics where we only return a value if both metrics are presents.
@@ -10,6 +11,13 @@ import java.util.List;
  * the destruction (old != null, current == null).
  */
 public class UpdateChanges implements Computer {
+
+    private final BiFunction<Double, Double, Double> calculateDifference;
+
+    public UpdateChanges(BiFunction<Double, Double, Double> calculateDifference) {
+        this.calculateDifference = calculateDifference;
+    }
+
     @Override
     public Metrics compute(Metrics reference, Metrics other) {
         Metrics result = null;
@@ -24,7 +32,7 @@ public class UpdateChanges implements Computer {
 
             result = new Metrics();
             for (int i = 0; i < others.size(); i++) {
-                result.add(references.get(i) - others.get(i));
+                result.add(calculateDifference.apply(others.get(i), references.get(i)));
             }
         }
 

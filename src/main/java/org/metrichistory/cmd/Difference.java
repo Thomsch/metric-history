@@ -1,9 +1,7 @@
 package org.metrichistory.cmd;
 
 import org.metrichistory.cmd.util.ProgressIndicator;
-import org.metrichistory.fluctuation.AllChange;
-import org.metrichistory.fluctuation.Computer;
-import org.metrichistory.fluctuation.UpdateChanges;
+import org.metrichistory.fluctuation.*;
 import org.metrichistory.mining.VersionComparator;
 import org.metrichistory.model.MeasureStore;
 import org.metrichistory.storage.GenealogyRepo;
@@ -18,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 /**
  * Computes the metric fluctuations from file(s) in RAW format.
@@ -37,20 +36,22 @@ public class Difference extends Command {
     @CommandLine.Parameters(index = "2", description = "Path of the file where the results will be stored or a directory that will contain one file per revision.")
     private String output;
 
-    @CommandLine.Option(names = {"-m", "--modifications"}, arity = "0..1", description = "Specifies which type of artifact modification to take into account.  Valid values: ${COMPLETION-CANDIDATES}", defaultValue = "ALL", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
-    private Modification modificationOption;
+    @CommandLine.Option(names = {"-c", "--classes"}, arity = "0..1",
+            description = "Specifies which kind of classes to take into account.  Valid values: ${COMPLETION-CANDIDATES}",
+            defaultValue = "ALL", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
+    private On onOption;
 
-    @CommandLine.Option(names = {"-t", "--type"}, arity = "0..1", description = "Specifies how to make the difference.  Valid values: ${COMPLETION-CANDIDATES}", defaultValue = "ABSOLUTE", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
-    private Type typeOption;
-
-
+    @CommandLine.Option(names = {"-h", "--how"}, arity = "0..1",
+            description = "Specifies how to make the difference.  Valid values: ${COMPLETION-CANDIDATES}",
+            defaultValue = "ABSOLUTE", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
+    private How howOption;
 
     @Override
     public void run() {
         ancestryFile = normalizePath(ancestryFile);
         input = normalizePath(input);
         output = normalizePath(output);
-        Computer computer = buildComputer(modificationOption);
+        final Computer computer = buildComputer(onOption, howOption);
 
         try {
             execute(computer);
@@ -102,21 +103,33 @@ public class Difference extends Command {
         }
     }
 
-    private Computer buildComputer(Modification modificationOption) {
-        Objects.requireNonNull(modificationOption);
+    private Computer buildComputer(On onOption, How howOption) {
+        Objects.requireNonNull(onOption);
 
-        switch (modificationOption){
+        final BiFunction<Double, Double, Double> computeDifference = buildComputationMethod(howOption);
+
+        switch (onOption){
             case ALL:
-                return new AllChange();
+                return new AllChange(computeDifference);
             case CHANGES:
-                return new UpdateChanges();
+                return new UpdateChanges(computeDifference);
             default:
                 throw new IllegalStateException("Unable to process the class target parameter");
         }
     }
 
-    private static class Error {
+    private BiFunction<Double, Double, Double> buildComputationMethod(How howOption) {
+        switch (howOption) {
+            case RELATIVE:
+                return new RelativeChange();
+            case ABSOLUTE:
+                return new AbsoluteChange();
+            default:
+                throw new IllegalStateException(String.format("The change computation method '%s' is not recognized", howOption));
+        }
+    }
 
+    private static class Error {
         final String version;
         final String parent;
         final Exception e;
@@ -132,6 +145,6 @@ public class Difference extends Command {
         }
     }
 
-    private enum Modification {ALL, CHANGES}
-    private enum Type {RELATIVE, ABSOLUTE}
+    private enum On {ALL, CHANGES}
+    private enum How {RELATIVE, ABSOLUTE}
 }

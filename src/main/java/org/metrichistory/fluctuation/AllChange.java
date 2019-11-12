@@ -3,8 +3,16 @@ package org.metrichistory.fluctuation;
 import org.metrichistory.model.Metrics;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class AllChange implements Computer {
+
+    private final BiFunction<Double, Double, Double> calculateDifference;
+
+    public AllChange(BiFunction<Double, Double, Double> calculateDifference) {
+        this.calculateDifference = calculateDifference;
+    }
+
     @Override
     public Metrics compute(Metrics reference, Metrics other) {
         if(other == null && reference == null) return null;
@@ -28,7 +36,7 @@ public class AllChange implements Computer {
 
         final Metrics result = new Metrics();
         for (int i = 0; i < references.size(); i++) {
-            result.add(references.get(i) - others.get(i));
+            result.add(calculateDifference.apply(others.get(i), references.get(i)));
         }
 
         return result;

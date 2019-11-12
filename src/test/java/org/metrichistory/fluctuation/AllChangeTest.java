@@ -12,7 +12,7 @@ public class AllChangeTest {
 
     @BeforeEach
     public void setUp() {
-        changes = new AllChange();
+        changes = new AllChange(new AbsoluteChange());
     }
 
     @Test
