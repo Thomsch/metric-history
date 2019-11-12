@@ -10,7 +10,7 @@ import java.util.function.BiFunction;
  * This put an emphasis on the changes between two version rather than the creation (old == null, current != null) or
  * the destruction (old != null, current == null).
  */
-public class UpdateChanges implements Computer {
+public class UpdateChanges implements ChangesComparator {
 
     private final BiFunction<Double, Double, Double> calculateDifference;
 

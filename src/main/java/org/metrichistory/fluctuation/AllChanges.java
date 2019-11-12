@@ -5,7 +5,7 @@ import org.metrichistory.model.Metrics;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class AllChanges implements Computer {
+public class AllChanges implements ChangesComparator {
 
     private final BiFunction<Double, Double, Double> calculateDifference;
 

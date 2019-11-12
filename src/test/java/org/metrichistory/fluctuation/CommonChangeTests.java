@@ -6,14 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Tests common behaviours between implementations of {@link Computer}.
+ * Tests common behaviours between implementations of {@link ChangesComparator}.
  */
 final class CommonChangeTests {
 
     private CommonChangeTests() {
     }
 
-    static void computesShouldMakeDifference(Computer changes) {
+    static void computesShouldMakeDifference(ChangesComparator changes) {
         final Metrics a = new Metrics(1.0);
         final Metrics b = new Metrics(1.0);
         final Metrics c = new Metrics(2.0);
@@ -27,7 +27,7 @@ final class CommonChangeTests {
         assertArrayEquals(new Double[]{-1.0}, cdiffb.get().toArray());
     }
 
-    static void computesShouldRespectOrder(Computer changes) {
+    static void computesShouldRespectOrder(ChangesComparator changes) {
         final Metrics a = new Metrics(1.0, 2.0, 3.0);
         final Metrics b = new Metrics(10.0, 20.0, 30.0);
 
@@ -37,7 +37,7 @@ final class CommonChangeTests {
         assertArrayEquals(expected, actual.get().toArray());
     }
 
-    static void bothMissingOperandsReturnNull(Computer changes) {
+    static void bothMissingOperandsReturnNull(ChangesComparator changes) {
         assertNull(changes.compute(null, null));
     }
 }

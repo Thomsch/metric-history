@@ -51,10 +51,10 @@ public class Difference extends Command {
         ancestryFile = normalizePath(ancestryFile);
         input = normalizePath(input);
         output = normalizePath(output);
-        final Computer computer = buildComputer(onOption, howOption);
+        final ChangesComparator changesComparator = buildComparator(onOption, howOption);
 
         try {
-            execute(computer);
+            execute(changesComparator);
         } catch (IOException e) {
             final String errorMessage = String.format("The ancestry file (%s) cannot be read", ancestryFile);
             System.err.println(errorMessage);
@@ -62,7 +62,7 @@ public class Difference extends Command {
         }
     }
 
-    private void execute(Computer computer) throws IOException {
+    private void execute(ChangesComparator comparator) throws IOException {
         final GenealogyRepo repo = new GenealogyRepo();
         final HashMap<String, String> ancestry = repo.load(ancestryFile);
         if (ancestry.isEmpty()) {
@@ -75,7 +75,7 @@ public class Difference extends Command {
         }
 
         final MeasureRepository measureRepository = MeasureRepository.build(input);
-        final VersionComparator versionComparator = new VersionComparator(computer);
+        final VersionComparator versionComparator = new VersionComparator(comparator);
 
         final LinkedList<Map.Entry<String, String>> entries = new LinkedList<>(ancestry.entrySet());
         final ProgressIndicator progressIndicator = new ProgressIndicator(entries.size(), 5);
@@ -103,7 +103,7 @@ public class Difference extends Command {
         }
     }
 
-    private Computer buildComputer(On onOption, How howOption) {
+    private ChangesComparator buildComparator(On onOption, How howOption) {
         Objects.requireNonNull(onOption);
 
         final BiFunction<Double, Double, Double> computeDifference = buildComputationMethod(howOption);

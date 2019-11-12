@@ -1,6 +1,6 @@
 package org.metrichistory.mining;
 
-import org.metrichistory.fluctuation.Computer;
+import org.metrichistory.fluctuation.ChangesComparator;
 import org.metrichistory.model.MeasureStore;
 import org.metrichistory.model.Metrics;
 import org.slf4j.Logger;
@@ -13,10 +13,11 @@ import java.util.Collection;
  */
 public final class VersionComparator {
     private static final Logger logger = LoggerFactory.getLogger(VersionComparator.class);
-    private Computer computer;
 
-    public VersionComparator(Computer computer) {
-        this.computer = computer;
+    private final ChangesComparator comparator;
+
+    public VersionComparator(ChangesComparator comparator) {
+        this.comparator = comparator;
     }
 
     /**
@@ -41,7 +42,7 @@ public final class VersionComparator {
 
             final Metrics otherMeasures = data.get(other, artifact);
 
-            final Metrics result = computer.compute(referenceMeasures, otherMeasures);
+            final Metrics result = comparator.compute(referenceMeasures, otherMeasures);
 
             results.add(version, artifact, result);
         }

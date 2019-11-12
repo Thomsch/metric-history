@@ -2,7 +2,10 @@ package org.metrichistory.fluctuation;
 
 import org.metrichistory.model.Metrics;
 
-public interface Computer {
+/**
+ * Compares between two set of metrics.
+ */
+public interface ChangesComparator {
 
     /**
      * Computes the difference for each metric between two suite of metric.
