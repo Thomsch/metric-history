@@ -8,7 +8,7 @@ import picocli.CommandLine;
 /**
  * Entry point for the application.
  */
-@CommandLine.Command(name = "metric-history", version = "Metric History 0.6", mixinStandardHelpOptions = true)
+@CommandLine.Command(name = "metric-history", version = "Metric History 0.6.1", mixinStandardHelpOptions = true)
 public final class Application implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
