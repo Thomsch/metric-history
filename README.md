@@ -51,6 +51,11 @@ Run `./gradlew distZip` to create a full distribution ZIP archive including runt
 
 Run `./gradlew test` to execute the tests.
 
+## Roadmap
+- Seamless support of databases
+- Support for more software measurement providers (i.e., code smells)
+- Support for different levels of granularity based on the measurement provider
+
 ## Contributing
 
 Suggestions are welcomed! Try creating a new issue or submitting a pull request!
