@@ -3,7 +3,7 @@
 
 # MetricHistory
 MetricHistory is an extensible tool designed to collect and process software
-measurements across mutiple versions of a code base. The measurement itself is
+measurements across multiple versions of a code base. The measurement itself is
 modular and executed by a third party tool. The default analyzer is
 [SourceMeter](https://www.sourcemeter.com/) which offers more than 52 metrics at
 the project, package, class, and method level.
