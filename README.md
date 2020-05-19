@@ -56,3 +56,6 @@ Run `./gradlew distZip` to create a full distribution ZIP archive including runt
 
 ### Testing
 Run `./gradlew test` to execute the tests.
+
+## License
+This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 3.
