@@ -8,6 +8,10 @@ version '0.6.1'
 sourceCompatibility=1.8
 targetCompatibility=1.8
 
+applicationName = rootProject.name
+mainClassName = "org.metrichistory.Application"
+applicationDefaultJvmArgs = ["-Xmx8G"]
+
 repositories {
     mavenCentral()
 }
@@ -32,9 +36,16 @@ dependencies {
     testRuntimeOnly group: 'org.junit.jupiter', name:'junit-jupiter-engine', version:'5.5.2'
 }
 
-applicationName = rootProject.name
-mainClassName = "org.metrichistory.Application"
-applicationDefaultJvmArgs = ["-Xmx8G"]
+sourceSets{
+    functionalTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/functional-test/java')
+        }
+        resources.srcDir file('src/functional-test/resources')
+    }
+}
 
 test {
     testLogging {
@@ -42,3 +53,9 @@ test {
         exceptionFormat "full"
     }
 }
+
+task functionalTest(type: Test) {
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    classpath = sourceSets.functionalTest.runtimeClasspath
+}
+
