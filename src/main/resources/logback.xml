@@ -14,5 +14,4 @@
     </root>
 
     <logger name="org.eclipse.jgit.util" level="info"/>
-    <logger name="org.mongodb.driver" level="info"/>
 </configuration>

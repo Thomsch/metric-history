@@ -26,7 +26,6 @@ public final class Application implements Runnable {
         commandLine.addSubcommand("ancestry", new Ancestry());
         commandLine.addSubcommand("convert", new Convert());
         commandLine.addSubcommand("filter", new FilterRefactoring());
-        commandLine.addSubcommand("mongo", new Mongo());
         commandLine.addSubcommand("revision-history", new ReleaseHistory());
         commandLine.setCaseInsensitiveEnumValuesAllowed(true);
 

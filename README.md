@@ -18,7 +18,6 @@ utilities:
 
 - Conversion of native analysis results into a easily readable reference format (RAW format).
 - Retrieval of the parent versions of a list of versions.
-- [Incubating] Exports to mongodb database.
 
 ## Installation
 Download the latest release at https://github.com/Thomsch/metric-history/releases. Unzip it and run `./bin/metric-history -V` to check if your installation is good. This instruction should print the current version.
@@ -38,9 +37,9 @@ This command analyzes the versions given in _versions.txt_ of the project locate
 You can also choose to integrate metric history to **your** projects by using its public API. Inspire yourself from the implementations in `org.metrichistory.cli.*`: they all use the public API!
 
 ## Roadmap
-- Seamless support of databases
-- Support for more software measurement providers (i.e., code smells)
-- Support for different levels of granularity based on the measurement provider
+- Database support [Nitrate](https://github.com/nitrite/nitrite-java), and [MongoDB](https://www.mongodb.com/)
+- Support for more analyzers (e.g., [Designite](https://www.designite-tools.com/designitejava/), code smells)
+- Support for different levels of granularity
 
 ## Contributing
 Suggestions are welcomed! Try creating a new issue or submitting a pull request!
