@@ -1,6 +1,6 @@
-package org.metrichistory.cmd;
+package org.metrichistory.cli;
 
-import org.metrichistory.cmd.util.ProgressIndicator;
+import org.metrichistory.cli.util.ProgressIndicator;
 import org.metrichistory.fluctuation.*;
 import org.metrichistory.mining.VersionComparator;
 import org.metrichistory.model.MeasureStore;

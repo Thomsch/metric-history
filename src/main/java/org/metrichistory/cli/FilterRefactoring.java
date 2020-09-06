@@ -1,4 +1,4 @@
-package org.metrichistory.cmd;
+package org.metrichistory.cli;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;

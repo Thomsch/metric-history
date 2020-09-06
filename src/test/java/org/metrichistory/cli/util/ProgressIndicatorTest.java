@@ -1,4 +1,4 @@
-package org.metrichistory.cmd.util;
+package org.metrichistory.cli.util;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package org.metrichistory.cmd;
+package org.metrichistory.cli;
 
 import org.metrichistory.model.vcs.Commit;
 import org.metrichistory.model.vcs.Tag;

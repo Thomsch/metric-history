@@ -1,4 +1,4 @@
-package org.metrichistory.cmd;
+package org.metrichistory.cli;
 
 import org.metrichistory.model.Genealogy;
 import org.metrichistory.storage.GenealogyRepo;

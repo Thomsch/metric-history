@@ -1,4 +1,4 @@
-package org.metrichistory.cmd.util;
+package org.metrichistory.cli.util;
 
 import java.io.PrintStream;
 import java.util.Locale;

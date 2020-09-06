@@ -35,7 +35,7 @@ This command analyzes the versions given in _versions.txt_ of the project locate
 `output/folder`.
 
 ### Using the API
-You can also choose to integrate metric history to **your** projects by using its public API. Inspire yourself from the implementations in `org.metrichistory.cmd.*`: they all use the public API!
+You can also choose to integrate metric history to **your** projects by using its public API. Inspire yourself from the implementations in `org.metrichistory.cli.*`: they all use the public API!
 
 ## Roadmap
 - Seamless support of databases

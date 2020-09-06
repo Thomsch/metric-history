@@ -1,4 +1,4 @@
-package org.metrichistory.cmd;
+package org.metrichistory.cli;
 
 import org.metrichistory.analyzer.sourcemeter.SourceMeterConverter;
 import org.metrichistory.model.FormatException;

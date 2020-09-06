@@ -1,8 +1,8 @@
-package org.metrichistory.cmd;
+package org.metrichistory.cli;
 
 import org.metrichistory.analyzer.Analyzer;
 import org.metrichistory.analyzer.AnalyzerBuilder;
-import org.metrichistory.cmd.util.ProjectNameResolver;
+import org.metrichistory.cli.util.ProjectNameResolver;
 import org.metrichistory.mining.Collector;
 import org.metrichistory.mining.Snapshot;
 import org.metrichistory.model.FormatException;
