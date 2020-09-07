@@ -54,7 +54,7 @@ public class SourceMeter implements Analyzer {
     }
 
     @Override
-    public void execute(String revision, String folder, FileFilter filter) {
+    public void analyzeVersion(String revision) {
         final DefaultExecutor executor = new DefaultExecutor();
         executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
             @Override

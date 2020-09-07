@@ -26,10 +26,10 @@ public class Snapshot {
         this.repositoryPath = repositoryPath;
     }
 
-    public void execute(String version, String folder, String outputFile) throws VcsNotFound, VcsCleanupException,
+    public void execute(String version, String outputFile) throws VcsNotFound, VcsCleanupException,
             IOException, FormatException {
         try (Vcs vcs = VcsBuilder.create(repositoryPath)) {
-            collector.analyzeVersion(version, folder);
+            collector.analyzeVersion(version);
             vcs.clean();
         }
 

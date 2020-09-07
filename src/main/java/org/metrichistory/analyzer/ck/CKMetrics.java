@@ -21,13 +21,17 @@ import java.util.Optional;
 public class CKMetrics implements Analyzer {
 
     private final Map<String, MetricDump> results;
+    private final FileFilter filter;
+    private final String folder;
 
-    public CKMetrics() {
+    public CKMetrics(FileFilter filter, String folder) {
+        this.filter = filter;
+        this.folder = folder;
         results = new HashMap<>();
     }
 
     @Override
-    public void execute(String revision, String folder, FileFilter filter) {
+    public void analyzeVersion(String revision) {
         final CKReport report = new CK().calculate(folder);
 
         final MetricDump dump = new MetricDump();

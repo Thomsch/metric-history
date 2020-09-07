@@ -6,17 +6,16 @@ import org.metrichistory.mining.FileFilter;
 import java.util.Optional;
 
 /**
- * Abstraction for a third party static code analyzer.
+ * Compatibility interface for a third party static code analyzer.
+ * To add compatibility to an unsupported analyzer, implement this interface.
  */
 public interface Analyzer {
 
     /**
-     * Execute the analyzer for a given version of a project.
-     * @param revision the version of the project to analyze
-     * @param folder   the location of the project
-     * @param filter a non-null filter to apply to this folder.
+     * Run an analysis for the given version.
+     * @param version the version identifier to analyze (e.g., commit hash, svn revision).
      */
-    void execute(String revision, String folder, FileFilter filter);
+    void analyzeVersion(String version);
 
     /**
      * Is invoked automatically by {@link Collector} after {@link #execute(String, String, FileFilter)}.

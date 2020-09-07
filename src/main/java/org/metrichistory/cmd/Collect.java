@@ -2,7 +2,6 @@ package org.metrichistory.cmd;
 
 import org.metrichistory.analyzer.Analyzer;
 import org.metrichistory.analyzer.AnalyzerBuilder;
-import org.metrichistory.analyzer.sourcemeter.SourceMeterConverter;
 import org.metrichistory.cmd.util.ProjectNameResolver;
 import org.metrichistory.mining.Collector;
 import org.metrichistory.mining.Snapshot;
@@ -148,7 +147,7 @@ public class Collect extends Command {
 
         final long beginning = System.nanoTime();
         try {
-            snapshot.execute(versionsParam, folder, outputFilePath);
+            snapshot.execute(versionsParam, outputFilePath);
         } catch (VcsCleanupException e) {
             e.printStackTrace();
             logger.error("Failed to cleanup the repository", e);

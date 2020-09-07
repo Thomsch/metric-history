@@ -2,6 +2,7 @@ package org.metrichistory.analyzer;
 
 import org.metrichistory.analyzer.ck.CKMetrics;
 import org.metrichistory.analyzer.sourcemeter.SourceMeter;
+import org.metrichistory.mining.FileFilter;
 
 import java.util.Objects;
 
@@ -18,6 +19,8 @@ public class AnalyzerBuilder {
     public Analyzer build(Census analyzerId) {
         Objects.requireNonNull(analyzerId);
         switch (analyzerId) {
+            case CK:
+                return new CKMetrics(FileFilter.production(), inputDirectory);
             case SOURCEMETER:
                 Objects.requireNonNull(executable, "An executable path is required for this analyzer");
                 Objects.requireNonNull(inputDirectory);
@@ -25,8 +28,6 @@ public class AnalyzerBuilder {
                 Objects.requireNonNull(projectName);
 
                 return new SourceMeter(executable, outputDirectory, projectName, inputDirectory);
-            case CK:
-                return new CKMetrics();
         }
         throw new IllegalArgumentException(String.format("'%s' is not a supported analyzer. Verify spelling.", analyzerId));
     }

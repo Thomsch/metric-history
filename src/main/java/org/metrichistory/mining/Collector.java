@@ -5,7 +5,6 @@ import org.metrichistory.versioncontrol.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -18,25 +17,20 @@ public class Collector {
 
     private final Analyzer analyzer;
 
-    private final FileFilter filter;
-
     public Collector(Analyzer analyzer) {
         this.analyzer = analyzer;
-
-        filter = FileFilter.noFilter();
     }
 
     /**
      * Analyze one version if it hasn't been cached.
      * @param version the version to analyze.
-     * @param projectDir the directory to analyze.
      */
-    public void analyzeVersion(String version, String projectDir) {
+    public void analyzeVersion(String version) {
         if(analyzer.hasInCache(version)){
             return;
         }
 
-        analyzer.execute(version, projectDir, filter);
+        analyzer.analyzeVersion(version);
         analyzer.postExecute(version);
     }
 
@@ -57,7 +51,7 @@ public class Collector {
                 logger.info("Processing {} ({})", version, ++i);
                 vcs.clean();
                 vcs.checkout(version);
-                analyzeVersion(version, repositoryPath);
+                analyzeVersion(version);
             }
 
             final long elapsed = System.nanoTime() - beginning;
