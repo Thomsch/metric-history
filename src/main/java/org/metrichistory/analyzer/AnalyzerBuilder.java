@@ -1,6 +1,7 @@
 package org.metrichistory.analyzer;
 
 import org.metrichistory.analyzer.ck.CKMetrics;
+import org.metrichistory.analyzer.dummy.DummyAnalyzer;
 import org.metrichistory.analyzer.sourcemeter.SourceMeter;
 import org.metrichistory.mining.FileFilter;
 
@@ -19,6 +20,8 @@ public class AnalyzerBuilder {
     public Analyzer build(Census analyzerId) {
         Objects.requireNonNull(analyzerId);
         switch (analyzerId) {
+            case DUMMY:
+                return new DummyAnalyzer();
             case CK:
                 return new CKMetrics(FileFilter.production(), inputDirectory);
             case SOURCEMETER:
@@ -48,5 +51,5 @@ public class AnalyzerBuilder {
         this.projectName = projectName;
     }
 
-    public enum Census {SOURCEMETER, CK}
+    public enum Census {DUMMY, CK, SOURCEMETER}
 }
